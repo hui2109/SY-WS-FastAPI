@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-bs-theme="auto">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>优雅登录界面</title>
+  <!-- Bootstrap 5 CSS -->
+  <link rel="stylesheet" href="/WSFrontends/assets/plugin/node_modules/bootstrap/dist/css/bootstrap.min.css">
+  <!-- Bootstrap Icons -->
+  <link rel="stylesheet" href="/WSFrontends/assets/plugin/node_modules/bootstrap-icons/font/bootstrap-icons.min.css">
+  <style>
+      body {
+          min-height: 100vh;
+          display: flex;
+          align-items: center;
+          background-color: var(--bs-body-bg);
+          transition: all 0.3s ease;
+          opacity: 0;
+          animation: fadeIn 0.3s ease-in forwards;
+      }
+
+      @keyframes fadeIn {
+          from {
+              opacity: 0;
+          }
+
+          to {
+              opacity: 1;
+          }
+      }
+
+      /* 页面过渡遮罩 */
+      .page-transition-overlay {
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background-color: var(--bs-body-bg);
+          z-index: 9999;
+          opacity: 0;
+          pointer-events: none;
+          transition: opacity 0.3s ease;
+      }
+
+      /* 定制暗模式背景颜色用于页面过渡 */
+      [data-bs-theme="dark"] .page-transition-overlay {
+          background: linear-gradient(145deg, #1a1a2e 0%, #16213e 100%);
+      }
+
+      [data-bs-theme="light"] .page-transition-overlay {
+          background: linear-gradient(145deg, #f5f7fa 0%, #e4e9f2 100%);
+      }
+
+      .login-card {
+          border: none;
+          border-radius: 15px;
+          box-shadow: 0 15px 25px rgba(0, 0, 0, 0.05);
+          backdrop-filter: blur(7px);
+          background-color: rgba(var(--bs-body-bg-rgb), 0.8);
+          transition: all 0.3s ease;
+      }
+
+      .login-card:hover {
+          box-shadow: 0 20px 30px rgba(0, 0, 0, 0.1);
+          transform: translateY(-5px);
+      }
+
+      .login-heading {
+          font-weight: 700;
+          letter-spacing: -0.5px;
+      }
+
+      .btn-primary {
+          padding: 12px;
+          font-weight: 600;
+          transition: all 0.3s ease;
+      }
+
+      .btn-primary:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 5px 15px rgba(var(--bs-primary-rgb), 0.4);
+      }
+
+      .form-control {
+          padding: 12px 15px;
+          border-radius: 10px;
+          transition: all 0.2s ease;
+      }
+
+      .form-control:focus {
+          box-shadow: 0 0 0 4px rgba(var(--bs-primary-rgb), 0.15);
+      }
+
+      .form-floating label {
+          padding-left: 15px;
+      }
+
+      .form-check-input:checked {
+          background-color: var(--bs-primary);
+          border-color: var(--bs-primary);
+      }
+
+      .theme-toggle {
+          position: fixed;
+          top: 20px;
+          right: 20px;
+          z-index: 1000;
+      }
+
+      /* 定制暗模式背景 */
+      [data-bs-theme="dark"] body {
+          background: linear-gradient(145deg, #1a1a2e 0%, #16213e 100%);
+      }
+
+      [data-bs-theme="light"] body {
+          background: linear-gradient(145deg, #f5f7fa 0%, #e4e9f2 100%);
+      }
+
+      .social-icons .btn {
+          width: 40px;
+          height: 40px;
+          padding: 0;
+          line-height: 40px;
+          text-align: center;
+          border-radius: 50%;
+          transition: all 0.3s ease;
+      }
+
+      .social-icons .btn:hover {
+          transform: translateY(-3px);
+      }
+
+      .brand-logo {
+          height: 40px;
+          margin-bottom: 10px;
+          transition: all 0.3s ease;
+      }
+
+      /* 响应式调整 */
+      @media (max-width: 576px) {
+          .login-card {
+              border-radius: 10px;
+          }
+      }
+  </style>
+</head>
+
+<body>
+<!-- 页面过渡遮罩 -->
+<div class="page-transition-overlay" id="pageTransition"></div>
+
+<!-- 主题切换按钮 -->
+<div class="theme-toggle">
+  <button class="btn btn-outline-primary rounded-circle" id="themeToggle">
+    <i class="bi bi-moon-stars-fill"></i>
+  </button>
+</div>
+
+<div class="container">
+  <div class="row justify-content-center">
+    <div class="col-12 col-sm-10 col-md-8 col-lg-6 col-xl-5">
+      <div class="card login-card p-4 p-md-5">
+        <div class="card-body">
+          <div class="text-center mb-4">
+            <div class="mb-3">
+              <svg class="brand-logo" viewBox="0 0 24 24" fill="currentColor">
+                <path
+                    d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-2-8c0 1.1.9 2 2 2s2-.9 2-2-.9-2-2-2-2 .9-2 2z"/>
+              </svg>
+            </div>
+            <h2 class="login-heading">欢迎回来</h2>
+            <p class="text-muted">请登录您的账户以继续</p>
+          </div>
+
+          <form>
+            <div class="form-floating mb-3">
+              <input class="form-control" id="floatingInput" placeholder="zhangsan" required>
+              <label for="floatingInput">用户名</label>
+            </div>
+            <div class="form-floating mb-4">
+              <input type="password" class="form-control" id="floatingPassword" placeholder="Password"
+                     required>
+              <label for="floatingPassword">密码</label>
+            </div>
+
+            <div class="d-flex justify-content-between mb-4">
+              <div id="loginError" class="text-danger" style="display: none;"></div>
+            </div>
+
+            <button class="btn btn-primary w-100 mb-4" type="submit">
+              登录
+            </button>
+
+            <div class="text-center">
+              <p class="mb-0">
+                还没有账户? <a href="/register" class="text-decoration-none fw-semibold"> 立即注册</a>
+              </p>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Bootstrap 5 JS Bundle with Popper -->
+<script src="/WSFrontends/assets/plugin/node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- 页面过渡和主题切换脚本 -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const themeToggleBtn = document.getElementById('themeToggle');
+        const htmlElement = document.documentElement;
+        const themeIcon = themeToggleBtn.querySelector('i');
+        const pageTransition = document.getElementById('pageTransition');
+
+        // 处理所有页面链接点击事件以实现平滑过渡
+        document.querySelectorAll('a[href]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                // 只处理内部链接
+                const href = this.getAttribute('href');
+                if (href.startsWith('http') || href.startsWith('#') || href.startsWith('javascript')) {
+                    return; // 不阻止外部链接、锚链接或JavaScript链接
+                }
+
+                e.preventDefault(); // 阻止默认跳转
+
+                // 显示过渡遮罩
+                pageTransition.style.opacity = '1';
+
+                // 延迟跳转以显示过渡动画
+                setTimeout(() => {
+                    window.location.href = href;
+                }, 300);
+            });
+        });
+
+        // 检查本地存储中的主题设置
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme) {
+            htmlElement.setAttribute('data-bs-theme', savedTheme);
+            updateIcon(savedTheme);
+        }
+
+        themeToggleBtn.addEventListener('click', function () {
+            const currentTheme = htmlElement.getAttribute('data-bs-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+
+            htmlElement.setAttribute('data-bs-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+
+            updateIcon(newTheme);
+        });
+
+        function updateIcon(theme) {
+            if (theme === 'dark') {
+                themeIcon.classList.remove('bi-moon-stars-fill');
+                themeIcon.classList.add('bi-sun-fill');
+            } else {
+                themeIcon.classList.remove('bi-sun-fill');
+                themeIcon.classList.add('bi-moon-stars-fill');
+            }
+        }
+
+        // 处理登录表单提交
+        const loginForm = document.querySelector('form');
+        const usernameInput = document.getElementById('floatingInput');
+        const passwordInput = document.getElementById('floatingPassword');
+        const loginError = document.getElementById('loginError');
+
+        loginForm.addEventListener('submit', function (event) {
+            event.preventDefault();
+
+            // 显示loading状态
+            const submitBtn = this.querySelector('button[type="submit"]');
+            const originalBtnText = submitBtn.innerHTML;
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> 登录中...';
+
+            // 隐藏之前可能的错误信息
+            loginError.style.display = 'none';
+
+            // 准备表单数据 (x-www-form-urlencoded格式)
+            const formData = new URLSearchParams();
+            formData.append('grant_type', 'password');
+            formData.append('username', usernameInput.value);
+            formData.append('password', passwordInput.value);
+            formData.append('scope', '');
+            formData.append('client_id', '');
+            formData.append('client_secret', '');
+
+            // 使用XMLHttpRequest发送登录请求（防止CORS问题）
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', '/token', true);
+            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            xhr.withCredentials = true;
+
+            xhr.onload = function () {
+                if (xhr.status >= 200 && xhr.status < 300) {
+                    try {
+                        const data = JSON.parse(xhr.responseText);
+
+                        // 登录成功，保存令牌到localStorage
+                        localStorage.setItem('access_token', data.access_token);
+
+                        // 添加token到sessionStorage以便页面跳转后立即可用
+                        sessionStorage.setItem('access_token', data.access_token);
+
+                        // 显示成功消息
+                        alert('登录成功！');
+
+                        // 设置默认的Authorization请求头，用于后续请求
+                        const token = data.access_token;
+
+                        // 跳转到主页
+                        pageTransition.style.opacity = '1';
+                        setTimeout(() => {
+                            window.location.href = '/index'; // 主页路径
+                        }, 300);
+                    } catch (e) {
+                        // JSON解析错误
+                        loginError.textContent = '登录响应无效';
+                        loginError.style.display = 'block';
+
+                        // 恢复按钮状态
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = originalBtnText;
+                    }
+                } else {
+                    // 显示错误信息
+                    loginError.textContent = '用户名或密码不正确';
+                    loginError.style.display = 'block';
+
+                    // 恢复按钮状态
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = originalBtnText;
+                }
+            };
+
+            xhr.onerror = function () {
+                // 显示错误信息
+                loginError.textContent = '网络错误，请检查您的连接';
+                loginError.style.display = 'block';
+
+                // 恢复按钮状态
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalBtnText;
+            };
+
+            // 发送请求
+            xhr.send(formData.toString());
+        });
+    });
+</script>
+</body>
+
+</html>

@@ -1,0 +1,470 @@
+<!doctype html>
+<html lang="en" data-bs-theme="auto">
+
+<head>
+  <script src="/WSFrontends/assets/plugin/offcanvas-navbar/color-modes.js"></script>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="">
+  <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
+  <meta name="generator" content="Hugo 0.122.0">
+  <title>省院电离排版站</title>
+
+  <link rel="icon" type="image/png" href="/WSFrontends/assets/img/radiation.png">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@docsearch/css@3">
+  <link rel="stylesheet" href="/WSFrontends/assets/plugin/node_modules/bootstrap/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="/WSFrontends/assets/plugin/offcanvas-navbar/offcanvas-navbar.css">
+  <link rel="stylesheet"
+    href="/WSFrontends/assets/plugin/node_modules/@eonasdan/tempus-dominus/dist/css/tempus-dominus.min.css">
+  <link rel="stylesheet" href="/WSFrontends/assets/plugin/node_modules/bootstrap-icons/font/bootstrap-icons.min.css">
+
+  <!-- 我的CSS样式 -->
+  <link rel="stylesheet" href="/WSFrontends/assets/2_css/index.css">
+  <link rel="stylesheet" href="/WSFrontends/assets/2_css/work_all.css">
+</head>
+
+<body class="bg-body-tertiary">
+  <!-- 添加权限验证脚本 -->
+  <script>
+    // 检查是否有访问令牌
+    const token = localStorage.getItem('access_token') || sessionStorage.getItem('access_token');
+
+    if (!token) {
+      // 如果没有令牌，重定向到登录页面
+      window.location.href = '/login';
+    } else {
+      // 设置默认的Authorization请求头
+      // 为所有的XMLHttpRequest请求添加授权头
+      const originalXhrOpen = XMLHttpRequest.prototype.open;
+      XMLHttpRequest.prototype.open = function () {
+        originalXhrOpen.apply(this, arguments);
+        this.setRequestHeader('Authorization', `Bearer ${token}`);
+      };
+
+      // 为所有的fetch请求添加授权头
+      const originalFetch = window.fetch;
+      window.fetch = function (url, options = {}) {
+        // 确保headers存在
+        if (!options.headers) {
+          options.headers = {};
+        }
+
+        // 如果headers是Headers对象
+        if (options.headers instanceof Headers) {
+          options.headers.append('Authorization', `Bearer ${token}`);
+        } else {
+          // 如果headers是普通对象
+          options.headers['Authorization'] = `Bearer ${token}`;
+        }
+
+        return originalFetch(url, options);
+      };
+    }
+  </script>
+
+  <!-- 底部切换主题明暗色的 [图标], 不用管 -->
+  <svg xmlns="http://www.w3.org/2000/svg" class="d-none">
+    <symbol id="check2" viewBox="0 0 16 16">
+      <path
+        d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0z" />
+    </symbol>
+    <symbol id="circle-half" viewBox="0 0 16 16">
+      <path d="M8 15A7 7 0 1 0 8 1v14zm0 1A8 8 0 1 1 8 0a8 8 0 0 1 0 16z" />
+    </symbol>
+    <symbol id="moon-stars-fill" viewBox="0 0 16 16">
+      <path
+        d="M6 .278a.768.768 0 0 1 .08.858 7.208 7.208 0 0 0-.878 3.46c0 4.021 3.278 7.277 7.318 7.277.527 0 1.04-.055 1.533-.16a.787.787 0 0 1 .81.316.733.733 0 0 1-.031.893A8.349 8.349 0 0 1 8.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.752.752 0 0 1 6 .278z" />
+      <path
+        d="M10.794 3.148a.217.217 0 0 1 .412 0l.387 1.162c.173.518.579.924 1.097 1.097l1.162.387a.217.217 0 0 1 0 .412l-1.162.387a1.734 1.734 0 0 0-1.097 1.097l-.387 1.162a.217.217 0 0 1-.412 0l-.387-1.162A1.734 1.734 0 0 0 9.31 6.593l-1.162-.387a.217.217 0 0 1 0-.412l1.162-.387a1.734 1.734 0 0 0 1.097-1.097l.387-1.162zM13.863.099a.145.145 0 0 1 .274 0l.258.774c.115.346.386.617.732.732l.774.258a.145.145 0 0 1 0 .274l-.774.258a1.156 1.156 0 0 0-.732.732l-.258.774a.145.145 0 0 1-.274 0l-.258-.774a1.156 1.156 0 0 0-.732-.732l-.774-.258a.145.145 0 0 1 0-.274l.774-.258c.346-.115.617-.386.732-.732L13.863.1z" />
+    </symbol>
+    <symbol id="sun-fill" viewBox="0 0 16 16">
+      <path
+        d="M8 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM8 0a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 0zm0 13a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 13zm8-5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2a.5.5 0 0 1 .5.5zM3 8a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2A.5.5 0 0 1 3 8zm10.657-5.657a.5.5 0 0 1 0 .707l-1.414 1.415a.5.5 0 1 1-.707-.708l1.414-1.414a.5.5 0 0 1 .707 0zm-9.193 9.193a.5.5 0 0 1 0 .707L3.05 13.657a.5.5 0 0 1-.707-.707l1.414-1.414a.5.5 0 0 1 .707 0zm9.193 2.121a.5.5 0 0 1-.707 0l-1.414-1.414a.5.5 0 0 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .707zM4.464 4.465a.5.5 0 0 1-.707 0L2.343 3.05a.5.5 0 1 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .708z" />
+    </symbol>
+  </svg>
+
+  <!-- 底部切换主题明暗色的 [文字], 不用管 -->
+  <div class="dropdown position-fixed bottom-0 end-0 mb-3 me-3 bd-mode-toggle">
+    <button class="btn btn-bd-primary py-2 dropdown-toggle d-flex align-items-center" id="bd-theme" type="button"
+      aria-expanded="false" data-bs-toggle="dropdown" aria-label="Toggle theme (auto)">
+      <svg class="bi my-1 theme-icon-active" width="1em" height="1em">
+        <use href="#circle-half"></use>
+      </svg>
+      <span class="visually-hidden" id="bd-theme-text">Toggle theme</span>
+    </button>
+    <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="bd-theme-text">
+      <li>
+        <button type="button" class="dropdown-item d-flex align-items-center" data-bs-theme-value="light"
+          aria-pressed="false">
+          <svg class="bi me-2 opacity-50" width="1em" height="1em">
+            <use href="#sun-fill"></use>
+          </svg>
+          Light
+          <svg class="bi ms-auto d-none" width="1em" height="1em">
+            <use href="#check2"></use>
+          </svg>
+        </button>
+      </li>
+      <li>
+        <button type="button" class="dropdown-item d-flex align-items-center" data-bs-theme-value="dark"
+          aria-pressed="false">
+          <svg class="bi me-2 opacity-50" width="1em" height="1em">
+            <use href="#moon-stars-fill"></use>
+          </svg>
+          Dark
+          <svg class="bi ms-auto d-none" width="1em" height="1em">
+            <use href="#check2"></use>
+          </svg>
+        </button>
+      </li>
+      <li>
+        <button type="button" class="dropdown-item d-flex align-items-center active" data-bs-theme-value="auto"
+          aria-pressed="true">
+          <svg class="bi me-2 opacity-50" width="1em" height="1em">
+            <use href="#circle-half"></use>
+          </svg>
+          Auto
+          <svg class="bi ms-auto d-none" width="1em" height="1em">
+            <use href="#check2"></use>
+          </svg>
+        </button>
+      </li>
+    </ul>
+  </div>
+
+  <!-- 主要的导航条 -->
+  <nav class="navbar navbar-expand-lg fixed-top navbar-dark bg-dark" aria-label="Main navigation">
+    <div class="container-fluid">
+      <!-- 主页logo, 点击可以回到主页 -->
+      <a class="navbar-brand" href="#">省院电离排版站</a>
+
+      <!-- 页面缩小后, 会显示☰, 用于展示菜单 -->
+      <button class="navbar-toggler p-0 border-0" type="button" id="navbarSideCollapse" data-bs-toggle="collapse"
+        data-bs-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false"
+        aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <!-- 真正的导航条 -->
+      <div class="navbar-collapse offcanvas-collapse" id="navbarContent">
+        <!-- 主要的功能菜单 -->
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <li class="nav-item">
+            <a class="nav-link active" href="#work" data-bs-target="work-content">上班</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#reserve" data-bs-target="reserve-content">预约</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#change" data-bs-target="change-content">换班</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#statistics" data-bs-target="statistics-content">统计</a>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" aria-expanded="false">排班</a>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="#">Action</a></li>
+              <li><a class="dropdown-item" href="#">Another action</a></li>
+              <li><a class="dropdown-item" href="#">Something else here</a></li>
+            </ul>
+          </li>
+        </ul>
+
+        <!-- 中间的切换按钮 -->
+        <ul class="navbar-nav me-5 mb-2 mb-lg-0">
+          <li class=" nav-item">
+            <a class="nav-link active mine" aria-current="page" href="#">我的</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link all" href="#">全科</a>
+          </li>
+        </ul>
+
+        <!-- 右边的搜索框 -->
+        <form class="d-flex" role="search">
+          <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+          <button class="btn btn-outline-success" type="submit">Search</button>
+        </form>
+      </div>
+    </div>
+  </nav>
+
+  <!-- 主要的内容区域 -->
+  <main class="container mt-3 pt-2">
+    <!-- 首页内容 -->
+    <div id="work-content-mine" class="content-section">
+      <h2>我的</h2>
+      <p>这是首页的内容。您可以在这里放置您的主要信息。</p>
+      <div class="row">
+        <div class="col-md-4">
+          <div class="card mb-4">
+            <div class="card-body">
+              <h5 class="card-title">特色内容 1</h5>
+              <p class="card-text">这里是一些特色内容的描述文字。</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card mb-4">
+            <div class="card-body">
+              <h5 class="card-title">特色内容 2</h5>
+              <p class="card-text">这里是一些特色内容的描述文字。</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card mb-4">
+            <div class="card-body">
+              <h5 class="card-title">特色内容 3</h5>
+              <p class="card-text">这里是一些特色内容的描述文字。</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="work-content-all" class="content-section d-none">
+      <div class="p-3 border border-secondary border-opacity-75 border-2 rounded-3">
+        <!-- 日期切换组件 -->
+        <div class="row">
+          <div class="col-lg-4"></div>
+          <div class="col-lg-4">
+            <div class="d-flex justify-content-between">
+              <button type="button" class="btn btn-success pre-month">上一月</button>
+              <div id="datetimepicker1" data-td-target-input="nearest" data-td-target-toggle="nearest">
+                <span class="input-group-text" data-td-target="#datetimepicker1" data-td-toggle="datetimepicker">
+                  <span class="mounianmouyue">某年某月</span>
+                </span>
+              </div>
+              <button type="button" class="btn btn-success next-month">下一月</button>
+            </div>
+          </div>
+          <div class="col-lg-4"></div>
+        </div>
+
+        <!-- 表格本体 -->
+        <div class="table-container m-auto mt-3 table-responsive">
+          <table class="paiban-table m-auto table table-bordered">
+            <thead>
+              <tr>
+                <th>已发布</th>
+              </tr>
+            </thead>
+            <tbody>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- 关于我们内容 -->
+    <div id="reserve-content-mine" class="content-section d-none">
+      <h2>我的</h2>
+      <p>这是关于我们页面的内容。您可以在这里介绍您的公司或组织。</p>
+      <div class="row">
+        <div class="col-lg-8">
+          <p>我们是一家专注于提供高质量服务的企业。我们的团队由经验丰富的专业人士组成，致力于为客户提供最佳解决方案。</p>
+          <p>我们的使命是通过创新和卓越的服务来满足客户的需求，并在行业中保持领先地位。</p>
+        </div>
+        <div class="col-lg-4">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">我们的价值观</h5>
+              <ul>
+                <li>诚信</li>
+                <li>创新</li>
+                <li>合作</li>
+                <li>卓越</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="reserve-content-all" class="content-section d-none">
+      <h2>全科</h2>
+      <p>这是关于我们页面的内容。您可以在这里介绍您的公司或组织。</p>
+      <div class="row">
+        <div class="col-lg-8">
+          <p>我们是一家专注于提供高质量服务的企业。我们的团队由经验丰富的专业人士组成，致力于为客户提供最佳解决方案。</p>
+          <p>我们的使命是通过创新和卓越的服务来满足客户的需求，并在行业中保持领先地位。</p>
+        </div>
+        <div class="col-lg-4">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">我们的价值观</h5>
+              <ul>
+                <li>诚信</li>
+                <li>创新</li>
+                <li>合作</li>
+                <li>卓越</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 服务内容 -->
+    <div id="change-content-mine" class="content-section d-none">
+      <h2>我的</h2>
+      <p>这是服务页面的内容。您可以在这里列出您提供的各种服务。</p>
+      <div class="row">
+        <div class="col-md-6 mb-4">
+          <div class="card h-100">
+            <div class="card-body">
+              <h5 class="card-title">服务 A</h5>
+              <p class="card-text">这是关于服务A的详细描述。我们提供全面的解决方案来满足您的需求。</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6 mb-4">
+          <div class="card h-100">
+            <div class="card-body">
+              <h5 class="card-title">服务 B</h5>
+              <p class="card-text">这是关于服务B的详细描述。我们的专业团队将确保您获得最佳体验。</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6 mb-4">
+          <div class="card h-100">
+            <div class="card-body">
+              <h5 class="card-title">服务 C</h5>
+              <p class="card-text">这是关于服务C的详细描述。我们致力于提供创新的解决方案。</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6 mb-4">
+          <div class="card h-100">
+            <div class="card-body">
+              <h5 class="card-title">服务 D</h5>
+              <p class="card-text">这是关于服务D的详细描述。我们的服务以客户满意度为导向。</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="change-content-all" class="content-section d-none">
+      <h2>全科</h2>
+      <p>这是服务页面的内容。您可以在这里列出您提供的各种服务。</p>
+      <div class="row">
+        <div class="col-md-6 mb-4">
+          <div class="card h-100">
+            <div class="card-body">
+              <h5 class="card-title">服务 A</h5>
+              <p class="card-text">这是关于服务A的详细描述。我们提供全面的解决方案来满足您的需求。</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6 mb-4">
+          <div class="card h-100">
+            <div class="card-body">
+              <h5 class="card-title">服务 B</h5>
+              <p class="card-text">这是关于服务B的详细描述。我们的专业团队将确保您获得最佳体验。</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6 mb-4">
+          <div class="card h-100">
+            <div class="card-body">
+              <h5 class="card-title">服务 C</h5>
+              <p class="card-text">这是关于服务C的详细描述。我们致力于提供创新的解决方案。</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6 mb-4">
+          <div class="card h-100">
+            <div class="card-body">
+              <h5 class="card-title">服务 D</h5>
+              <p class="card-text">这是关于服务D的详细描述。我们的服务以客户满意度为导向。</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 联系我们内容 -->
+    <div id="statistics-content-mine" class="content-section d-none">
+      <h2>我的</h2>
+      <p>这是联系页面的内容。您可以在这里提供您的联系信息和表单。</p>
+      <div class="row">
+        <div class="col-md-6">
+          <form>
+            <div class="mb-3">
+              <label for="name" class="form-label">姓名</label>
+              <input type="text" class="form-control" id="name" required>
+            </div>
+            <div class="mb-3">
+              <label for="email" class="form-label">电子邮件</label>
+              <input type="email" class="form-control" id="email" required>
+            </div>
+            <div class="mb-3">
+              <label for="message" class="form-label">留言</label>
+              <textarea class="form-control" id="message" rows="5" required></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">发送</button>
+          </form>
+        </div>
+        <div class="col-md-6">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">我们的联系方式</h5>
+              <p><strong>地址：</strong>某某市某某区某某街123号</p>
+              <p><strong>电话：</strong>123-456-7890</p>
+              <p><strong>电子邮件：</strong>info@example.com</p>
+              <p><strong>营业时间：</strong>周一至周五 9:00-18:00</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="statistics-content-all" class="content-section d-none">
+      <h2>全科</h2>
+      <p>这是联系页面的内容。您可以在这里提供您的联系信息和表单。</p>
+      <div class="row">
+        <div class="col-md-6">
+          <form>
+            <div class="mb-3">
+              <label for="name" class="form-label">姓名</label>
+              <input type="text" class="form-control" id="name1" required>
+            </div>
+            <div class="mb-3">
+              <label for="email" class="form-label">电子邮件</label>
+              <input type="email" class="form-control" id="email1" required>
+            </div>
+            <div class="mb-3">
+              <label for="message" class="form-label">留言</label>
+              <textarea class="form-control" id="message1" rows="5" required></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">发送</button>
+          </form>
+        </div>
+        <div class="col-md-6">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">我们的联系方式</h5>
+              <p><strong>地址：</strong>某某市某某区某某街123号</p>
+              <p><strong>电话：</strong>123-456-7890</p>
+              <p><strong>电子邮件：</strong>info@example.com</p>
+              <p><strong>营业时间：</strong>周一至周五 9:00-18:00</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="/WSFrontends/assets/plugin/node_modules/bootstrap/dist/js/bootstrap.bundle.js"></script>
+  <script src="/WSFrontends/assets/plugin/offcanvas-navbar/offcanvas-navbar.js"></script>
+  <script src="/WSFrontends/assets/plugin/node_modules/@popperjs/core/dist/umd/popper.min.js"></script>
+  <script src="/WSFrontends/assets/plugin/node_modules/@eonasdan/tempus-dominus/dist/js/tempus-dominus.min.js"></script>
+
+  <!-- 我的js文件, 按顺序引入 -->
+  <script src="/WSFrontends/assets/4_js/myConstant.js"></script>
+  <script src="/WSFrontends/assets/4_js/changePages.js"></script>
+  <script src="/WSFrontends/assets/4_js/initTables.js"></script>
+  <script src="/WSFrontends/assets/4_js/datePicker.js"></script>
+</body>
+
+</html>
