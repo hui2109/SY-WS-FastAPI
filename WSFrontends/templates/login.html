@@ -302,17 +302,11 @@
                     try {
                         const data = JSON.parse(xhr.responseText);
 
-                        // 登录成功，保存令牌到localStorage
-                        localStorage.setItem('access_token', data.access_token);
-
-                        // 添加token到sessionStorage以便页面跳转后立即可用
+                        // 登录成功，保存令牌到 sessionStorage
                         sessionStorage.setItem('access_token', data.access_token);
 
                         // 显示成功消息
-                        alert('登录成功！');
-
-                        // 设置默认的Authorization请求头，用于后续请求
-                        const token = data.access_token;
+                        // alert('登录成功！');
 
                         // 跳转到主页
                         pageTransition.style.opacity = '1';

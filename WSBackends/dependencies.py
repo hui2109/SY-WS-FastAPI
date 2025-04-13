@@ -1,4 +1,5 @@
 from typing import Annotated
+from datetime import datetime, tzinfo, timezone
 
 import jwt
 from fastapi import Depends, HTTPException, status
@@ -32,8 +33,15 @@ async def get_current_user(
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         username = payload.get("sub")
+        expire = payload.get("exp")
 
         if username is None:
+            raise credentials_exception
+
+        if expire is None:
+            raise credentials_exception
+
+        if datetime.now(timezone.utc) > datetime.fromtimestamp(expire, tz=timezone.utc):
             raise credentials_exception
     except InvalidTokenError:
         raise credentials_exception

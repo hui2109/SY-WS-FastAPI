@@ -6,6 +6,7 @@ from fastapi.staticfiles import StaticFiles
 from WSBackends.database.database import create_db_and_tables
 from WSBackends.routers.index import router as index_router
 from WSBackends.routers.login import router as login_router
+from WSBackends.routers.verify import router as verify_router
 from WSBackends.utils import Statics
 
 app = FastAPI()
@@ -31,6 +32,7 @@ def add_middleware():
 def add_routers():
     app.include_router(login_router)
     app.include_router(index_router)
+    app.include_router(verify_router)
 
 
 def add_static_files():
