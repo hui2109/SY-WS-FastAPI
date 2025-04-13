@@ -4,24 +4,24 @@ from typing import Annotated
 # 处理特殊报错
 import bcrypt
 import jwt
-from fastapi import Depends, HTTPException, APIRouter, status
-from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
-from jwt.exceptions import InvalidTokenError
+from fastapi import Depends, HTTPException, APIRouter, status, Request
+from fastapi.responses import HTMLResponse
+from fastapi.security import OAuth2PasswordRequestForm
 from passlib.context import CryptContext
 from pydantic import BaseModel
-from sqlmodel import Session, select
+from sqlmodel import select
 
 from .secret import SECRET_KEY, ALGORITHM, ACCESS_TOKEN_EXPIRE_MINUTES
-from ..database.database import engine
 from ..database.models import Account, Personnel
+from ..dependencies import SessionDep
+from ..utils import Templates
 
 bcrypt.__about__ = bcrypt
 
 # 密码处理工具
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/login/token")
 
-router = APIRouter(prefix="/login", tags=["login"])
+router = APIRouter(tags=["login"])
 
 
 # 定义请求和响应模型
@@ -38,14 +38,6 @@ class UserCreate(UserBase):
 class Token(BaseModel):
     access_token: str
     token_type: str
-
-
-def get_session():
-    with Session(engine) as session:
-        yield session
-
-
-SessionDep = Annotated[Session, Depends(get_session)]
 
 
 # 密码工具函数
@@ -67,33 +59,6 @@ def create_access_token(data: dict, expires_delta: timedelta | None = None):
     to_encode.update({"exp": expire})
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
-
-
-# 用户验证函数
-async def get_current_user(
-        token: Annotated[str, Depends(oauth2_scheme)], session: SessionDep
-):
-    credentials_exception = HTTPException(
-        status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Could not validate credentials",
-        headers={"WWW-Authenticate": "Bearer"},
-    )
-
-    try:
-        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        username = payload.get("sub")
-
-        if username is None:
-            raise credentials_exception
-    except InvalidTokenError:
-        raise credentials_exception
-
-    user = session.exec(select(Account).where(Account.username == username)).first()
-
-    if user is None:
-        raise credentials_exception
-
-    return user
 
 
 # 注册路由
@@ -160,10 +125,11 @@ async def login_for_access_token(
     return Token(access_token=access_token, token_type="bearer")
 
 
-# 获取当前用户信息的路由
-@router.get("/me", response_model=Personnel)
-async def read_users_me(current_user: Annotated[Account, Depends(get_current_user)]):
-    # 获取关联的人员信息
-    personnel = current_user.personnel
+@router.get("/register", response_class=HTMLResponse)
+async def register(request: Request):
+    return Templates.TemplateResponse("register.html", {"request": request})
 
-    return personnel
+
+@router.get("/login", response_class=HTMLResponse)
+async def login(request: Request):
+    return Templates.TemplateResponse("login.html", {"request": request})
