@@ -5,7 +5,7 @@ from typing import Annotated
 import bcrypt
 import jwt
 from fastapi import Depends, HTTPException, APIRouter, status, Request
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.security import OAuth2PasswordRequestForm
 from passlib.context import CryptContext
 from pydantic import BaseModel
@@ -103,7 +103,7 @@ async def register_user(user_data: UserCreate, session: SessionDep):
 # 登录路由
 @router.post("/token", response_model=Token)
 async def login_for_access_token(
-        form_data: Annotated[OAuth2PasswordRequestForm, Depends()], session: SessionDep
+    form_data: Annotated[OAuth2PasswordRequestForm, Depends()], session: SessionDep
 ):
     # 查找用户
     user = session.exec(
@@ -135,3 +135,8 @@ async def register(request: Request):
 @router.get("/login", response_class=HTMLResponse)
 async def login(request: Request):
     return Templates.TemplateResponse("login.html", {"request": request})
+
+
+@router.get("/", response_class=HTMLResponse)
+async def root():
+    return RedirectResponse(url="/login", status_code=status.HTTP_303_SEE_OTHER)
