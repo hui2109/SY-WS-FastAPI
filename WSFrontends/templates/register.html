@@ -30,6 +30,29 @@
       }
     }
 
+    /* 头像选择器样式 */
+    .avatar-option {
+      width: 100%;
+      aspect-ratio: 1;
+      border-radius: 8px;
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition: all 0.2s ease;
+      padding: 2px;
+    }
+
+    .avatar-option:hover {
+      transform: scale(1.05);
+      box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .avatar-option.selected {
+      border-color: var(--bs-primary);
+      background-color: rgba(var(--bs-primary-rgb), 0.1);
+      transform: scale(1.05);
+      box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
+    }
+
     /* 页面过渡遮罩 */
 
     .page-transition-overlay {
@@ -196,7 +219,6 @@
               <h2 class="login-heading">创建账户</h2>
               <p class="text-muted">请填写以下信息完成注册</p>
             </div>
-
             <form>
               <!-- 用户名 -->
               <div class="form-floating mb-3">
@@ -216,10 +238,27 @@
                 <label for="floatingConfirmPassword">确认密码</label>
               </div>
 
-              <!-- 全名 -->
-              <div class="form-floating mb-3">
-                <input type="text" class="form-control" id="floatingFullname" placeholder="全名" required>
-                <label for="floatingFullname">全名</label>
+              <div class="row mb-3">
+                <!-- 头像选择器 -->
+                <div class="col-md-4 mb-3 mb-md-0">
+                  <label class="form-label">头像</label>
+                  <div class="card p-2 text-center">
+                    <img id="avatarPreview" src="/WSFrontends/assets/img/avatars/001-pirate.svg"
+                      class="img-fluid mx-auto mb-2" style="width: 80px; height: 80px;" alt="头像预览">
+                    <input type="hidden" id="selectedAvatar" name="selectedAvatar" value="001-pirate.svg">
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#avatarModal">
+                      选择头像
+                    </button>
+                  </div>
+                </div>
+
+                <!-- 全名 -->
+                <div class="col-md-8">
+                  <div class="form-floating h-100">
+                    <input type="text" class="form-control h-100" id="floatingFullname" placeholder="全名" required>
+                    <label for="floatingFullname">全名</label>
+                  </div>
+                </div>
               </div>
 
               <!-- 入职日期 -->
@@ -247,6 +286,126 @@
     </div>
   </div>
 
+  <!-- 头像选择模态框 -->
+  <div class="modal fade" id="avatarModal" tabindex="-1" aria-labelledby="avatarModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="avatarModalLabel">选择头像</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="avatar-grid" style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px;">
+            <img src="/WSFrontends/assets/img/avatars/001-pirate.svg" data-avatar="001-pirate.svg"
+              class="avatar-option selected" data-bs-toggle="tooltip" title="海盗" alt="海盗">
+            <img src="/WSFrontends/assets/img/avatars/002-bee.svg" data-avatar="002-bee.svg" class="avatar-option"
+              data-bs-toggle="tooltip" title="蜜蜂" alt="蜜蜂">
+            <img src="/WSFrontends/assets/img/avatars/003-superhero.svg" data-avatar="003-superhero.svg"
+              class="avatar-option" data-bs-toggle="tooltip" title="超级英雄" alt="超级英雄">
+            <img src="/WSFrontends/assets/img/avatars/004-astronaut.svg" data-avatar="004-astronaut.svg"
+              class="avatar-option" data-bs-toggle="tooltip" title="宇航员" alt="宇航员">
+            <img src="/WSFrontends/assets/img/avatars/005-artist.svg" data-avatar="005-artist.svg" class="avatar-option"
+              data-bs-toggle="tooltip" title="艺术家" alt="艺术家">
+            <img src="/WSFrontends/assets/img/avatars/006-angel.svg" data-avatar="006-angel.svg" class="avatar-option"
+              data-bs-toggle="tooltip" title="天使" alt="天使">
+            <img src="/WSFrontends/assets/img/avatars/007-pilot.svg" data-avatar="007-pilot.svg" class="avatar-option"
+              data-bs-toggle="tooltip" title="飞行员" alt="飞行员">
+            <img src="/WSFrontends/assets/img/avatars/008-alien.svg" data-avatar="008-alien.svg" class="avatar-option"
+              data-bs-toggle="tooltip" title="外星人" alt="外星人">
+            <img src="/WSFrontends/assets/img/avatars/009-ghost.svg" data-avatar="009-ghost.svg" class="avatar-option"
+              data-bs-toggle="tooltip" title="幽灵" alt="幽灵">
+            <img src="/WSFrontends/assets/img/avatars/010-unicorn.svg" data-avatar="010-unicorn.svg"
+              class="avatar-option" data-bs-toggle="tooltip" title="独角兽" alt="独角兽">
+            <img src="/WSFrontends/assets/img/avatars/011-ninja.svg" data-avatar="011-ninja.svg" class="avatar-option"
+              data-bs-toggle="tooltip" title="忍者" alt="忍者">
+            <img src="/WSFrontends/assets/img/avatars/012-cowboy.svg" data-avatar="012-cowboy.svg" class="avatar-option"
+              data-bs-toggle="tooltip" title="牛仔" alt="牛仔">
+            <img src="/WSFrontends/assets/img/avatars/013-doctor.svg" data-avatar="013-doctor.svg" class="avatar-option"
+              data-bs-toggle="tooltip" title="医生" alt="医生">
+            <img src="/WSFrontends/assets/img/avatars/014-magician.svg" data-avatar="014-magician.svg"
+              class="avatar-option" data-bs-toggle="tooltip" title="魔术师" alt="魔术师">
+            <img src="/WSFrontends/assets/img/avatars/015-firefighter.svg" data-avatar="015-firefighter.svg"
+              class="avatar-option" data-bs-toggle="tooltip" title="消防员" alt="消防员">
+            <img src="/WSFrontends/assets/img/avatars/016-bear.svg" data-avatar="016-bear.svg" class="avatar-option"
+              data-bs-toggle="tooltip" title="熊" alt="熊">
+            <img src="/WSFrontends/assets/img/avatars/017-fairy.svg" data-avatar="017-fairy.svg" class="avatar-option"
+              data-bs-toggle="tooltip" title="仙女" alt="仙女">
+            <img src="/WSFrontends/assets/img/avatars/018-cat.svg" data-avatar="018-cat.svg" class="avatar-option"
+              data-bs-toggle="tooltip" title="猫" alt="猫">
+            <img src="/WSFrontends/assets/img/avatars/019-robot.svg" data-avatar="019-robot.svg" class="avatar-option"
+              data-bs-toggle="tooltip" title="机器人" alt="机器人">
+            <img src="/WSFrontends/assets/img/avatars/020-devil.svg" data-avatar="020-devil.svg" class="avatar-option"
+              data-bs-toggle="tooltip" title="恶魔" alt="恶魔">
+            <img src="/WSFrontends/assets/img/avatars/021-rabbit.svg" data-avatar="021-rabbit.svg" class="avatar-option"
+              data-bs-toggle="tooltip" title="兔子" alt="兔子">
+            <img src="/WSFrontends/assets/img/avatars/022-knight.svg" data-avatar="022-knight.svg" class="avatar-option"
+              data-bs-toggle="tooltip" title="骑士" alt="骑士">
+            <img src="/WSFrontends/assets/img/avatars/023-mummy.svg" data-avatar="023-mummy.svg" class="avatar-option"
+              data-bs-toggle="tooltip" title="木乃伊" alt="木乃伊">
+            <img src="/WSFrontends/assets/img/avatars/024-princess.svg" data-avatar="024-princess.svg"
+              class="avatar-option" data-bs-toggle="tooltip" title="公主" alt="公主">
+            <img src="/WSFrontends/assets/img/avatars/025-pumpkin.svg" data-avatar="025-pumpkin.svg"
+              class="avatar-option" data-bs-toggle="tooltip" title="南瓜" alt="南瓜">
+            <img src="/WSFrontends/assets/img/avatars/026-dog.svg" data-avatar="026-dog.svg" class="avatar-option"
+              data-bs-toggle="tooltip" title="狗" alt="狗">
+            <img src="/WSFrontends/assets/img/avatars/027-clown.svg" data-avatar="027-clown.svg" class="avatar-option"
+              data-bs-toggle="tooltip" title="小丑" alt="小丑">
+            <img src="/WSFrontends/assets/img/avatars/028-Pharaoh.svg" data-avatar="028-Pharaoh.svg"
+              class="avatar-option" data-bs-toggle="tooltip" title="法老" alt="法老">
+            <img src="/WSFrontends/assets/img/avatars/029-scientist.svg" data-avatar="029-scientist.svg"
+              class="avatar-option" data-bs-toggle="tooltip" title="科学家" alt="科学家">
+            <img src="/WSFrontends/assets/img/avatars/030-sailor.svg" data-avatar="030-sailor.svg" class="avatar-option"
+              data-bs-toggle="tooltip" title="水手" alt="水手">
+            <img src="/WSFrontends/assets/img/avatars/031-dentist.svg" data-avatar="031-dentist.svg"
+              class="avatar-option" data-bs-toggle="tooltip" title="牙医" alt="牙医">
+            <img src="/WSFrontends/assets/img/avatars/032-wizard.svg" data-avatar="032-wizard.svg" class="avatar-option"
+              data-bs-toggle="tooltip" title="巫师" alt="巫师">
+            <img src="/WSFrontends/assets/img/avatars/033-chicken.svg" data-avatar="033-chicken.svg"
+              class="avatar-option" data-bs-toggle="tooltip" title="小鸡" alt="小鸡">
+            <img src="/WSFrontends/assets/img/avatars/034-monkey.svg" data-avatar="034-monkey.svg" class="avatar-option"
+              data-bs-toggle="tooltip" title="猴子" alt="猴子">
+            <img src="/WSFrontends/assets/img/avatars/035-viking.svg" data-avatar="035-viking.svg" class="avatar-option"
+              data-bs-toggle="tooltip" title="维京人" alt="维京人">
+            <img src="/WSFrontends/assets/img/avatars/036-pig.svg" data-avatar="036-pig.svg" class="avatar-option"
+              data-bs-toggle="tooltip" title="猪" alt="猪">
+            <img src="/WSFrontends/assets/img/avatars/037-butterfly.svg" data-avatar="037-butterfly.svg"
+              class="avatar-option" data-bs-toggle="tooltip" title="蝴蝶" alt="蝴蝶">
+            <img src="/WSFrontends/assets/img/avatars/038-hawaiian.svg" data-avatar="038-hawaiian.svg"
+              class="avatar-option" data-bs-toggle="tooltip" title="夏威夷人" alt="夏威夷人">
+            <img src="/WSFrontends/assets/img/avatars/039-dinosaur.svg" data-avatar="039-dinosaur.svg"
+              class="avatar-option" data-bs-toggle="tooltip" title="恐龙" alt="恐龙">
+            <img src="/WSFrontends/assets/img/avatars/040-flower.svg" data-avatar="040-flower.svg" class="avatar-option"
+              data-bs-toggle="tooltip" title="花" alt="花">
+            <img src="/WSFrontends/assets/img/avatars/041-lion.svg" data-avatar="041-lion.svg" class="avatar-option"
+              data-bs-toggle="tooltip" title="狮子" alt="狮子">
+            <img src="/WSFrontends/assets/img/avatars/042-apache.svg" data-avatar="042-apache.svg" class="avatar-option"
+              data-bs-toggle="tooltip" title="阿帕奇" alt="阿帕奇">
+            <img src="/WSFrontends/assets/img/avatars/043-farmer.svg" data-avatar="043-farmer.svg" class="avatar-option"
+              data-bs-toggle="tooltip" title="农民" alt="农民">
+            <img src="/WSFrontends/assets/img/avatars/044-officer.svg" data-avatar="044-officer.svg"
+              class="avatar-option" data-bs-toggle="tooltip" title="警官" alt="警官">
+            <img src="/WSFrontends/assets/img/avatars/045-giraffe.svg" data-avatar="045-giraffe.svg"
+              class="avatar-option" data-bs-toggle="tooltip" title="长颈鹿" alt="长颈鹿">
+            <img src="/WSFrontends/assets/img/avatars/046-vampire.svg" data-avatar="046-vampire.svg"
+              class="avatar-option" data-bs-toggle="tooltip" title="吸血鬼" alt="吸血鬼">
+            <img src="/WSFrontends/assets/img/avatars/047-zebra.svg" data-avatar="047-zebra.svg" class="avatar-option"
+              data-bs-toggle="tooltip" title="斑马" alt="斑马">
+            <img src="/WSFrontends/assets/img/avatars/048-worker.svg" data-avatar="048-worker.svg" class="avatar-option"
+              data-bs-toggle="tooltip" title="工人" alt="工人">
+            <img src="/WSFrontends/assets/img/avatars/049-frog.svg" data-avatar="049-frog.svg" class="avatar-option"
+              data-bs-toggle="tooltip" title="青蛙" alt="青蛙">
+            <img src="/WSFrontends/assets/img/avatars/050-shark.svg" data-avatar="050-shark.svg" class="avatar-option"
+              data-bs-toggle="tooltip" title="鲨鱼" alt="鲨鱼">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+          <button type="button" class="btn btn-primary" data-bs-dismiss="modal">确认选择</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Bootstrap 5 JS Bundle with Popper -->
   <script src="/WSFrontends/assets/plugin/node_modules/bootstrap/dist/js/bootstrap.bundle.js"></script>
 
@@ -257,6 +416,47 @@
       const htmlElement = document.documentElement;
       const themeIcon = themeToggleBtn.querySelector('i');
       const pageTransition = document.getElementById('pageTransition');
+
+      // 初始化所有工具提示
+      const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+      const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl, {
+        placement: 'top',
+        delay: { show: 300, hide: 100 }
+      }));
+
+      // 头像选择逻辑
+      const avatarOptions = document.querySelectorAll('.avatar-option');
+      const selectedAvatarInput = document.getElementById('selectedAvatar');
+      const avatarPreview = document.getElementById('avatarPreview');
+
+      // 头像模态框打开时，确保正确显示当前选中的头像
+      const avatarModal = document.getElementById('avatarModal');
+      avatarModal.addEventListener('show.bs.modal', function () {
+        // 移除所有头像的选中状态
+        avatarOptions.forEach(opt => opt.classList.remove('selected'));
+
+        // 找到并选中当前已选择的头像
+        const currentAvatarFile = selectedAvatarInput.value;
+        const currentAvatarOption = document.querySelector(`.avatar-option[data-avatar="${currentAvatarFile}"]`);
+        if (currentAvatarOption) {
+          currentAvatarOption.classList.add('selected');
+        }
+      });
+
+      // 头像点击选择逻辑
+      avatarOptions.forEach(option => {
+        option.addEventListener('click', function () {
+          // 移除其他选中状态
+          avatarOptions.forEach(opt => opt.classList.remove('selected'));
+          // 添加当前选中状态
+          this.classList.add('selected');
+
+          // 更新预览图和隐藏输入值
+          const avatarFile = this.getAttribute('data-avatar');
+          avatarPreview.src = `/WSFrontends/assets/img/avatars/${avatarFile}`;
+          selectedAvatarInput.value = avatarFile;
+        });
+      });
 
       // 处理所有页面链接点击事件以实现平滑过渡
       document.querySelectorAll('a[href]').forEach(anchor => {
@@ -345,7 +545,9 @@
           fullname: fullname.value,
           // 转换日期格式为ISO字符串
           enroll_date: new Date(enrollDate.value + 'T00:00:00').toISOString(),
-          password: password.value
+          password: password.value,
+          // 添加头像数据
+          avatar: document.getElementById('selectedAvatar').value
         };
 
         // 显示loading状态
