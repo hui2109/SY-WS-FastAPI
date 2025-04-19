@@ -8,6 +8,7 @@ class Account(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
     username: str
     password: str
+    avatar: str | None = Field(default='/WSFrontends/assets/img/avatars/001-pirate.svg')
 
     # 一对一反向关系
     personnel: "Personnel" = Relationship(back_populates="account")

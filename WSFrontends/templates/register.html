@@ -135,7 +135,6 @@
     }
 
     /* 定制暗模式背景 */
-
     [data-bs-theme="dark"] body {
       background: linear-gradient(145deg, #1a1a2e 0%, #16213e 100%);
     }
@@ -241,27 +240,23 @@
                 <label for="floatingConfirmPassword">确认密码</label>
               </div>
 
-              <div class="row mb-3">
-                <!-- 头像选择器 -->
-                <div class="col-md-4 mb-3 mb-md-0">
-                  <label class="form-label">头像</label>
-                  <div class="card p-2 text-center">
-                    <img id="avatarPreview" src="/WSFrontends/assets/img/avatars/001-pirate.svg"
-                      class="img-fluid mx-auto mb-2" style="width: 80px; height: 80px;" alt="头像预览">
-                    <input type="hidden" id="selectedAvatar" name="selectedAvatar" value="001-pirate.svg">
-                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#avatarModal">
-                      选择头像
-                    </button>
-                  </div>
+              <!-- 头像选择 -->
+              <div class="form-floating mb-3">
+                <div class="card p-2 text-center">
+                  <img id="avatarPreview" src="/WSFrontends/assets/img/avatars/001-pirate.svg"
+                    class="img-fluid mx-auto mb-2" style="width: 80px; height: 80px;" alt="头像预览">
+                  <input type="hidden" id="selectedAvatar" name="selectedAvatar" value="001-pirate.svg">
+                  <button type="button" class="btn btn-outline-success" data-bs-toggle="modal"
+                    data-bs-target="#avatarModal">
+                    选择头像
+                  </button>
                 </div>
+              </div>
 
-                <!-- 全名 -->
-                <div class="col-md-8">
-                  <div class="form-floating h-100">
-                    <input type="text" class="form-control h-100" id="floatingFullname" placeholder="全名" required>
-                    <label for="floatingFullname">全名</label>
-                  </div>
-                </div>
+              <!-- 全名 -->
+              <div class="form-floating mb-3">
+                <input type="text" class="form-control" id="floatingFullname" placeholder="全名" required>
+                <label for="floatingFullname">全名</label>
               </div>
 
               <!-- 入职日期 -->
@@ -297,11 +292,12 @@
     <div class="modal-dialog modal-dialog-centered modal-lg">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="avatarModalLabel">选择头像</h5>
+          <h6 class="modal-title" id="avatarModalLabel">选择头像</h6>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          <div class="avatar-grid" style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px;">
+          <div class="avatar-grid d-grid gap-md-1 overflow-auto p-2"
+            style="grid-template-columns: repeat(5, 1fr); max-height: 400px;">
             <img src="/WSFrontends/assets/img/avatars/001-pirate.svg" data-avatar="001-pirate.svg"
               class="avatar-option selected" data-bs-toggle="tooltip" title="海盗" alt="海盗">
             <img src="/WSFrontends/assets/img/avatars/002-bee.svg" data-avatar="002-bee.svg" class="avatar-option"
@@ -406,7 +402,7 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
-          <button type="button" class="btn btn-primary" data-bs-dismiss="modal">确认选择</button>
+          <button type="button" class="btn btn-success" data-bs-dismiss="modal">确认选择</button>
         </div>
       </div>
     </div>
@@ -427,8 +423,14 @@
       const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
       const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl, {
         placement: 'top',
-        delay: { show: 300, hide: 100 }
+        delay: { show: 500, hide: 50 },
+        container: '.avatar-grid'
       }));
+
+      // 监听头像网格滚动事件，滚动时隐藏所有tooltip
+      document.querySelector('.avatar-grid').addEventListener('scroll', function () {
+        tooltipList.forEach(tooltip => tooltip.hide());
+      });
 
       // 头像选择逻辑
       const avatarOptions = document.querySelectorAll('.avatar-option');

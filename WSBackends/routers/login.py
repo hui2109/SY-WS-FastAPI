@@ -29,6 +29,7 @@ class UserBase(BaseModel):
     username: str
     fullname: str
     enroll_date: datetime
+    avatar: str
 
 
 class UserCreate(UserBase):
@@ -84,6 +85,7 @@ async def register_user(user_data: UserCreate, session: SessionDep):
     new_account = Account(
         username=user_data.username,
         password=hashed_password,
+        avatar=f'/WSFrontends/assets/img/avatars/{user_data.avatar}',  # "001-pirate.svg"
     )
 
     # 然后创建人员信息并关联账户
@@ -103,7 +105,7 @@ async def register_user(user_data: UserCreate, session: SessionDep):
 # 登录路由
 @router.post("/token", response_model=Token)
 async def login_for_access_token(
-    form_data: Annotated[OAuth2PasswordRequestForm, Depends()], session: SessionDep
+        form_data: Annotated[OAuth2PasswordRequestForm, Depends()], session: SessionDep
 ):
     # 查找用户
     user = session.exec(
