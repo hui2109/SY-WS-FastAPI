@@ -1,20 +1,17 @@
-#work-content-all #datetimepicker1>span:hover {
+#work-content-all #datetimepicker1 > span:hover {
   cursor: pointer;
 }
-
 #work-content-all .table-container {
   width: 90%;
   height: 70vh;
   overflow: auto;
   z-index: 0;
 }
-
 #work-content-all .table-container .paiban-table {
   table-layout: fixed;
   border-collapse: separate;
   border-spacing: 2px;
 }
-
 #work-content-all .table-container .paiban-table thead tr th {
   position: sticky;
   top: 0;
@@ -26,7 +23,6 @@
   border-bottom: 1px solid #ddd;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
-
 #work-content-all .table-container .paiban-table thead tr th:first-child {
   line-height: 48px;
   left: 0;
@@ -36,13 +32,11 @@
   border-bottom: 1px solid #ddd;
   box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
 }
-
 #work-content-all .table-container .paiban-table tbody tr td {
   text-align: center;
   width: 66px;
   height: 48px;
 }
-
 #work-content-all .table-container .paiban-table tbody tr td:first-child {
   position: sticky;
   left: 0;
@@ -57,5 +51,3 @@
   left: var(--td-left) !important;
   transform: none !important;
 }
-
-/*# sourceMappingURL=work_all.css.map */

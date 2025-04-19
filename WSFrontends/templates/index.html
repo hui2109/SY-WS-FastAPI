@@ -10,9 +10,8 @@
   <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
   <meta name="generator" content="Hugo 0.122.0">
   <title>省院电离排版站</title>
-
   <link rel="icon" type="image/png" href="/WSFrontends/assets/img/radiation.png">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@docsearch/css@3">
+
   <link rel="stylesheet" href="/WSFrontends/assets/plugin/node_modules/bootstrap/dist/css/bootstrap.min.css">
   <link rel="stylesheet" href="/WSFrontends/assets/plugin/offcanvas-navbar/offcanvas-navbar.css">
   <link rel="stylesheet"
@@ -22,6 +21,7 @@
   <!-- 我的CSS样式 -->
   <link rel="stylesheet" href="/WSFrontends/assets/2_css/index.css">
   <link rel="stylesheet" href="/WSFrontends/assets/2_css/work_all.css">
+  <link rel="stylesheet" href="/WSFrontends/assets/2_css/commons.css">
 </head>
 
 <body class="bg-body-tertiary">
@@ -29,20 +29,24 @@
   <svg xmlns="http://www.w3.org/2000/svg" class="d-none">
     <symbol id="check2" viewBox="0 0 16 16">
       <path
-        d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0z" />
+        d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0z">
+      </path>
     </symbol>
     <symbol id="circle-half" viewBox="0 0 16 16">
-      <path d="M8 15A7 7 0 1 0 8 1v14zm0 1A8 8 0 1 1 8 0a8 8 0 0 1 0 16z" />
+      <path d="M8 15A7 7 0 1 0 8 1v14zm0 1A8 8 0 1 1 8 0a8 8 0 0 1 0 16z"></path>
     </symbol>
     <symbol id="moon-stars-fill" viewBox="0 0 16 16">
       <path
-        d="M6 .278a.768.768 0 0 1 .08.858 7.208 7.208 0 0 0-.878 3.46c0 4.021 3.278 7.277 7.318 7.277.527 0 1.04-.055 1.533-.16a.787.787 0 0 1 .81.316.733.733 0 0 1-.031.893A8.349 8.349 0 0 1 8.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.752.752 0 0 1 6 .278z" />
+        d="M6 .278a.768.768 0 0 1 .08.858 7.208 7.208 0 0 0-.878 3.46c0 4.021 3.278 7.277 7.318 7.277.527 0 1.04-.055 1.533-.16a.787.787 0 0 1 .81.316.733.733 0 0 1-.031.893A8.349 8.349 0 0 1 8.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.752.752 0 0 1 6 .278z">
+      </path>
       <path
-        d="M10.794 3.148a.217.217 0 0 1 .412 0l.387 1.162c.173.518.579.924 1.097 1.097l1.162.387a.217.217 0 0 1 0 .412l-1.162.387a1.734 1.734 0 0 0-1.097 1.097l-.387 1.162a.217.217 0 0 1-.412 0l-.387-1.162A1.734 1.734 0 0 0 9.31 6.593l-1.162-.387a.217.217 0 0 1 0-.412l1.162-.387a1.734 1.734 0 0 0 1.097-1.097l.387-1.162zM13.863.099a.145.145 0 0 1 .274 0l.258.774c.115.346.386.617.732.732l.774.258a.145.145 0 0 1 0 .274l-.774.258a1.156 1.156 0 0 0-.732.732l-.258.774a.145.145 0 0 1-.274 0l-.258-.774a1.156 1.156 0 0 0-.732-.732l-.774-.258a.145.145 0 0 1 0-.274l.774-.258c.346-.115.617-.386.732-.732L13.863.1z" />
+        d="M10.794 3.148a.217.217 0 0 1 .412 0l.387 1.162c.173.518.579.924 1.097 1.097l1.162.387a.217.217 0 0 1 0 .412l-1.162.387a1.734 1.734 0 0 0-1.097 1.097l-.387 1.162a.217.217 0 0 1-.412 0l-.387-1.162A1.734 1.734 0 0 0 9.31 6.593l-1.162-.387a.217.217 0 0 1 0-.412l1.162-.387a1.734 1.734 0 0 0 1.097-1.097l.387-1.162zM13.863.099a.145.145 0 0 1 .274 0l.258.774c.115.346.386.617.732.732l.774.258a.145.145 0 0 1 0 .274l-.774.258a1.156 1.156 0 0 0-.732.732l-.258.774a.145.145 0 0 1-.274 0l-.258-.774a1.156 1.156 0 0 0-.732-.732l-.774-.258a.145.145 0 0 1 0-.274l.774-.258c.346-.115.617-.386.732-.732L13.863.1z">
+      </path>
     </symbol>
     <symbol id="sun-fill" viewBox="0 0 16 16">
       <path
-        d="M8 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM8 0a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 0zm0 13a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 13zm8-5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2a.5.5 0 0 1 .5.5zM3 8a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2A.5.5 0 0 1 3 8zm10.657-5.657a.5.5 0 0 1 0 .707l-1.414 1.415a.5.5 0 1 1-.707-.708l1.414-1.414a.5.5 0 0 1 .707 0zm-9.193 9.193a.5.5 0 0 1 0 .707L3.05 13.657a.5.5 0 0 1-.707-.707l1.414-1.414a.5.5 0 0 1 .707 0zm9.193 2.121a.5.5 0 0 1-.707 0l-1.414-1.414a.5.5 0 0 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .707zM4.464 4.465a.5.5 0 0 1-.707 0L2.343 3.05a.5.5 0 1 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .708z" />
+        d="M8 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM8 0a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 0zm0 13a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 13zm8-5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2a.5.5 0 0 1 .5.5zM3 8a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2A.5.5 0 0 1 3 8zm10.657-5.657a.5.5 0 0 1 0 .707l-1.414 1.415a.5.5 0 1 1-.707-.708l1.414-1.414a.5.5 0 0 1 .707 0zm-9.193 9.193a.5.5 0 0 1 0 .707L3.05 13.657a.5.5 0 0 1-.707-.707l1.414-1.414a.5.5 0 0 1 .707 0zm9.193 2.121a.5.5 0 0 1-.707 0l-1.414-1.414a.5.5 0 0 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .707zM4.464 4.465a.5.5 0 0 1-.707 0L2.343 3.05a.5.5 0 1 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .708z">
+      </path>
     </symbol>
   </svg>
 
@@ -150,7 +154,23 @@
           <button class="btn btn-outline-success" type="submit">Search</button>
         </form>
 
-        <!-- 显示当前的用户名及头像, 头像在注册时可以选择 -->
+        <!-- 显示当前的用户名及头像 -->
+        <div class="dropdown text-end ms-3">
+          <a href="#" class="d-block link-body-emphasis text-decoration-none dropdown-toggle" data-bs-toggle="dropdown"
+            aria-expanded="false">
+            <img id="avatarPreview" src="" alt="用户头像" width="32" height="32" class="rounded-circle">
+            <input type="hidden" id="selectedAvatar" name="selectedAvatar" value="001-pirate.svg">
+            <span id="user-name" class="text-light ms-2">用户名</span>
+          </a>
+          <ul class="dropdown-menu text-small">
+            <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#avatarModal">切换头像</a></li>
+            <li>
+              <hr class="dropdown-divider">
+            </li>
+            <li><a class="dropdown-item" href="#" id="logoutBtn">退出登录</a></li>
+          </ul>
+        </div>
+
       </div>
     </div>
   </nav>
@@ -419,6 +439,127 @@
     </div>
   </main>
 
+  <!-- 头像选择模态框 -->
+  <div class="modal fade" id="avatarModal" tabindex="-1" aria-labelledby="avatarModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h6 class="modal-title" id="avatarModalLabel">选择头像</h6>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="avatar-grid d-grid gap-md-1 overflow-auto p-2"
+            style="grid-template-columns: repeat(5, 1fr); max-height: 400px;">
+            <img src="/WSFrontends/assets/img/avatars/001-pirate.svg" data-avatar="001-pirate.svg"
+              class="avatar-option selected" data-bs-toggle="tooltip" title="海盗" alt="海盗">
+            <img src="/WSFrontends/assets/img/avatars/002-bee.svg" data-avatar="002-bee.svg" class="avatar-option"
+              data-bs-toggle="tooltip" title="蜜蜂" alt="蜜蜂">
+            <img src="/WSFrontends/assets/img/avatars/003-superhero.svg" data-avatar="003-superhero.svg"
+              class="avatar-option" data-bs-toggle="tooltip" title="超级英雄" alt="超级英雄">
+            <img src="/WSFrontends/assets/img/avatars/004-astronaut.svg" data-avatar="004-astronaut.svg"
+              class="avatar-option" data-bs-toggle="tooltip" title="宇航员" alt="宇航员">
+            <img src="/WSFrontends/assets/img/avatars/005-artist.svg" data-avatar="005-artist.svg" class="avatar-option"
+              data-bs-toggle="tooltip" title="艺术家" alt="艺术家">
+            <img src="/WSFrontends/assets/img/avatars/006-angel.svg" data-avatar="006-angel.svg" class="avatar-option"
+              data-bs-toggle="tooltip" title="天使" alt="天使">
+            <img src="/WSFrontends/assets/img/avatars/007-pilot.svg" data-avatar="007-pilot.svg" class="avatar-option"
+              data-bs-toggle="tooltip" title="飞行员" alt="飞行员">
+            <img src="/WSFrontends/assets/img/avatars/008-alien.svg" data-avatar="008-alien.svg" class="avatar-option"
+              data-bs-toggle="tooltip" title="外星人" alt="外星人">
+            <img src="/WSFrontends/assets/img/avatars/009-ghost.svg" data-avatar="009-ghost.svg" class="avatar-option"
+              data-bs-toggle="tooltip" title="幽灵" alt="幽灵">
+            <img src="/WSFrontends/assets/img/avatars/010-unicorn.svg" data-avatar="010-unicorn.svg"
+              class="avatar-option" data-bs-toggle="tooltip" title="独角兽" alt="独角兽">
+            <img src="/WSFrontends/assets/img/avatars/011-ninja.svg" data-avatar="011-ninja.svg" class="avatar-option"
+              data-bs-toggle="tooltip" title="忍者" alt="忍者">
+            <img src="/WSFrontends/assets/img/avatars/012-cowboy.svg" data-avatar="012-cowboy.svg" class="avatar-option"
+              data-bs-toggle="tooltip" title="牛仔" alt="牛仔">
+            <img src="/WSFrontends/assets/img/avatars/013-doctor.svg" data-avatar="013-doctor.svg" class="avatar-option"
+              data-bs-toggle="tooltip" title="医生" alt="医生">
+            <img src="/WSFrontends/assets/img/avatars/014-magician.svg" data-avatar="014-magician.svg"
+              class="avatar-option" data-bs-toggle="tooltip" title="魔术师" alt="魔术师">
+            <img src="/WSFrontends/assets/img/avatars/015-firefighter.svg" data-avatar="015-firefighter.svg"
+              class="avatar-option" data-bs-toggle="tooltip" title="消防员" alt="消防员">
+            <img src="/WSFrontends/assets/img/avatars/016-bear.svg" data-avatar="016-bear.svg" class="avatar-option"
+              data-bs-toggle="tooltip" title="熊" alt="熊">
+            <img src="/WSFrontends/assets/img/avatars/017-fairy.svg" data-avatar="017-fairy.svg" class="avatar-option"
+              data-bs-toggle="tooltip" title="仙女" alt="仙女">
+            <img src="/WSFrontends/assets/img/avatars/018-cat.svg" data-avatar="018-cat.svg" class="avatar-option"
+              data-bs-toggle="tooltip" title="猫" alt="猫">
+            <img src="/WSFrontends/assets/img/avatars/019-robot.svg" data-avatar="019-robot.svg" class="avatar-option"
+              data-bs-toggle="tooltip" title="机器人" alt="机器人">
+            <img src="/WSFrontends/assets/img/avatars/020-devil.svg" data-avatar="020-devil.svg" class="avatar-option"
+              data-bs-toggle="tooltip" title="恶魔" alt="恶魔">
+            <img src="/WSFrontends/assets/img/avatars/021-rabbit.svg" data-avatar="021-rabbit.svg" class="avatar-option"
+              data-bs-toggle="tooltip" title="兔子" alt="兔子">
+            <img src="/WSFrontends/assets/img/avatars/022-knight.svg" data-avatar="022-knight.svg" class="avatar-option"
+              data-bs-toggle="tooltip" title="骑士" alt="骑士">
+            <img src="/WSFrontends/assets/img/avatars/023-mummy.svg" data-avatar="023-mummy.svg" class="avatar-option"
+              data-bs-toggle="tooltip" title="木乃伊" alt="木乃伊">
+            <img src="/WSFrontends/assets/img/avatars/024-princess.svg" data-avatar="024-princess.svg"
+              class="avatar-option" data-bs-toggle="tooltip" title="公主" alt="公主">
+            <img src="/WSFrontends/assets/img/avatars/025-pumpkin.svg" data-avatar="025-pumpkin.svg"
+              class="avatar-option" data-bs-toggle="tooltip" title="南瓜" alt="南瓜">
+            <img src="/WSFrontends/assets/img/avatars/026-dog.svg" data-avatar="026-dog.svg" class="avatar-option"
+              data-bs-toggle="tooltip" title="狗" alt="狗">
+            <img src="/WSFrontends/assets/img/avatars/027-clown.svg" data-avatar="027-clown.svg" class="avatar-option"
+              data-bs-toggle="tooltip" title="小丑" alt="小丑">
+            <img src="/WSFrontends/assets/img/avatars/028-Pharaoh.svg" data-avatar="028-Pharaoh.svg"
+              class="avatar-option" data-bs-toggle="tooltip" title="法老" alt="法老">
+            <img src="/WSFrontends/assets/img/avatars/029-scientist.svg" data-avatar="029-scientist.svg"
+              class="avatar-option" data-bs-toggle="tooltip" title="科学家" alt="科学家">
+            <img src="/WSFrontends/assets/img/avatars/030-sailor.svg" data-avatar="030-sailor.svg" class="avatar-option"
+              data-bs-toggle="tooltip" title="水手" alt="水手">
+            <img src="/WSFrontends/assets/img/avatars/031-dentist.svg" data-avatar="031-dentist.svg"
+              class="avatar-option" data-bs-toggle="tooltip" title="牙医" alt="牙医">
+            <img src="/WSFrontends/assets/img/avatars/032-wizard.svg" data-avatar="032-wizard.svg" class="avatar-option"
+              data-bs-toggle="tooltip" title="巫师" alt="巫师">
+            <img src="/WSFrontends/assets/img/avatars/033-chicken.svg" data-avatar="033-chicken.svg"
+              class="avatar-option" data-bs-toggle="tooltip" title="小鸡" alt="小鸡">
+            <img src="/WSFrontends/assets/img/avatars/034-monkey.svg" data-avatar="034-monkey.svg" class="avatar-option"
+              data-bs-toggle="tooltip" title="猴子" alt="猴子">
+            <img src="/WSFrontends/assets/img/avatars/035-viking.svg" data-avatar="035-viking.svg" class="avatar-option"
+              data-bs-toggle="tooltip" title="维京人" alt="维京人">
+            <img src="/WSFrontends/assets/img/avatars/036-pig.svg" data-avatar="036-pig.svg" class="avatar-option"
+              data-bs-toggle="tooltip" title="猪" alt="猪">
+            <img src="/WSFrontends/assets/img/avatars/037-butterfly.svg" data-avatar="037-butterfly.svg"
+              class="avatar-option" data-bs-toggle="tooltip" title="蝴蝶" alt="蝴蝶">
+            <img src="/WSFrontends/assets/img/avatars/038-hawaiian.svg" data-avatar="038-hawaiian.svg"
+              class="avatar-option" data-bs-toggle="tooltip" title="夏威夷人" alt="夏威夷人">
+            <img src="/WSFrontends/assets/img/avatars/039-dinosaur.svg" data-avatar="039-dinosaur.svg"
+              class="avatar-option" data-bs-toggle="tooltip" title="恐龙" alt="恐龙">
+            <img src="/WSFrontends/assets/img/avatars/040-flower.svg" data-avatar="040-flower.svg" class="avatar-option"
+              data-bs-toggle="tooltip" title="花" alt="花">
+            <img src="/WSFrontends/assets/img/avatars/041-lion.svg" data-avatar="041-lion.svg" class="avatar-option"
+              data-bs-toggle="tooltip" title="狮子" alt="狮子">
+            <img src="/WSFrontends/assets/img/avatars/042-apache.svg" data-avatar="042-apache.svg" class="avatar-option"
+              data-bs-toggle="tooltip" title="阿帕奇" alt="阿帕奇">
+            <img src="/WSFrontends/assets/img/avatars/043-farmer.svg" data-avatar="043-farmer.svg" class="avatar-option"
+              data-bs-toggle="tooltip" title="农民" alt="农民">
+            <img src="/WSFrontends/assets/img/avatars/044-officer.svg" data-avatar="044-officer.svg"
+              class="avatar-option" data-bs-toggle="tooltip" title="警官" alt="警官">
+            <img src="/WSFrontends/assets/img/avatars/045-giraffe.svg" data-avatar="045-giraffe.svg"
+              class="avatar-option" data-bs-toggle="tooltip" title="长颈鹿" alt="长颈鹿">
+            <img src="/WSFrontends/assets/img/avatars/046-vampire.svg" data-avatar="046-vampire.svg"
+              class="avatar-option" data-bs-toggle="tooltip" title="吸血鬼" alt="吸血鬼">
+            <img src="/WSFrontends/assets/img/avatars/047-zebra.svg" data-avatar="047-zebra.svg" class="avatar-option"
+              data-bs-toggle="tooltip" title="斑马" alt="斑马">
+            <img src="/WSFrontends/assets/img/avatars/048-worker.svg" data-avatar="048-worker.svg" class="avatar-option"
+              data-bs-toggle="tooltip" title="工人" alt="工人">
+            <img src="/WSFrontends/assets/img/avatars/049-frog.svg" data-avatar="049-frog.svg" class="avatar-option"
+              data-bs-toggle="tooltip" title="青蛙" alt="青蛙">
+            <img src="/WSFrontends/assets/img/avatars/050-shark.svg" data-avatar="050-shark.svg" class="avatar-option"
+              data-bs-toggle="tooltip" title="鲨鱼" alt="鲨鱼">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+          <button type="button" class="btn btn-success" data-bs-dismiss="modal">确认选择</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script src="/WSFrontends/assets/plugin/node_modules/bootstrap/dist/js/bootstrap.bundle.js"></script>
   <script src="/WSFrontends/assets/plugin/offcanvas-navbar/offcanvas-navbar.js"></script>
   <script src="/WSFrontends/assets/plugin/node_modules/@popperjs/core/dist/umd/popper.min.js"></script>
@@ -429,6 +570,8 @@
   <script src="/WSFrontends/assets/4_js/changePages.js"></script>
   <script src="/WSFrontends/assets/4_js/initTables.js"></script>
   <script src="/WSFrontends/assets/4_js/datePicker.js"></script>
+  <script src="/WSFrontends/assets/4_js/commons.js"></script>
+  <script src="/WSFrontends/assets/4_js/userInfo.js"></script>
   <!-- <script src="/WSFrontends/assets/4_js/verify.js"></script> -->
 </body>
 

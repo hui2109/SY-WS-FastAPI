@@ -142,3 +142,9 @@ async def login(request: Request):
 @router.get("/", response_class=HTMLResponse)
 async def root():
     return RedirectResponse(url="/login", status_code=status.HTTP_303_SEE_OTHER)
+
+
+# 登出路由
+@router.post("/logout")
+async def logout():
+    return {"status": "success", "message": "登出成功"}

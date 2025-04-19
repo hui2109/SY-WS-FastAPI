@@ -1,70 +1,70 @@
 #work-content-all {
-    #datetimepicker1 > span{
-        &:hover{
-            cursor: pointer;
-        }
+  #datetimepicker1>span {
+    &:hover {
+      cursor: pointer;
     }
+  }
 
 
-    .table-container{
-        width: 90%;
-        height: 70vh;
-        overflow:auto;
-        z-index: 0;
+  .table-container {
+    width: 90%;
+    height: 70vh;
+    overflow: auto;
+    z-index: 0;
 
-        .paiban-table{
-            table-layout: fixed;
-            border-collapse: separate;  // 重要：使用 separate 而不是 collapse
-            border-spacing: 2px;
+    .paiban-table {
+      table-layout: fixed;
+      border-collapse: separate; // 重要：使用 separate 而不是 collapse
+      border-spacing: 2px;
 
-            thead tr th{
-                &:first-child{
-                    line-height: 48px;
-    
-                    // 固定左上角单元格
-                    left: 0; 
-                    z-index: 3;
-                    background-color: var(--bs-success);
+      thead tr th {
+        &:first-child {
+          line-height: 48px;
 
-                    border-right: 1px solid #ddd;  // 添加右边框
-                    border-bottom: 1px solid #ddd; // 添加下边框
-                    box-shadow: 2px 0 5px rgba(0,0,0,0.1); // 添加阴影效果
-                }
+          // 固定左上角单元格
+          left: 0;
+          z-index: 3;
+          background-color: var(--bs-success);
 
-                position: sticky;
-                top: 0;
-                z-index: 1;
-                background-color: var(--bs-primary-bg-subtle);
-
-                text-align: center;
-                width: 66px;
-                height: 62px;
-
-                border-bottom: 1px solid #ddd;    // 添加下边框
-                box-shadow: 0 2px 5px rgba(0,0,0,0.1); // 添加阴影效果
-            }
-
-            tbody tr td{
-                &:first-child{
-                    position: sticky;
-                    left: 0;
-                    z-index: 2;
-                    background-color: var(--bs-primary-bg-subtle);
-
-                    border-right: 1px solid #ddd;  // 添加右边框
-                    box-shadow: 2px 0 5px rgba(0,0,0,0.1); // 添加阴影效果
-                }
-
-                text-align: center;
-                width: 66px;
-                height: 48px;
-            }
+          border-right: 1px solid #ddd; // 添加右边框
+          border-bottom: 1px solid #ddd; // 添加下边框
+          box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1); // 添加阴影效果
         }
+
+        position: sticky;
+        top: 0;
+        z-index: 1;
+        background-color: var(--bs-primary-bg-subtle);
+
+        text-align: center;
+        width: 66px;
+        height: 62px;
+
+        border-bottom: 1px solid #ddd; // 添加下边框
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); // 添加阴影效果
+      }
+
+      tbody tr td {
+        &:first-child {
+          position: sticky;
+          left: 0;
+          z-index: 2;
+          background-color: var(--bs-primary-bg-subtle);
+
+          border-right: 1px solid #ddd; // 添加右边框
+          box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1); // 添加阴影效果
+        }
+
+        text-align: center;
+        width: 66px;
+        height: 48px;
+      }
     }
+  }
 }
 
-.tempus-dominus-widget{
-    top: var(--td-top) !important; 
-    left: var(--td-left) !important;
-    transform: none !important;
+.tempus-dominus-widget {
+  top: var(--td-top) !important;
+  left: var(--td-left) !important;
+  transform: none !important;
 }
