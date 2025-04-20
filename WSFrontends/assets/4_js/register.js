@@ -107,16 +107,16 @@ function formValidation() {
 
         // 收集表单数据并转换格式
         const formData = {
-            username: username.value,
-            fullname: fullname.value,
+            username: username.value.trim(),
+            name: fullname.value.trim(),
             // 转换日期格式为ISO字符串
-            enroll_date: new Date(enrollDate.value + 'T00:00:00').toISOString(),
+            hiredate: new Date(enrollDate.value + 'T00:00:00').toISOString(),
             password: password.value,
             // 添加头像数据
             avatar: selectedAvatar.value,
             // 添加工号和电话号码
-            worknumber: workNumber.value,
-            phonenumber: phoneNumber.value
+            worknumber: workNumber.value.trim(),
+            phonenumber: phoneNumber.value.trim()
         };
 
         // 显示loading状态
@@ -145,7 +145,9 @@ function formValidation() {
                 }, 300);
             } else {
                 // 显示错误消息
-                alert('注册失败，请稍后重试');
+                return response.json().then(err => {
+                    alert('注册失败，请重试! ' + err.detail || '注册失败，请重试!');
+                });
             }
         }).catch(error => {
             // 显示错误消息

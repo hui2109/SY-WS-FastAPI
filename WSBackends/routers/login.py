@@ -1,7 +1,6 @@
 from datetime import datetime, timedelta, timezone
 from typing import Annotated
 
-# 处理特殊报错
 import bcrypt
 import jwt
 from fastapi import Depends, HTTPException, APIRouter, status, Request
@@ -12,10 +11,12 @@ from pydantic import BaseModel
 from sqlmodel import select
 
 from .secret import SECRET_KEY, ALGORITHM, ACCESS_TOKEN_EXPIRE_MINUTES
+from .utils import get_personnel_list
 from ..database.models import Account, Personnel
 from ..dependencies import SessionDep
 from ..utils import Templates
 
+# 处理特殊报错
 bcrypt.__about__ = bcrypt
 
 # 密码处理工具
@@ -27,8 +28,8 @@ router = APIRouter(tags=["login"])
 # 定义请求和响应模型
 class UserBase(BaseModel):
     username: str
-    fullname: str
-    enroll_date: datetime
+    name: str
+    hiredate: datetime
     avatar: str
     worknumber: str
     phonenumber: str
@@ -80,6 +81,11 @@ async def register_user(user_data: UserCreate, session: SessionDep):
             detail="Username already registered!",
         )
 
+    # 如果是已注册人员, 则修改已有账号
+    PersonnelSet = set(get_personnel_list())
+    if user_data.name in PersonnelSet:
+        return RedirectResponse(url='/update-user', status_code=status.HTTP_307_TEMPORARY_REDIRECT)
+
     # 加密密码
     hashed_password = get_password_hash(user_data.password)
 
@@ -92,8 +98,8 @@ async def register_user(user_data: UserCreate, session: SessionDep):
 
     # 然后创建人员信息并关联账户
     new_personnel = Personnel(
-        name=user_data.fullname,
-        hiredate=user_data.enroll_date,
+        name=user_data.name,
+        hiredate=user_data.hiredate,
         worknumber=user_data.worknumber,
         phonenumber=user_data.phonenumber,
         account=new_account,  # 设置外键关系
