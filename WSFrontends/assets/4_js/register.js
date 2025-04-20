@@ -9,6 +9,9 @@ const confirmPassword = document.getElementById('floatingConfirmPassword');
 const username = document.getElementById('floatingUsername');
 const fullname = document.getElementById('floatingFullname');
 const enrollDate = document.getElementById('floatingEnrollDate');
+const selectedAvatar = document.getElementById('selectedAvatar');
+const workNumber = document.getElementById('floatingWorkNumber');
+const phoneNumber = document.getElementById('floatingPhoneNumber');
 
 function _updateIcon(theme) {
     if (theme === 'dark') {
@@ -110,7 +113,10 @@ function formValidation() {
             enroll_date: new Date(enrollDate.value + 'T00:00:00').toISOString(),
             password: password.value,
             // 添加头像数据
-            avatar: document.getElementById('selectedAvatar').value
+            avatar: selectedAvatar.value,
+            // 添加工号和电话号码
+            worknumber: workNumber.value,
+            phonenumber: phoneNumber.value
         };
 
         // 显示loading状态

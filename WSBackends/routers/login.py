@@ -30,6 +30,8 @@ class UserBase(BaseModel):
     fullname: str
     enroll_date: datetime
     avatar: str
+    worknumber: str
+    phonenumber: str
 
 
 class UserCreate(UserBase):
@@ -92,6 +94,8 @@ async def register_user(user_data: UserCreate, session: SessionDep):
     new_personnel = Personnel(
         name=user_data.fullname,
         hiredate=user_data.enroll_date,
+        worknumber=user_data.worknumber,
+        phonenumber=user_data.phonenumber,
         account=new_account,  # 设置外键关系
     )
 

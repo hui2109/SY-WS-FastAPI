@@ -39,6 +39,8 @@ class Personnel(SQLModel, table=True):
     name: str = Field(index=True)
     weight: int = Field(default=1.0, index=True)
     hiredate: datetime
+    worknumber: str
+    phonenumber: str
     account_id: int | None = Field(default=None, foreign_key="account.id", unique=True)
 
     # Personnel持有Account的外键，定义明确的一对一关系
