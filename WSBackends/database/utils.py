@@ -1,50 +1,48 @@
 from enum import Enum
 
 
-class MachineType(Enum):
-    AC1 = '1'
-    AC2 = '2'
-    AC3 = '3'
-    CT1 = 'S1'
-    CT2 = 'S2'
+class Bans(Enum):
     NA = 'NA'
 
+    _1A = '1A'
+    _2A = '2A'
+    _3A = '3A'
+    _1B = '1B'
+    _2B = '2B'
+    _3B = '3B'
+    _1C = '1C'
+    _2C = '2C'
+    _3C = '3C'
 
-class WorkSectionType(Enum):
-    A = 'A'
-    B = 'B'
-    C = 'C'
-    NA = 'NA'
+    S1 = 'S1'
+    S2 = 'S2'
 
+    N1 = 'N1'
+    N2 = 'N2'
+    ENGAGE = '进修'
+    TRAIN = '培训'
 
-class RelaxType(Enum):
-    NORMAL = '休息'
+    RELAX = '休息'
     RL = '放射假'  # Radiation Leave
     AL = '年假'  # Annual Leave
-
     SICK = '病假'
     EVENT = '事假'
-
     MARRY = '婚假'
     ML = '产假'  # maternity leave
     PL = '陪产假'  # paternity leave
     CL = '育儿假'  # childcare leave
-
     FL = '丧假'  # funeral leave
-    OTHERS = '其他'
+    OTHERS = '其他假'
 
-    NA = 'NA'
+    OAE = 'OAE'  # Overtime
+    OBE = 'OBE'
+    OCE = 'OCE'
+    OAF = 'OAF'
+    OBF = 'OBF'
+    OCF = 'OCF'
 
+    OTR = 'OTR'
+    OTB = 'OTB'
+    OVB = 'OVB'
 
-class AuxiliaryType(Enum):
-    N1 = 'N1'
-    N2 = 'N2'
-    ENGAGE = '进修'
-    NA = 'NA'
-
-
-class OvertimeType(Enum):
-    OE = 'E'
-    OF = 'F'
     OPHY = 'Phy'
-    NA = 'NA'
