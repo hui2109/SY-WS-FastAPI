@@ -1,7 +1,8 @@
 from datetime import datetime
+
 from sqlmodel import SQLModel, Field, Relationship
 
-from .utils import AcceleratorType, WorkSectionType
+from .utils import MachineType, WorkSectionType, RelaxType, AuxiliaryType, OvertimeType
 
 
 class Account(SQLModel, table=True):
@@ -16,11 +17,20 @@ class Account(SQLModel, table=True):
 
 class Bantype(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
-    accelerator: AcceleratorType
-    workSection: WorkSectionType
+    machine_type: MachineType
+    work_section_type: WorkSectionType
+    relax_type: RelaxType
+    auxiliary_type: AuxiliaryType
+    overtime_type: OvertimeType
     description: str | None
 
     workschedule: list["Workschedule"] = Relationship(back_populates="bantype")
+
+    # # 保证5个加起来的组合唯一
+    # __table_args__ = (
+    #     UniqueConstraint('machine_type', 'work_section_type', 'relax_type',
+    #                      'auxiliary_type', 'overtime_type', name='uix_bantype_types'),
+    #
 
 
 class WorkschedulePersonnelLink(SQLModel, table=True):
@@ -54,7 +64,8 @@ class Personnel(SQLModel, table=True):
 # 排班表对班种: 多对一
 class Workschedule(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
-    work_date: datetime = Field(index=True)
+    work_start_date: datetime = Field(index=True)
+    work_end_date: datetime = Field(index=True)
     bantype_id: int | None = Field(default=None, foreign_key="bantype.id")
 
     bantype: Bantype | None = Relationship(back_populates="workschedule")
