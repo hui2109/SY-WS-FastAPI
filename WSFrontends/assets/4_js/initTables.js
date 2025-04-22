@@ -1,5 +1,4 @@
 "use strict";
-console.log(Personnel);
 function formatDate(date) {
     const year = date.getFullYear();
     const month = date.getMonth() + 1; // 月份的索引从0开始
@@ -74,7 +73,7 @@ class InitTables {
     isRestDay(dateString) {
         // 解析日期字符串，例如："2025年-2月-2-周日"
         const date = new Date(parseInt(dateString.split('-')[0]), parseInt(dateString.split('-')[1]) - 1, // 月份的索引从0开始
-        parseInt(dateString.split('-')[2]));
+            parseInt(dateString.split('-')[2]));
         // 获取星期几 (0是周日, 6是周六)
         const day = date.getDay();
         // 构造检测字符串 (没有星期)

@@ -4,9 +4,9 @@ from fastapi import APIRouter, Depends
 from pydantic import BaseModel
 from sqlmodel import select
 
+from .login import get_password_hash
 from ..database.models import Account, Personnel
 from ..dependencies import get_current_user, SessionDep
-from .login import get_password_hash
 
 router = APIRouter(tags=["updates"])
 

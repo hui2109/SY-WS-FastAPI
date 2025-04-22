@@ -4,10 +4,13 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
 from WSBackends.database.database import create_db_and_tables
+from WSBackends.routers.deletes import router as deletes_router
 from WSBackends.routers.index import router as index_router
+from WSBackends.routers.inserts import router as inserts_router
 from WSBackends.routers.login import router as login_router
-from WSBackends.routers.verify import router as verify_router
+from WSBackends.routers.selects import router as selects_router
 from WSBackends.routers.updates import router as updates_router
+from WSBackends.routers.verify import router as verify_router
 from WSBackends.utils import Statics
 
 app = FastAPI()
@@ -32,9 +35,12 @@ def add_middleware():
 
 def add_routers():
     app.include_router(login_router)
-    app.include_router(index_router)
     app.include_router(verify_router)
+    app.include_router(index_router)
+    app.include_router(inserts_router)
+    app.include_router(deletes_router)
     app.include_router(updates_router)
+    app.include_router(selects_router)
 
 
 def add_static_files():
