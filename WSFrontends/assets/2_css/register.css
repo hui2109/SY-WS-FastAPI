@@ -53,8 +53,7 @@ body {
   border: none;
   border-radius: 15px;
   box-shadow: 0 15px 25px rgba(0, 0, 0, 0.05);
-  -webkit-backdrop-filter: blur(7px);
-          backdrop-filter: blur(7px);
+  backdrop-filter: blur(7px);
   background-color: rgba(var(--bs-body-bg-rgb), 0.8);
   transition: all 0.3s ease;
 }
@@ -111,8 +110,7 @@ body {
 
 /* 日期选择器自定义样式 */
 input[type=date] {
-  -moz-appearance: none;
-       appearance: none;
+  appearance: none;
   -webkit-appearance: none;
   color: var(--bs-body-color);
   padding: 12px 15px;
