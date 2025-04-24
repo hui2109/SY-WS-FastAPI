@@ -54,6 +54,12 @@ def generate_bantype(bantype: str):
             elif 'ENGAGE' in name:
                 start_time = time(hour=8, minute=0, second=0, microsecond=0)
                 end_time = time(hour=18, minute=30, second=0, microsecond=0)
+            elif 'TRAIN' in name:
+                start_time = time(hour=8, minute=0, second=0, microsecond=0)
+                end_time = time(hour=18, minute=30, second=0, microsecond=0)
+            elif 'JD' in name:
+                start_time = time(hour=8, minute=0, second=0, microsecond=0)
+                end_time = time(hour=14, minute=00, second=0, microsecond=0)
             elif 'OPHY' in name:
                 start_time = time(hour=14, minute=0, second=0, microsecond=0)
                 end_time = time(hour=16, minute=30, second=0, microsecond=0)
@@ -89,6 +95,9 @@ def generate_bantype(bantype: str):
                 pure_ban_list += generate_bantype(ban)
             elif 'F' in ban and 'C' in bantype:
                 ban = Bans.OCF.value
+                pure_ban_list += generate_bantype(ban)
+            elif 'EA' in ban:
+                ban = Bans.JD.value
                 pure_ban_list += generate_bantype(ban)
             elif 'E' in ban and ('A' in bantype or 'S1' in bantype or 'S2' in bantype):
                 ban = Bans.OAE.value

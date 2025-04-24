@@ -1,11 +1,12 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from fastapi import APIRouter, Depends
 from pydantic import BaseModel
 from sqlmodel import select
+from pypinyin import pinyin, load_phrases_dict, lazy_pinyin
 
+from .utils import convert_UTC_Chinese
 from ..database.models import Workschedule
-from ..database.utils import Bans
 from ..dependencies import get_current_user, SessionDep
 
 router = APIRouter(tags=["selects"], dependencies=[Depends(get_current_user)])
@@ -16,16 +17,14 @@ class QueryMonth(BaseModel):
     month_end: datetime
 
 
-class QueryMonthResponse(BaseModel):
-    name: str
-    work_date: datetime
-    ban: Bans
-
-
 # 查询单个月的排班情况
 @router.post("/select-month-schedule")
 async def select_month_schedule(queryMonth: QueryMonth, session: SessionDep):
-    queryMonthResponses = []
+    # UTC时区 转 中国时区
+    queryMonth.month_start = convert_UTC_Chinese(queryMonth.month_start)
+    queryMonth.month_end = convert_UTC_Chinese(queryMonth.month_end)
+
+    queryMonthResponse = {}
     personnel_set = set()
 
     # 首先应该获取当前月的人员名单
@@ -38,12 +37,20 @@ async def select_month_schedule(queryMonth: QueryMonth, session: SessionDep):
     for result in results:
         work_date = result.work_date
         personnel_links = result.personnel_links
+        ban = result.bantype.ban
+
         for personnel_link in personnel_links:
             personnel_name = personnel_link.personnel.name
-            ban = result.bantype.ban
 
-            queryMonthResponse = QueryMonthResponse(name=personnel_name, work_date=work_date, ban=ban)
-            queryMonthResponses.append(queryMonthResponse)
+            _key = f'{personnel_name}_{work_date.year}_{work_date.month}_{work_date.day}'
+
+            if queryMonthResponse.get(_key) is None:
+                values = [f'{ban.value}']
+                queryMonthResponse[_key] = values
+            else:
+                queryMonthResponse[_key].append(f'{ban.value}')
+
             personnel_set.add(personnel_name)
-    queryMonthResponses.append({'personnels': personnel_set})
-    return queryMonthResponses
+    queryMonthResponse['personnels'] = personnel_set
+
+    return queryMonthResponse

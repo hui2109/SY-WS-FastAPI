@@ -36,6 +36,7 @@
   text-align: center;
   width: 66px;
   height: 48px;
+  vertical-align: middle;
 }
 #work-content-all .table-container .paiban-table tbody tr td:first-child {
   position: sticky;

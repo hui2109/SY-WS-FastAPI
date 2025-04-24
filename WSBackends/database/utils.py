@@ -21,6 +21,7 @@ class Bans(Enum):
     N2 = 'N2'
     ENGAGE = '进修'
     TRAIN = '培训'
+    JD = '机动'
 
     RELAX = '休息'
     RL = '放射假'  # Radiation Leave

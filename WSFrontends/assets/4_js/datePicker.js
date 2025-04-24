@@ -1,28 +1,31 @@
 "use strict";
-/// <reference path="../plugin/node_modules/@eonasdan/tempus-dominus/types/tempus-dominus.d.ts" />
 let dateLabel = document.querySelector('.mounianmouyue');
 let preMonth = document.querySelector('.pre-month');
 let nextMonth = document.querySelector('.next-month');
 let currentDate;
+
 preMonth.addEventListener('click', function () {
     // 获取当前月的第一天
     currentDate = new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1);
     updateDateLabel(currentDate);
-    let uWT = new updateWholeTable(currentDate);
+    let uWT = new InitTables(currentDate);
     uWT.init();
 });
+
 nextMonth.addEventListener('click', function () {
     currentDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1);
     updateDateLabel(currentDate);
-    let uWT = new updateWholeTable(currentDate);
+    let uWT = new InitTables(currentDate);
     uWT.init();
 });
+
 function updateDateLabel(date) {
     dateLabel.textContent = '';
     // 写入日期: XX年XX月
     dateLabel.textContent = `${date.getFullYear()}年${date.getMonth() + 1}月`;
     currentDate = date;
 }
+
 // 根据dateLabel标签的位置, 改变日期选择器(.tempus-dominus-widget)弹出的位置
 function adjustDatePickerPosition() {
     let datePicker = document.querySelector('.tempus-dominus-widget');
@@ -34,6 +37,7 @@ function adjustDatePickerPosition() {
     datePicker.style.setProperty('--td-left', `${new_x}px`);
     datePicker.style.setProperty('--td-top', `${new_y}px`);
 }
+
 document.addEventListener('DOMContentLoaded', function () {
     const element = document.getElementById('datetimepicker1');
     const datetimepicker = new tempusDominus.TempusDominus(element, {
@@ -74,9 +78,8 @@ document.addEventListener('DOMContentLoaded', function () {
     });
     // 监听日期改变事件
     element.addEventListener('change.td', (event) => {
-        const customEve = event;
-        updateDateLabel(customEve.detail.date);
-        let uWT = new updateWholeTable(currentDate);
+        updateDateLabel(event.detail.date);
+        let uWT = new InitTables(currentDate);
         uWT.init();
     });
     // 文档首次加载时, 显示当前日期
@@ -88,10 +91,12 @@ document.addEventListener('DOMContentLoaded', function () {
         adjustDatePickerPosition();
     });
 });
+
 class updateWholeTable {
     constructor(date) {
         this.date = date;
     }
+
     init() {
         this.getStartEndDate();
         this.lookElement();
@@ -99,14 +104,16 @@ class updateWholeTable {
         this.generateTbody();
         this.checkForRestDays();
     }
+
     formatDate(date) {
         const year = date.getFullYear();
         const month = date.getMonth() + 1; // 月份的索引从0开始
         const day = date.getDate();
-        const options = { weekday: 'short' }; // 获取星期
+        const options = {weekday: 'short'}; // 获取星期
         const weekDay = date.toLocaleDateString('zh-CN', options);
         return `${year}年-${month}月-${day}-${weekDay}`;
     }
+
     goThroughDate(startDate, endDate) {
         let dateList = [];
         while (startDate <= endDate) {
@@ -116,14 +123,17 @@ class updateWholeTable {
         }
         return dateList;
     }
+
     getStartEndDate() {
         this.startDate = new Date(this.date.getFullYear(), this.date.getMonth(), 1);
         this.endDate = new Date(this.date.getFullYear(), this.date.getMonth() + 1, 0);
         this.dateList = goThroughDate(this.startDate, this.endDate);
     }
+
     lookElement() {
         this.paibanTable = document.querySelector('.paiban-table');
     }
+
     generateThead() {
         this.thead_tr = this.paibanTable.querySelector('thead > tr');
         // 只保留tr下的第一个th
@@ -143,6 +153,7 @@ class updateWholeTable {
             this.thead_tr.appendChild(th);
         }
     }
+
     generateTbody() {
         let daysNum = this.dateList.length;
         let tbody = this.paibanTable.querySelector('tbody');
@@ -156,8 +167,7 @@ class updateWholeTable {
                 let td = document.createElement('td');
                 if (j == 0) {
                     td.textContent = Personnel[i];
-                }
-                else {
+                } else {
                     td.textContent = '数据';
                 }
                 tr.appendChild(td);
@@ -165,25 +175,25 @@ class updateWholeTable {
             tbody.appendChild(tr);
         }
     }
+
     // 判断日期是否为休息日
     isRestDay(dateString) {
         // 解析日期字符串，例如："2025年-2月-2-周日"
         const date = new Date(parseInt(dateString.split('-')[0]), parseInt(dateString.split('-')[1]) - 1, // 月份的索引从0开始
-        parseInt(dateString.split('-')[2]));
+            parseInt(dateString.split('-')[2]));
         // 获取星期几 (0是周日, 6是周六)
         const day = date.getDay();
         // 构造检测字符串 (没有星期)
         const dateWithoutWeek = `${date.getFullYear()}年-${date.getMonth() + 1}月-${date.getDate()}`;
         if (SpecialRestDays.includes(dateWithoutWeek)) {
             return true;
-        }
-        else if (SpecialWorkDays.includes(dateWithoutWeek)) {
+        } else if (SpecialWorkDays.includes(dateWithoutWeek)) {
             return false;
-        }
-        else {
+        } else {
             return day === 0 || day === 6;
         }
     }
+
     // 设置休息日样式
     setRestDayStyle(th, columnIndex) {
         if (this.isRestDay(this.dateList[columnIndex])) {
@@ -200,6 +210,7 @@ class updateWholeTable {
             }
         }
     }
+
     // 检查并设置休息日样式
     checkForRestDays() {
         console.log(this.thead_tr.children);

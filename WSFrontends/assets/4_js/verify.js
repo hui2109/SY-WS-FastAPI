@@ -12,32 +12,23 @@ function secret_verify() {
         return null;
     }
 
-    // 使用XMLHttpRequest发送验证请求
-    const xhr = new XMLHttpRequest();
-    xhr.open('POST', '/secret_verify', true);
-    xhr.setRequestHeader('Authorization', `Bearer ${token}`);
-    xhr.withCredentials = true;
-
-    xhr.onload = function () {
-        if (xhr.status >= 200 && xhr.status < 300) {
-            try {
-                const data = JSON.parse(xhr.responseText);
-                console.log(data);
-            } catch (e) {
-                // JSON解析错误
-                console.error('JSON解析错误:', e);
-            }
-        } else {
-            console.error('请求失败:', xhr.status, xhr.statusText);
-            window.location.href = '/login';
+    // 使用fetch发送验证请求
+    fetch('/secret_verify', {
+        method: 'POST',
+        headers: {
+            'Authorization': `Bearer ${token}`
+        },
+        credentials: 'include'
+    }).then(response => {
+        if (response.ok) {
+            return response.json();
         }
-    };
-
-    xhr.onerror = function () {
-        // 显示错误信息
-        console.error('网络错误:', xhr.status, xhr.statusText);
-    };
-
-    // 发送请求
-    xhr.send();
+        console.error('请求失败:', response.status, response.statusText);
+        window.location.href = '/login';
+        throw new Error('请求失败');
+    }).then(data => {
+        console.log(data);
+    }).catch(error => {
+        console.error('网络错误:', error);
+    });
 }

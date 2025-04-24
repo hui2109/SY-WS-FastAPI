@@ -3,6 +3,7 @@ const navLinks = document.querySelectorAll('.nav-link:not(.mine):not(.all)');
 const navLink_mine = document.querySelector('.mine');
 const navLink_all = document.querySelector('.all');
 const indexLinks = [navLink_mine, navLink_all];
+
 // 改变导航栏链接的状态
 function changeLinkState(link, _, parentNode) {
     link.addEventListener('click', function (e) {
@@ -15,6 +16,7 @@ function changeLinkState(link, _, parentNode) {
         this.classList.add('active');
     });
 }
+
 function connectIndexAndNav(link) {
     link.addEventListener('click', function (e) {
         // 调用当前active链接对应的点击事件
@@ -25,6 +27,7 @@ function connectIndexAndNav(link) {
         }
     });
 }
+
 // 改变内容区域的可见度
 function changeContentState(link) {
     link.addEventListener('click', function (e) {
@@ -45,19 +48,23 @@ function changeContentState(link) {
         window.location.hash = this.getAttribute('href') + suffix;
     });
 }
+
 function indexLinkBind(link, _, parentNode) {
     changeLinkState(link, _, parentNode);
     connectIndexAndNav(link);
 }
+
 function navLinkBind(link, _, parentNode) {
     changeLinkState(link, _, parentNode);
     changeContentState(link);
 }
+
 document.addEventListener('DOMContentLoaded', function () {
     // 为索引导航链接绑定点击事件
     indexLinks.forEach(indexLinkBind);
     // 为导航链接添加点击事件监听器
     navLinks.forEach(navLinkBind);
+
     // 页面加载时检查URL的hash部分以显示相应的内容
     function checkHash() {
         var _a;
@@ -74,8 +81,8 @@ document.addEventListener('DOMContentLoaded', function () {
             const indexLink = document.querySelector(`.${classname}`);
             indexLink === null || indexLink === void 0 ? void 0 : indexLink.click();
         }
-        ;
     }
+
     // 页面初始化
     (() => {
         window.location.hash = '#work-all';
