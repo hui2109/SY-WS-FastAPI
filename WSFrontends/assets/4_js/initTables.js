@@ -48,7 +48,6 @@ class InitTables {
             month_start: this.startDate,
             month_end: this.endDate
         }
-        console.log(JSON.stringify(data))
         fetch('/select-month-schedule', {
             method: 'POST',
             headers: {
@@ -122,7 +121,6 @@ class InitTables {
             let tr = document.createElement('tr');
             let td = document.createElement('td');
             let name = personnel_list[i];
-            console.log(name)
 
             td.textContent = name;
             tr.appendChild(td);

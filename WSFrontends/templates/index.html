@@ -17,11 +17,13 @@
   <link rel="stylesheet"
     href="/WSFrontends/assets/plugin/node_modules/@eonasdan/tempus-dominus/dist/css/tempus-dominus.min.css">
   <link rel="stylesheet" href="/WSFrontends/assets/plugin/node_modules/bootstrap-icons/font/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="/WSFrontends/assets/plugin/node_modules/swiper/swiper-bundle.min.css">
 
   <!-- 我的CSS样式 -->
   <link rel="stylesheet" href="/WSFrontends/assets/2_css/index.css">
   <link rel="stylesheet" href="/WSFrontends/assets/2_css/work_all.css">
   <link rel="stylesheet" href="/WSFrontends/assets/2_css/commons.css">
+  <link rel="stylesheet" href="/WSFrontends/assets/2_css/work_mine.css">
 </head>
 
 <body class="bg-body-tertiary">
@@ -179,33 +181,129 @@
   <main class="container mt-3 pt-2">
     <!-- 首页内容 -->
     <div id="work-content-mine" class="content-section">
-      <h2>我的</h2>
-      <p>这是首页的内容。您可以在这里放置您的主要信息。</p>
-      <div class="row">
-        <div class="col-md-4">
-          <div class="card mb-4">
-            <div class="card-body">
-              <h5 class="card-title">特色内容 1</h5>
-              <p class="card-text">这里是一些特色内容的描述文字。</p>
+      <div class="container">
+        <h5 class="text-center mb-3">信息查看组件</h5>
+
+        <!-- 日期切换组件 -->
+        <div class="row">
+          <div class="col-2"></div>
+          <div class="col-8">
+            <div class="d-flex justify-content-between">
+              <button type="button" class="btn btn-success pre-month">上一月</button>
+              <div id="datetimepicker2" data-td-target-input="nearest" data-td-target-toggle="nearest">
+                <span class="input-group-text" data-td-target="#datetimepicker2" data-td-toggle="datetimepicker">
+                  <span class="mounianmouyue">某年某月</span>
+                </span>
+              </div>
+              <button type="button" class="btn btn-success next-month">下一月</button>
+            </div>
+          </div>
+          <div class="col-2"></div>
+        </div>
+
+        <!-- 整体容器，添加tabindex使其可接收键盘焦点 -->
+        <div class="component-wrapper" tabindex="0">
+          <!-- 固定的星期容器 -->
+          <div class="weekday-container">
+            <div class="weekday-item">周一</div>
+            <div class="weekday-item">周二</div>
+            <div class="weekday-item">周三</div>
+            <div class="weekday-item">周四</div>
+            <div class="weekday-item">周五</div>
+            <div class="weekday-item">周六</div>
+            <div class="weekday-item">周日</div>
+          </div>
+
+          <!-- Swiper 滑动容器 -->
+          <div class="swiper-container">
+            <div class="swiper mySwiper">
+              <div class="swiper-wrapper">
+                <!-- 第一周 -->
+                <div class="swiper-slide">
+                  <div class="card">
+                    <div class="date-row">
+                      <div class="date-item">1</div>
+                      <div class="date-item">2</div>
+                      <div class="date-item">3</div>
+                      <div class="date-item">4</div>
+                      <div class="date-item">5</div>
+                      <div class="date-item">6</div>
+                      <div class="date-item">7</div>
+                    </div>
+                    <div class="info-row first">
+                      <div class="info-item">会议</div>
+                      <div class="info-item">休息</div>
+                      <div class="info-item">培训</div>
+                      <div class="info-item">出差</div>
+                      <div class="info-item">汇报</div>
+                      <div class="info-item">自习</div>
+                      <div class="info-item">休息</div>
+                    </div>
+                    <div class="info-row last">
+                      <div class="info-item">会议</div>
+                      <div class="info-item">休息</div>
+                      <div class="info-item">培训</div>
+                      <div class="info-item">出差</div>
+                      <div class="info-item">汇报</div>
+                      <div class="info-item">自习</div>
+                      <div class="info-item">休息</div>
+                    </div>
+                  </div>
+                </div>
+                <!-- 第二周 -->
+                <div class="swiper-slide">
+                  <div class="card">
+                    <div class="date-row">
+                      <div class="date-item">8</div>
+                      <div class="date-item">9</div>
+                      <div class="date-item">10</div>
+                      <div class="date-item">11</div>
+                      <div class="date-item">12</div>
+                      <div class="date-item">13</div>
+                      <div class="date-item">14</div>
+                    </div>
+                    <div class="info-row">
+                      <div class="info-item">述职</div>
+                      <div class="info-item">参观</div>
+                      <div class="info-item">检查</div>
+                      <div class="info-item">学习</div>
+                      <div class="info-item">活动</div>
+                      <div class="info-item">比赛</div>
+                      <div class="info-item">休假</div>
+                    </div>
+                  </div>
+                </div>
+                <!-- 第三周 -->
+                <div class="swiper-slide">
+                  <div class="card">
+                    <div class="date-row">
+                      <div class="date-item">15</div>
+                      <div class="date-item">16</div>
+                      <div class="date-item">17</div>
+                      <div class="date-item">18</div>
+                      <div class="date-item">19</div>
+                      <div class="date-item">20</div>
+                      <div class="date-item">21</div>
+                    </div>
+                    <div class="info-row">
+                      <div class="info-item">讲座</div>
+                      <div class="info-item">评审</div>
+                      <div class="info-item">研讨</div>
+                      <div class="info-item">总结</div>
+                      <div class="info-item">考核</div>
+                      <div class="info-item">庆祝</div>
+                      <div class="info-item">休息</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="swiper-pagination"></div>
+              <div class="swipe-hint">左右滑动查看</div>
             </div>
           </div>
         </div>
-        <div class="col-md-4">
-          <div class="card mb-4">
-            <div class="card-body">
-              <h5 class="card-title">特色内容 2</h5>
-              <p class="card-text">这里是一些特色内容的描述文字。</p>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div class="card mb-4">
-            <div class="card-body">
-              <h5 class="card-title">特色内容 3</h5>
-              <p class="card-text">这里是一些特色内容的描述文字。</p>
-            </div>
-          </div>
-        </div>
+
+        <div class="keyboard-hint">提示：使用键盘 ← 和 → 箭头键可切换卡片</div>
       </div>
     </div>
     <div id="work-content-all" class="content-section d-none">
@@ -561,6 +659,7 @@
   <script src="/WSFrontends/assets/plugin/offcanvas-navbar/offcanvas-navbar.js"></script>
   <script src="/WSFrontends/assets/plugin/node_modules/@popperjs/core/dist/umd/popper.min.js"></script>
   <script src="/WSFrontends/assets/plugin/node_modules/@eonasdan/tempus-dominus/dist/js/tempus-dominus.min.js"></script>
+  <script src="/WSFrontends/assets/plugin/node_modules/swiper/swiper-bundle.min.js"></script>
 
   <!-- 我的js文件, 按顺序引入 -->
   <script src="/WSFrontends/assets/4_js/myConstant.js"></script>
@@ -569,6 +668,7 @@
   <script src="/WSFrontends/assets/4_js/datePicker.js"></script>
   <script src="/WSFrontends/assets/4_js/commons.js"></script>
   <script src="/WSFrontends/assets/4_js/userInfo.js"></script>
+  <script src="/WSFrontends/assets/4_js/swiperSwitch.js"></script>
   <!-- <script src="/WSFrontends/assets/4_js/verify.js"></script> -->
 </body>
 

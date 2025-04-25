@@ -67,25 +67,27 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // 页面加载时检查URL的hash部分以显示相应的内容
     function checkHash() {
-        var _a;
         const hash = window.location.hash;
         if (hash) {
             const [navHref, classname] = hash.split('-');
+
             // nav全部都不激活
             navLinks.forEach(function (link) {
                 link.classList.remove('active');
             });
+
             // 对应的nav激活
-            (_a = document.querySelector(`a[href="${navHref}"]`)) === null || _a === void 0 ? void 0 : _a.classList.add('active');
+            document.querySelector(`a[href="${navHref}"]`)?.classList.add('active');
+
             // 模拟index点击
             const indexLink = document.querySelector(`.${classname}`);
-            indexLink === null || indexLink === void 0 ? void 0 : indexLink.click();
-        }
+            indexLink.click();
+        };
     }
 
     // 页面初始化
     (() => {
-        window.location.hash = '#work-all';
+        window.location.hash = '#work-mine';
         checkHash();
     })();
     // 监听hash变化

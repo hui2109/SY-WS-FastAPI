@@ -1,7 +1,7 @@
 "use strict";
-let dateLabel = document.querySelector('.mounianmouyue');
-let preMonth = document.querySelector('.pre-month');
-let nextMonth = document.querySelector('.next-month');
+let dateLabel = document.querySelector('#work-content-all .mounianmouyue');
+let preMonth = document.querySelector('#work-content-all .pre-month');
+let nextMonth = document.querySelector('#work-content-all .next-month');
 let currentDate;
 
 preMonth.addEventListener('click', function () {
@@ -109,7 +109,7 @@ class updateWholeTable {
         const year = date.getFullYear();
         const month = date.getMonth() + 1; // 月份的索引从0开始
         const day = date.getDate();
-        const options = {weekday: 'short'}; // 获取星期
+        const options = { weekday: 'short' }; // 获取星期
         const weekDay = date.toLocaleDateString('zh-CN', options);
         return `${year}年-${month}月-${day}-${weekDay}`;
     }
