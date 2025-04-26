@@ -6,7 +6,7 @@ from sqlmodel import select
 from pypinyin import pinyin, load_phrases_dict, lazy_pinyin
 
 from .utils import convert_UTC_Chinese
-from ..database.models import Workschedule
+from ..database.models import Workschedule, Account, WorkschedulePersonnelLink
 from ..dependencies import get_current_user, SessionDep
 
 router = APIRouter(tags=["selects"], dependencies=[Depends(get_current_user)])
@@ -39,6 +39,7 @@ async def select_month_schedule(queryMonth: QueryMonth, session: SessionDep):
         personnel_links = result.personnel_links
         ban = result.bantype.ban
 
+        personnel_link: WorkschedulePersonnelLink
         for personnel_link in personnel_links:
             personnel_name = personnel_link.personnel.name
 
@@ -54,3 +55,42 @@ async def select_month_schedule(queryMonth: QueryMonth, session: SessionDep):
     queryMonthResponse['personnels'] = personnel_set
 
     return queryMonthResponse
+
+
+@router.post("/select-my-month-schedule", dependencies=None)
+async def select_my_month_schedule(queryMonth: QueryMonth, session: SessionDep, user: Account = Depends(get_current_user)):
+    # UTC时区 转 中国时区
+    queryMonth.month_start = convert_UTC_Chinese(queryMonth.month_start)
+    queryMonth.month_end = convert_UTC_Chinese(queryMonth.month_end)
+
+    name = user.personnel.name
+    queryMyMonthResponse = {}
+
+    statement = select(Workschedule).where(
+        Workschedule.work_date >= queryMonth.month_start,
+        Workschedule.work_date <= queryMonth.month_end
+    )
+    results = session.exec(statement).all()
+    result: Workschedule
+    for result in results:
+        personnel_links = result.personnel_links
+        personnel_link: WorkschedulePersonnelLink
+        names_in_personnel_links = [personnel_link.personnel.name for personnel_link in personnel_links]
+        if name in names_in_personnel_links:
+            work_date = result.work_date
+            ban = result.bantype.ban
+
+            names_in_personnel_links.remove(name)
+            coworker_names_list = names_in_personnel_links
+
+            _key = f'{name}_{work_date.year}_{work_date.month}_{work_date.day}'
+            _value = {
+                'ban': f'{ban.value}',
+                'coworkers': coworker_names_list
+            }
+            if queryMyMonthResponse.get(_key) is None:
+                queryMyMonthResponse[_key] = [_value]
+            else:
+                queryMyMonthResponse[_key].append(_value)
+
+    return queryMyMonthResponse
