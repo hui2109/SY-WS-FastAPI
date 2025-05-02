@@ -1,0 +1,65 @@
+.table-container {
+  width: 90%;
+  height: 40vh;
+  overflow: auto;
+  margin-bottom: 30px;
+  border: 1px solid #dee2e6;
+  z-index: 0;
+}
+
+.vacation-table {
+  width: 3000px;
+  table-layout: fixed;
+  border-collapse: separate;
+  border-spacing: 2px;
+}
+.vacation-table th, .vacation-table td {
+  text-align: center;
+  vertical-align: middle;
+  border: 1px solid #dee2e6;
+  padding: 8px;
+}
+.vacation-table thead tr:first-child th {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background-color: var(--bs-primary-bg-subtle);
+}
+.vacation-table thead tr:first-child th:first-child {
+  left: 0;
+  z-index: 4;
+  background-color: var(--bs-success);
+  width: 105px;
+}
+.vacation-table thead tr:first-child th:first-child .dropdown .custom-select-menu {
+  width: 89px;
+  min-width: unset;
+  border-radius: 8px;
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+  padding: 0;
+  text-align-last: center;
+}
+.vacation-table thead tr:first-child th:first-child .dropdown .custom-select-item:hover {
+  background-color: var(--bs-success);
+}
+.vacation-table thead tr:last-child th {
+  position: sticky;
+  top: 44px;
+  z-index: 2;
+  background-color: var(--bs-primary-bg-subtle);
+}
+.vacation-table tbody tr td:first-child {
+  position: sticky;
+  left: 0;
+  z-index: 3;
+  background-color: var(--bs-primary-bg-subtle);
+  border-right: 1px solid #ddd;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.clickable-cell {
+  cursor: pointer;
+}
+.clickable-cell:hover {
+  background-color: #f1f1f1;
+}

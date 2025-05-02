@@ -41,9 +41,11 @@ function displayUserInfo(userData) {
     // 设置用户头像
     userAvatarElement.src = userData[0];
     selectedAvatarInput.value = userData[0].split('/').pop();
+    sessionStorage.setItem('user_avatar', userData[0].split('/').pop());
 
     // 设置用户名
     userNameElement.textContent = userData[1];
+    sessionStorage.setItem('user_name', userData[1]);
 }
 
 // 更新头像

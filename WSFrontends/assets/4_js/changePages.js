@@ -82,12 +82,13 @@ document.addEventListener('DOMContentLoaded', function () {
             // 模拟index点击
             const indexLink = document.querySelector(`.${classname}`);
             indexLink.click();
-        };
+        }
+        ;
     }
 
     // 页面初始化
     (() => {
-        window.location.hash = '#work-mine';
+        window.location.hash = '#reserve-all';
         checkHash();
     })();
     // 监听hash变化
