@@ -1,4 +1,4 @@
-/* 头像选择器样式 */
+// 头像选择器样式
 .avatar-option {
   width: 100%;
   aspect-ratio: 1;
@@ -20,3 +20,29 @@
     box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
   }
 }
+
+// alert警告框样式
+.custom-alert {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  max-width: 350px;
+  z-index: 9999;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transform: translateX(400px);
+  transition: transform 0.3s ease-in-out;
+
+  &.show {
+    transform: translateX(0);
+  }
+}
+.alert-container {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 9999;
+}
+

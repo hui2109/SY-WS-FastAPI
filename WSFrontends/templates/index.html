@@ -719,17 +719,20 @@
         <div class="modal-header">
           <h5 class="modal-title" id="bookingModalLabel">预约休假</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          <input type="hidden" id="bookingSequence" value="wu" required>
         </div>
+
         <div id="bookingContent" class="modal-body">
           <p class="mt-0 mb-2">预约方式：</p>
           <ul class="list-group list-group-horizontal reserveMode">
             <li class="list-group-item">
-              <input class="form-check-input me-1" type="radio" name="listGroupRadio" value="" id="singleMode" checked>
+              <input class="form-check-input me-1" type="radio" name="reserveModeRadio" value="0" id="singleMode"
+                checked>
               <label class="form-check-label" for="singleMode">独立预约</label>
             </li>
             <li class="list-group-item">
-              <input class="form-check-input me-1" type="radio" name="listGroupRadio" value="" id="shareMode">
-              <label class="form-check-label" for="shareMode">拼假预约 (最多3人拼)</label>
+              <input class="form-check-input me-1" type="radio" name="reserveModeRadio" value="1" id="shareMode">
+              <label class="form-check-label" for="shareMode">拼假预约（最多3人拼）</label>
             </li>
           </ul>
 
@@ -737,28 +740,31 @@
           <ul class="list-group list-group-horizontal list-group-flush bookingPerson">
             <li class="list-group-item ps-2">
               <button type="button" class="btn btn-success" disabled>张旭辉</button>
+              <input type="hidden" id="bookingPerson0" value="wu" required>
             </li>
 
             <li class="list-group-item">
               <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown"
-                aria-expanded="false">
+                aria-expanded="false" data-default="拼假人1">
                 拼假人1
               </button>
               <ul class="dropdown-menu">
                 <li><span class="dropdown-item">廖中凡</span></li>
                 <li><span class="dropdown-item">尹红科</span></li>
               </ul>
+              <input type="hidden" id="bookingPerson1" value="wu" required>
             </li>
 
             <li class="list-group-item">
               <button type="button" class="btn btn-warning dropdown-toggle" data-bs-toggle="dropdown"
-                aria-expanded="false">
+                aria-expanded="false" data-default="拼假人2">
                 拼假人2
               </button>
               <ul class="dropdown-menu">
                 <li><span class="dropdown-item">曾小洲</span></li>
                 <li><span class="dropdown-item">凌子涵</span></li>
               </ul>
+              <input type="hidden" id="bookingPerson2" value="wu" required>
             </li>
           </ul>
 
@@ -766,140 +772,161 @@
           <ul class="list-group bookingDate">
             <li class="list-group-item d-flex justify-content-between align-items-center">
               <div>
-                <input class="form-check-input me-1 border border-success" type="checkbox" value=""
+                <input class="form-check-input me-1 border border-success" type="checkbox" value="wu"
                   id="selectedPeriodcb1-1">
                 <label class="form-check-label text-success" for="selectedPeriodcb1-1">2025年1月30日</label>
+                <input type="hidden" id="bookingDate00" value="wu" required>
               </div>
               <div class="d-flex justify-content-between">
                 <div class="me-3">
-                  <input class="form-check-input border border-primary" type="checkbox" value=""
+                  <input class="form-check-input border border-primary" type="checkbox" value="wu"
                     id="selectedPeriodcb1-2">
                   <label class="form-check-label text-primary" for="selectedPeriodcb1-2">拼假人1</label>
+                  <input type="hidden" id="bookingDate10" value="wu" required>
                 </div>
                 <div>
-                  <input class="form-check-input border border-warning" type="checkbox" value=""
+                  <input class="form-check-input border border-warning" type="checkbox" value="wu"
                     id="selectedPeriodcb1-3">
                   <label class="form-check-label text-warning" for="selectedPeriodcb1-3">拼假人2</label>
+                  <input type="hidden" id="bookingDate20" value="wu" required>
                 </div>
               </div>
             </li>
 
             <li class="list-group-item d-flex justify-content-between align-items-center">
               <div>
-                <input class="form-check-input me-1 border border-success" type="checkbox" value=""
+                <input class="form-check-input me-1 border border-success" type="checkbox" value="wu"
                   id="selectedPeriodcb2-1">
                 <label class="form-check-label text-success" for="selectedPeriodcb2-1">2025年1月31日</label>
+                <input type="hidden" id="bookingDate01" value="wu" required>
               </div>
               <div class="d-flex justify-content-between">
                 <div class="me-3">
-                  <input class="form-check-input border border-primary" type="checkbox" value=""
+                  <input class="form-check-input border border-primary" type="checkbox" value="wu"
                     id="selectedPeriodcb2-2">
                   <label class="form-check-label text-primary" for="selectedPeriodcb2-2">拼假人1</label>
+                  <input type="hidden" id="bookingDate11" value="wu" required>
                 </div>
                 <div>
-                  <input class="form-check-input border border-warning" type="checkbox" value=""
+                  <input class="form-check-input border border-warning" type="checkbox" value="wu"
                     id="selectedPeriodcb2-3">
                   <label class="form-check-label text-warning" for="selectedPeriodcb2-3">拼假人2</label>
+                  <input type="hidden" id="bookingDate21" value="wu" required>
                 </div>
               </div>
             </li>
 
             <li class="list-group-item d-flex justify-content-between align-items-center">
               <div>
-                <input class="form-check-input me-1 border border-success" type="checkbox" value=""
+                <input class="form-check-input me-1 border border-success" type="checkbox" value="wu"
                   id="selectedPeriodcb3-1">
                 <label class="form-check-label text-success" for="selectedPeriodcb3-1">2025年2月1日</label>
+                <input type="hidden" id="bookingDate02" value="wu" required>
               </div>
               <div class="d-flex justify-content-between">
                 <div class="me-3">
-                  <input class="form-check-input border border-primary" type="checkbox" value=""
+                  <input class="form-check-input border border-primary" type="checkbox" value="wu"
                     id="selectedPeriodcb3-2">
                   <label class="form-check-label text-primary" for="selectedPeriodcb3-2">拼假人1</label>
+                  <input type="hidden" id="bookingDate12" value="wu" required>
                 </div>
                 <div>
-                  <input class="form-check-input border border-warning" type="checkbox" value=""
+                  <input class="form-check-input border border-warning" type="checkbox" value="wu"
                     id="selectedPeriodcb3-3">
                   <label class="form-check-label text-warning" for="selectedPeriodcb3-3">拼假人2</label>
+                  <input type="hidden" id="bookingDate22" value="wu" required>
                 </div>
               </div>
             </li>
 
             <li class="list-group-item d-flex justify-content-between align-items-center">
               <div>
-                <input class="form-check-input me-1 border border-success" type="checkbox" value=""
+                <input class="form-check-input me-1 border border-success" type="checkbox" value="wu"
                   id="selectedPeriodcb4-1">
                 <label class="form-check-label text-success" for="selectedPeriodcb4-1">2025年2月2日</label>
+                <input type="hidden" id="bookingDate03" value="wu" required>
               </div>
               <div class="d-flex justify-content-between">
                 <div class="me-3">
-                  <input class="form-check-input border border-primary" type="checkbox" value=""
+                  <input class="form-check-input border border-primary" type="checkbox" value="wu"
                     id="selectedPeriodcb4-2">
                   <label class="form-check-label text-primary" for="selectedPeriodcb4-2">拼假人1</label>
+                  <input type="hidden" id="bookingDate13" value="wu" required>
                 </div>
                 <div>
-                  <input class="form-check-input border border-warning" type="checkbox" value=""
+                  <input class="form-check-input border border-warning" type="checkbox" value="wu"
                     id="selectedPeriodcb4-3">
                   <label class="form-check-label text-warning" for="selectedPeriodcb4-3">拼假人2</label>
+                  <input type="hidden" id="bookingDate23" value="wu" required>
                 </div>
               </div>
             </li>
 
             <li class="list-group-item d-flex justify-content-between align-items-center">
               <div>
-                <input class="form-check-input me-1 border border-success" type="checkbox" value=""
+                <input class="form-check-input me-1 border border-success" type="checkbox" value="wu"
                   id="selectedPeriodcb5-1">
                 <label class="form-check-label text-success" for="selectedPeriodcb5-1">2025年2月3日</label>
+                <input type="hidden" id="bookingDate04" value="wu" required>
               </div>
               <div class="d-flex justify-content-between">
                 <div class="me-3">
-                  <input class="form-check-input border border-primary" type="checkbox" value=""
+                  <input class="form-check-input border border-primary" type="checkbox" value="wu"
                     id="selectedPeriodcb5-2">
                   <label class="form-check-label text-primary" for="selectedPeriodcb5-2">拼假人1</label>
+                  <input type="hidden" id="bookingDate14" value="wu" required>
                 </div>
                 <div>
-                  <input class="form-check-input border border-warning" type="checkbox" value=""
+                  <input class="form-check-input border border-warning" type="checkbox" value="wu"
                     id="selectedPeriodcb5-3">
                   <label class="form-check-label text-warning" for="selectedPeriodcb5-3">拼假人2</label>
+                  <input type="hidden" id="bookingDate24" value="wu" required>
                 </div>
               </div>
             </li>
 
             <li class="list-group-item d-flex justify-content-between align-items-center">
               <div>
-                <input class="form-check-input me-1 border border-success" type="checkbox" value=""
+                <input class="form-check-input me-1 border border-success" type="checkbox" value="wu"
                   id="selectedPeriodcb6-1">
                 <label class="form-check-label text-success" for="selectedPeriodcb6-1">2025年2月4日</label>
+                <input type="hidden" id="bookingDate05" value="wu" required>
               </div>
               <div class="d-flex justify-content-between">
                 <div class="me-3">
-                  <input class="form-check-input border border-primary" type="checkbox" value=""
+                  <input class="form-check-input border border-primary" type="checkbox" value="wu"
                     id="selectedPeriodcb6-2">
                   <label class="form-check-label text-primary" for="selectedPeriodcb6-2">拼假人1</label>
+                  <input type="hidden" id="bookingDate15" value="wu" required>
                 </div>
                 <div>
-                  <input class="form-check-input border border-warning" type="checkbox" value=""
+                  <input class="form-check-input border border-warning" type="checkbox" value="wu"
                     id="selectedPeriodcb6-3">
                   <label class="form-check-label text-warning" for="selectedPeriodcb6-3">拼假人2</label>
+                  <input type="hidden" id="bookingDate25" value="wu" required>
                 </div>
               </div>
             </li>
 
             <li class="list-group-item d-flex justify-content-between align-items-center">
               <div>
-                <input class="form-check-input me-1 border border-success" type="checkbox" value=""
+                <input class="form-check-input me-1 border border-success" type="checkbox" value="wu"
                   id="selectedPeriodcb7-1">
                 <label class="form-check-label text-success" for="selectedPeriodcb7-1">2025年2月5日</label>
+                <input type="hidden" id="bookingDate06" value="wu" required>
               </div>
               <div class="d-flex justify-content-between">
                 <div class="me-3">
-                  <input class="form-check-input border border-primary" type="checkbox" value=""
+                  <input class="form-check-input border border-primary" type="checkbox" value="wu"
                     id="selectedPeriodcb7-2">
                   <label class="form-check-label text-primary" for="selectedPeriodcb7-2">拼假人1</label>
+                  <input type="hidden" id="bookingDate16" value="wu" required>
                 </div>
                 <div>
-                  <input class="form-check-input border border-warning" type="checkbox" value=""
+                  <input class="form-check-input border border-warning" type="checkbox" value="wu"
                     id="selectedPeriodcb7-3">
                   <label class="form-check-label text-warning" for="selectedPeriodcb7-3">拼假人2</label>
+                  <input type="hidden" id="bookingDate26" value="wu" required>
                 </div>
               </div>
             </li>
@@ -909,7 +936,7 @@
           <ul class="list-group list-group-horizontal list-group-flush relaxType">
             <li class="list-group-item ps-2">
               <button type="button" class="btn btn-success dropdown-toggle" data-bs-toggle="dropdown"
-                aria-expanded="false">
+                aria-expanded="false" data-default="请选择">
                 请选择
               </button>
               <ul class="dropdown-menu">
@@ -922,13 +949,14 @@
                 <li><span class="dropdown-item">陪产假</span></li>
                 <li><span class="dropdown-item">育儿假</span></li>
                 <li><span class="dropdown-item">丧假</span></li>
-                <li><span class="dropdown-item">其他家</span></li>
+                <li><span class="dropdown-item">其他假</span></li>
               </ul>
+              <input type="hidden" id="relaxType0" value="wu" required>
             </li>
 
             <li class="list-group-item">
               <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown"
-                aria-expanded="false">
+                aria-expanded="false" data-default="拼假人1">
                 拼假人1
               </button>
               <ul class="dropdown-menu">
@@ -941,13 +969,14 @@
                 <li><span class="dropdown-item">陪产假</span></li>
                 <li><span class="dropdown-item">育儿假</span></li>
                 <li><span class="dropdown-item">丧假</span></li>
-                <li><span class="dropdown-item">其他家</span></li>
+                <li><span class="dropdown-item">其他假</span></li>
               </ul>
+              <input type="hidden" id="relaxType1" value="wu" required>
             </li>
 
             <li class="list-group-item">
               <button type="button" class="btn btn-warning dropdown-toggle" data-bs-toggle="dropdown"
-                aria-expanded="false">
+                aria-expanded="false" data-default="拼假人2">
                 拼假人2
               </button>
               <ul class="dropdown-menu">
@@ -960,8 +989,9 @@
                 <li><span class="dropdown-item">陪产假</span></li>
                 <li><span class="dropdown-item">育儿假</span></li>
                 <li><span class="dropdown-item">丧假</span></li>
-                <li><span class="dropdown-item">其他家</span></li>
+                <li><span class="dropdown-item">其他假</span></li>
               </ul>
+              <input type="hidden" id="relaxType2" value="wu" required>
             </li>
           </ul>
         </div>
@@ -978,10 +1008,13 @@
           </div>
         </div>
 
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
-          <button type="button" class="btn btn-primary" id="confirmBooking">确认预约</button>
-          <button type="button" class="btn btn-danger" id="cancelBooking" style="display: none;">取消预约</button>
+        <div class="modal-footer justify-content-between">
+          <button type="button" class="btn btn-info" id="resetBooking">重置</button>
+          <div>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
+            <button type="button" class="btn btn-primary" id="confirmBooking">确认预约</button>
+            <button type="button" class="btn btn-danger" id="cancelBooking" style="display: none;">取消预约</button>
+          </div>
         </div>
       </div>
     </div>
@@ -999,6 +1032,7 @@
 
   <!-- 我的js文件, 按顺序引入 -->
   <script src="/WSFrontends/assets/4_js/myConstant.js"></script>
+  <script src="/WSFrontends/assets/4_js/differentAlert.js"></script>
   <script src="/WSFrontends/assets/4_js/changePages.js"></script>
   <script src="/WSFrontends/assets/4_js/initTables.js"></script>
   <script src="/WSFrontends/assets/4_js/datePicker.js"></script>
