@@ -3,7 +3,7 @@ function initAvatarModal() {
     const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
     const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl, {
         placement: 'top',
-        delay: { show: 500, hide: 50 },
+        delay: {show: 500, hide: 50},
         container: '.avatar-grid'
     }));
 
@@ -46,6 +46,18 @@ function initAvatarModal() {
             avatarPreview.src = `/WSFrontends/assets/img/avatars/${avatarFile}`;
         });
     });
+}
+
+
+function getToken() {
+    // 获取token
+    const token = sessionStorage.getItem('access_token');
+    if (!token) {
+        // 如果没有令牌，重定向到登录页面
+        window.location.href = '/login';
+        return;
+    }
+    return token;
 }
 
 document.addEventListener('DOMContentLoaded', function () {

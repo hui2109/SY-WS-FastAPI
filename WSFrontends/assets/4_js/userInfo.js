@@ -7,11 +7,8 @@ const logoutBtn = document.getElementById('logoutBtn');
 // 获取并显示用户信息
 function loadUserInfo() {
     // 获取token
-    const token = sessionStorage.getItem('access_token');
-
+    const token = getToken();
     if (!token) {
-        // 如果没有令牌，重定向到登录页面
-        window.location.href = '/login';
         return;
     }
 

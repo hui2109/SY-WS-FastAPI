@@ -23,6 +23,8 @@ class Bantype(SQLModel, table=True):
     description: str | None
 
     workschedule: list["Workschedule"] = Relationship(back_populates="bantype")
+    restinfos: list["RestInfo"] = Relationship(back_populates="bantype")
+    reservevacation: list["ReserveVacation"] = Relationship(back_populates="bantype")
 
     # # 保证5个加起来的组合唯一
     # __table_args__ = (
@@ -53,9 +55,9 @@ class Personnel(SQLModel, table=True):
     # Personnel持有Account的外键，定义明确的一对一关系
     account: Account = Relationship(back_populates="personnel")
     restinfos: list["RestInfo"] = Relationship(back_populates="personnel")
-    workschedule_links: list[WorkschedulePersonnelLink] = Relationship(
-        back_populates="personnel"
-    )
+    reservevacation: list["ReserveVacation"] = Relationship(back_populates="personnel")
+    workschedule_links: list[WorkschedulePersonnelLink] = Relationship(back_populates="personnel")
+    # reservevacation_links: list["ReservePersonnelLink"] = Relationship(back_populates="personnel")
 
 
 # 排班表对班种: 多对一
@@ -65,18 +67,40 @@ class Workschedule(SQLModel, table=True):
     bantype_id: int | None = Field(default=None, foreign_key="bantype.id")
 
     bantype: Bantype | None = Relationship(back_populates="workschedule")
-    personnel_links: list[WorkschedulePersonnelLink] = Relationship(
-        back_populates="workschedule"
-    )
+    personnel_links: list[WorkschedulePersonnelLink] = Relationship(back_populates="workschedule")
 
 
+# 休息日对班种: 多对一
+# 休息日对人: 多对一
 class RestInfo(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
     start_date: datetime = Field(index=True)
     end_date: datetime = Field(index=True)
     available_days: int
-    remain_days: int
-    spend_days: int
     personnel_id: int | None = Field(default=None, foreign_key="personnel.id")
+    bantype_id: int | None = Field(default=None, foreign_key="bantype.id")
 
     personnel: Personnel | None = Relationship(back_populates="restinfos")
+    bantype: Bantype | None = Relationship(back_populates="restinfos")
+
+
+# class ReservePersonnelLink(SQLModel, table=True):
+#     reservevacation_id: int = Field(foreign_key="reservevacation.id", primary_key=True)
+#     personnel_id: int = Field(foreign_key="personnel.id", primary_key=True)
+#
+#     personnel: Personnel = Relationship(back_populates="reservevacation_links")
+#     reservevacation: "ReserveVacation" = Relationship(back_populates="personnel_links")
+
+
+# 预约排班 与 人 : 多对一
+# 预约排班 与 班 : 多对一
+class ReserveVacation(SQLModel, table=True):
+    id: int | None = Field(default=None, primary_key=True)
+    sequence: int = Field(index=True)
+    reserve_date: datetime = Field(index=True)
+    bantype_id: int | None = Field(default=None, foreign_key="bantype.id")
+    personnel_id: int | None = Field(default=None, foreign_key="personnel.id")
+
+    bantype: Bantype | None = Relationship(back_populates="reservevacation")
+    personnel: Personnel | None = Relationship(back_populates="reservevacation")
+    # personnel_links: list[ReservePersonnelLink] = Relationship(back_populates="reservevacation")

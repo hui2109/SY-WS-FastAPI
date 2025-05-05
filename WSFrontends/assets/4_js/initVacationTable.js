@@ -174,9 +174,8 @@ class InitVacationTable {
                 result = this.checkShareFormValidation(Math.max(index, 2))
                 if (result.length === 0) return;
             }
-            console.log('哈哈哈', result);
-            return result;
 
+            this.sendData(result);
         })
 
         // 处理  [预约人]  的点击事件
@@ -313,7 +312,7 @@ class InitVacationTable {
         // 模拟 [独立预约方式] 的点击事件
         this.reserveMode[0].click();
 
-        const modalInstance = new bootstrap.Modal(bookingModal);
+        const modalInstance = new bootstrap.Modal(this.bookingModal);
         modalInstance.show();
     }
 
@@ -348,7 +347,8 @@ class InitVacationTable {
             return false;
         }
 
-        return {bookingSequence, bookingPerson, relaxType, bookingDates};
+        //return {bookingSequence, bookingPerson, relaxType, bookingDates};
+        return {'sequence': bookingSequence, 'name': bookingPerson, 'ban': relaxType, 'reserve_dates': bookingDates};
     }
 
     checkShareFormValidation(maxIndex) {
@@ -362,6 +362,46 @@ class InitVacationTable {
             }
         }
         return pureData
+    }
+
+    sendData(result) {
+        // 获取token
+        const token = getToken();
+        if (!token) {
+            return;
+        }
+
+        // 向服务器发请求
+        fetch('/create-reserve', {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(result)
+        }).then(response =>
+            response.json().then(data => {
+                if (response.ok) {
+                    showAlert({
+                        type: 'success',
+                        title: '预约成功！',
+                        message: data.detail,
+                    });
+                    const modalInstance = bootstrap.Modal.getInstance(this.bookingModal);
+                    modalInstance.hide();
+                } else {
+                    showAlert({
+                        type: 'danger',
+                        title: '预约失败！',
+                        message: data.detail,
+                    });
+                }
+            })
+        ).catch(error => {
+            alert('预约失败！未知错误！');
+            console.error(error);
+        })
     }
 }
 

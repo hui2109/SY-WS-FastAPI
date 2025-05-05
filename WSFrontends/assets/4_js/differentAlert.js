@@ -12,6 +12,13 @@ function getAlertContainer(parentNode) {
 }
 
 // 显示提示框
+/**
+ * @param {'primary'|'secondary'|'success'|'danger'|'warning'|'info'|'light'|'dark'} type
+ * @param {string} title
+ * @param {string} message
+ * @param {number} [duration]
+ * @param {HTMLElement} [parentNode]
+ */
 function showAlert({
                        type,
                        title,
