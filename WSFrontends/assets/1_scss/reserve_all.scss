@@ -11,24 +11,24 @@
 
 .vacation-table {
   // min-width: 1200px;
-  width: 3000px;
+  width: 2800px;
   // overflow: auto;
   table-layout: fixed;
   border-collapse: separate; // 重要：使用 separate 而不是 collapse
   border-spacing: 2px;
 
-  & th,
-  & td {
+  th,
+  td {
     text-align: center;
     vertical-align: middle;
     border: 1px solid #dee2e6;
-    padding: 8px;
+    //padding: 8px;
     // min-width: 80px;
   }
 
-  & thead tr {
+  thead tr {
     &:first-child {
-      & th {
+      th {
         &:first-child {
           // 固定左上角单元格
           left: 0;
@@ -36,8 +36,8 @@
           background-color: var(--bs-success);
           width: 105px;
 
-          & .dropdown {
-            & .custom-select-menu {
+          .dropdown {
+            .custom-select-menu {
               width: 89px;
               min-width: unset;
 
@@ -47,7 +47,7 @@
               text-align-last: center;
             }
 
-            & .custom-select-item:hover {
+            .custom-select-item:hover {
               background-color: var(--bs-success);
             }
           }
@@ -67,7 +67,7 @@
     }
 
     &:last-child {
-      & th {
+      th {
         position: sticky;
         top: 44px;
         z-index: 2;
@@ -76,15 +76,18 @@
     }
   }
 
-  & tbody tr td:first-child {
-    background-color: aqua;
-    position: sticky;
-    left: 0;
-    z-index: 3;
-    background-color: var(--bs-primary-bg-subtle);
+  tbody tr td {
+    &:first-child {
+      position: sticky;
+      left: 0;
+      z-index: 3;
+      background-color: var(--bs-primary-bg-subtle);
 
-    border-right: 1px solid #ddd; // 添加右边框
-    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1); // 添加阴影效果
+      border-right: 1px solid #ddd; // 添加右边框
+      box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1); // 添加阴影效果
+    }
+    width: 90px;
+    height: 60px;
   }
 }
 
@@ -94,4 +97,33 @@
   &:hover {
     background-color: #f1f1f1;
   }
+
+  .label-bar {
+    position: relative;
+    height: 40%;
+
+    .row{
+      height: 100%;
+
+      > *{
+        padding: 0;
+        background-color: transparent;
+      }
+    }
+
+    .label-text {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 12px;
+      font-weight: bolder;
+      color: var(--bs-body-color);
+    }
+
+    &:not(:last-child){
+      margin-bottom: 2px;
+    }
+  }
 }
+

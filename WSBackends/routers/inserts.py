@@ -87,11 +87,13 @@ async def create_reserve(reserves: list[OneReserve], session: SessionDep):
             current_reserve_vacation = session.exec(select(ReserveVacation).where(
                 ReserveVacation.sequence == one_reserve.sequence,
                 ReserveVacation.reserve_date == reserve_date,
-                ReserveVacation.bantype == bantype,
+                ReserveVacation.sequence == one_reserve.sequence,
                 ReserveVacation.personnel == personnel
             )).first()
             if not current_reserve_vacation:
                 current_reserve_vacation = ReserveVacation(**one_reserve.model_dump(), reserve_date=reserve_date, bantype=bantype, personnel=personnel)
                 session.add(current_reserve_vacation)
+            else:
+                current_reserve_vacation.bantype = bantype
         session.commit()
     return {'detail': '预约休假成功!'}

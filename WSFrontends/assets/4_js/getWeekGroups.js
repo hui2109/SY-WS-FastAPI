@@ -4,8 +4,8 @@ dayjs.extend(dayjs_plugin_localeData);
 dayjs.locale('zh-cn');
 
 function generateWeeklyGroups(startYear, startMonth, endYear, endMonth) {
-    const result = {};
-    const result_obj = {};
+    let result = {};
+    let result_obj = {};
 
     const startDate = dayjs(`${startYear}-${startMonth}-01`).startOf('month');
     const endDate = dayjs(`${endYear}-${endMonth}-01`).endOf('month');
@@ -54,8 +54,17 @@ function generateWeeklyGroups(startYear, startMonth, endYear, endMonth) {
         current = current.add(1, 'week');
     }
 
+    // 排除非本年的数据
+    result = {
+        [startYear]: result[startYear]
+    };
+    result_obj = {
+        [startYear]: result_obj[startYear]
+    };
+
     return [result, result_obj];
 }
+
 
 // const groupedDates = generateWeeklyGroups(2025, 1, 2025, 6);
 // console.log(JSON.stringify(groupedDates, null, 2));

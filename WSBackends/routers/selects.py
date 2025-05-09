@@ -6,7 +6,7 @@ from sqlmodel import select
 from pypinyin import pinyin, load_phrases_dict, lazy_pinyin
 
 from .utils import convert_UTC_Chinese
-from ..database.models import Workschedule, Account, WorkschedulePersonnelLink
+from ..database.models import Workschedule, Account, WorkschedulePersonnelLink, ReserveVacation
 from ..dependencies import get_current_user, SessionDep
 
 router = APIRouter(tags=["selects"], dependencies=[Depends(get_current_user)])
@@ -94,3 +94,33 @@ async def select_my_month_schedule(queryMonth: QueryMonth, session: SessionDep, 
                 queryMyMonthResponse[_key].append(_value)
 
     return queryMyMonthResponse
+
+
+@router.post("/select_all-reservations", dependencies=None)
+async def select_all_reservations(queryMonth: QueryMonth, session: SessionDep):
+    # UTC时区 转 中国时区
+    queryMonth.month_start = convert_UTC_Chinese(queryMonth.month_start)
+    queryMonth.month_end = convert_UTC_Chinese(queryMonth.month_end)
+
+    queryAllReservationsResponse = []
+
+    statement = select(ReserveVacation).where(
+        ReserveVacation.reserve_date >= queryMonth.month_start,
+        ReserveVacation.reserve_date <= queryMonth.month_end
+    )
+    results = session.exec(statement).all()
+    result: ReserveVacation
+    for result in results:
+        sequence = result.sequence
+        reserve_date = result.reserve_date
+        name = result.personnel.name
+        bantype = result.bantype.ban.value
+
+        queryAllReservationsResponse.append({
+            'sequence': sequence,
+            'reserve_date': reserve_date,
+            'name': name,
+            'bantype': bantype
+        })
+
+    return queryAllReservationsResponse

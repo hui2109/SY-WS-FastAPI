@@ -8,16 +8,16 @@
 }
 
 .vacation-table {
-  width: 3000px;
+  width: 2800px;
   table-layout: fixed;
   border-collapse: separate;
   border-spacing: 2px;
 }
-.vacation-table th, .vacation-table td {
+.vacation-table th,
+.vacation-table td {
   text-align: center;
   vertical-align: middle;
   border: 1px solid #dee2e6;
-  padding: 8px;
 }
 .vacation-table thead tr:first-child th {
   position: sticky;
@@ -48,6 +48,10 @@
   z-index: 2;
   background-color: var(--bs-primary-bg-subtle);
 }
+.vacation-table tbody tr td {
+  width: 90px;
+  height: 60px;
+}
 .vacation-table tbody tr td:first-child {
   position: sticky;
   left: 0;
@@ -62,4 +66,27 @@
 }
 .clickable-cell:hover {
   background-color: #f1f1f1;
+}
+.clickable-cell .label-bar {
+  position: relative;
+  height: 40%;
+}
+.clickable-cell .label-bar .row {
+  height: 100%;
+}
+.clickable-cell .label-bar .row > * {
+  padding: 0;
+  background-color: transparent;
+}
+.clickable-cell .label-bar .label-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 12px;
+  font-weight: bolder;
+  color: var(--bs-body-color);
+}
+.clickable-cell .label-bar:not(:last-child) {
+  margin-bottom: 2px;
 }

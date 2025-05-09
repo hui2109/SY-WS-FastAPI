@@ -1,17 +1,34 @@
 class InitVacationTable {
+    constructor(year) {
+        this.true_day_start = dayjs(`2099-01-01`);
+        this.true_day_end = dayjs(`1900-01-01`);
+        this.init_year = year;
+    }
+
     init() {
-        this.modifyHalfTableHead('firstHalfTableHead', 2025, 1, 2025, 6);
+        this.modifyHalfTableHead('firstHalfTableHead', this.init_year, 1, this.init_year, 6);
         this.generateTableRows('firstHalfTableBody', 10);
 
-        this.modifyHalfTableHead('secondHalfTableHead', 2025, 7, 2025, 12, 6);
+        this.modifyHalfTableHead('secondHalfTableHead', this.init_year, 7, this.init_year, 12, 6);
         this.generateTableRows('secondHalfTableBody', 10);
 
         this.lookForElement();
         this.bindClickEvent();
+
+        this.getReserveData();
+
+        console.log(this.true_day_start, this.true_day_end);
     }
 
     modifyHalfTableHead(_id, startYear, startMonth, endYear, endMonth, delta = null) {
         [this.GroupedDates, this.GroupedDatesObj] = generateWeeklyGroups(startYear, startMonth, endYear, endMonth);
+        [this.day_start, this.day_end] = this.getStartEndDates();
+        if (this.day_start <= this.true_day_start) {
+            this.true_day_start = this.day_start;
+        }
+        if (this.day_end >= this.true_day_end) {
+            this.true_day_end = this.day_end;
+        }
 
         console.log(this.GroupedDates)
         console.log(this.GroupedDatesObj)
@@ -58,7 +75,8 @@ class InitVacationTable {
             // 日期组列
             for (let j = 0; j < this.col_nums; j++) {
                 const cell = document.createElement('td');
-                cell.className = 'clickable-cell';
+                cell.classList.add('clickable-cell');
+                //cell.classList.add('position-relative');
                 cell.dataset.serialNum = i;
                 cell.dataset.colNum = j;
                 cell.dataset.dateRange = this.getCellDateRange(j);
@@ -403,7 +421,240 @@ class InitVacationTable {
             console.error(error);
         })
     }
+
+    getStartEndDates() {
+        let year = Object.keys(this.GroupedDates)[0];
+        let month_start = Object.keys(this.GroupedDates[year])[0];
+        let month_end = Object.keys(this.GroupedDates[year])[Object.keys(this.GroupedDates[year]).length - 1];
+        let day_start = this.GroupedDatesObj[year][month_start][0][0];
+        let day_end = this.GroupedDatesObj[year][month_end][Object.keys(this.GroupedDates[year][month_end]).length - 1][1];
+
+        return [day_start, day_end];
+    }
+
+    getReserveData() {
+        let data = {
+            month_start: this.true_day_start,
+            month_end: this.true_day_end,
+        }
+        // 获取token
+        const token = getToken();
+        if (!token) {
+            return;
+        }
+
+        fetch('/select_all-reservations', {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(data)
+        }).then(response => {
+            response.json().then(data => {
+                this.server_reserve_data = data;
+                console.log(this.server_reserve_data);
+                this.renderTableCells();
+            })
+        })
+
+    }
+
+    renderTableCells() {
+        let tableCells = document.querySelectorAll('#reserve-content-all .clickable-cell');
+        let tryCell = tableCells[0];
+        //tryCell.innerHTML = `
+        //<div class="container position-relative" style="height: 40%;">
+        //    <div class="row h-100">
+        //        <div class="col-3 bg-success p-0"></div>
+        //        <div class="col-6 bg-warning p-0"></div>
+        //        <div class="col-3 bg-primary p-0"></div>
+        //    </div>
+        //    <div class="position-absolute" style="top: 50%;left: 50%;transform: translate(-50%, -50%);font-size: 12px;color: #a52834">张旭辉</div>
+        //</div>
+        //`;
+
+        tryCell.innerHTML += `
+        <div class="container label-bar">
+            <div class="row">
+                <div class="col" style="background-color:transparent;"></div>
+                <div class="col" style="background-color:transparent;"></div>
+                <div class="col" style="background-color:transparent;"></div>
+                <div class="col" style="background-color:transparent;"></div>
+                <div class="col" style="background-color:transparent;"></div>
+                <div class="col" style="background-color:transparent;"></div>
+                <div class="col" style="background-color:transparent;"></div>
+            </div>
+            <div class="label-text">张旭辉</div>
+        </div>
+        `;
+
+        tryCell.innerHTML += `
+        <div class="container label-bar">
+            <div class="row">
+                <div class="col bg-success"></div>
+                <div class="col bg-warning"></div>
+                <div class="col bg-primary"></div>
+                <div class="col bg-danger"></div>
+                <div class="col bg-body"></div>
+                <div class="col bg-info"></div>
+                <div class="col bg-black"></div>
+            </div>
+            <div class="label-text">廖中凡</div>
+        </div>
+        `;
+
+        tryCell.innerHTML += `
+        <div class="container label-bar">
+            <div class="row">
+                <div class="col bg-success"></div>
+                <div class="col bg-warning"></div>
+                <div class="col bg-primary"></div>
+                <div class="col bg-danger"></div>
+                <div class="col bg-body"></div>
+                <div class="col bg-info"></div>
+                <div class="col bg-black"></div>
+            </div>
+            <div class="label-text">曾小洲</div>
+        </div>
+        `;
+        // 以上都是无用的
+
+
+        this.targetCells = {}
+        if (this.server_reserve_data.length === 0) {
+            return;
+        }
+        this.getBanTypeColor();
+
+        for (let server_data of this.server_reserve_data) {
+            let targetCell = {
+                tableCell: null,
+                name: null,
+                bantype_days: [
+                    // {bantype: null, days: []},
+                    // {bantype: null, days: []}
+                ]
+            }
+
+            let sequence = server_data['sequence'];
+            let name = server_data['name'];
+            let bantype = server_data['bantype'];
+            let reserve_date = dayjs(server_data['reserve_date']);
+
+            const startDate = reserve_date.startOf('isoWeek');
+            const endDate = reserve_date.endOf('isoWeek');
+            let xingQi;  // 星期一到星期天  对应 0-6
+            if (xingQi !== 0) {
+                xingQi = reserve_date.day() - 1
+            } else {
+                xingQi = 6
+            }
+
+            let dateRange = `${startDate.format('YYYY-MM-DD')},${endDate.format('YYYY-MM-DD')}`;
+            let tableCell = document.querySelector(`#reserve-content-all .clickable-cell[data-date-range="${dateRange}"][data-serial-num="${sequence}"]`);
+            if (tableCell) {
+                // 使用行 + 列 + 日期 + 名字 标识每个单元格
+                let index = `${tableCell.dataset.serialNum}_${tableCell.dataset.colNum}_${tableCell.dataset.dateRange}_${name}`
+
+                if (!this.targetCells[index]) {
+                    targetCell['tableCell'] = tableCell;
+                    targetCell['name'] = name;
+                    targetCell['bantype_days'].push({bantype: bantype, days: [xingQi]})
+                    this.targetCells[index] = targetCell
+                } else {
+                    let bantype_days = this.targetCells[index]['bantype_days']
+                    for (let bantypeDay of bantype_days) {
+                        if (bantype === bantypeDay['bantype']) {
+                            bantypeDay['days'].push(xingQi);
+                        } else {
+                            bantype_days.push({bantype: bantype, days: [xingQi]})
+                        }
+                    }
+                }
+            } else {
+                console.error(`没有找到对应的单元格: ${dateRange}, ${sequence}`);
+            }
+        }
+
+        console.log(this.targetCells)
+        this.renderTableCell();
+    }
+
+    renderTableCell() {
+        for (let targetCellsKey in this.targetCells) {
+            let targetCell = this.targetCells[targetCellsKey];
+            let name = targetCell['name'];
+            let tableCell = targetCell['tableCell'];
+            let bantype_days = targetCell['bantype_days'];
+
+            this.getLabelBar(name, bantype_days, tableCell);
+        }
+    }
+
+    getLabelBar(name, bantype_days, tableCell) {
+        let divLabelBar = document.createElement('div');
+        divLabelBar.classList.add('container');
+        divLabelBar.classList.add('label-bar');
+
+        let divLabelText = document.createElement('div');
+        divLabelText.classList.add('label-text');
+        divLabelText.textContent = `${name}`;
+
+        let divRow = document.createElement('div');
+        divRow.classList.add('row');
+
+        for (let i = 0; i < 7; i++) {
+            let divCol = document.createElement('div');
+            divCol.classList.add('col')
+
+            for (let bantypeDay of bantype_days) {
+                let bantype = bantypeDay['bantype'];
+                let days_list = bantypeDay['days'];
+
+                if (days_list.includes(i)) {
+                    divCol.style.backgroundColor = this.banTypeColor[bantype];
+                    divCol.classList.add('border')
+                    break;
+                }
+            }
+            divRow.appendChild(divCol);
+        }
+
+        divLabelBar.appendChild(divRow);
+        divLabelBar.appendChild(divLabelText);
+        tableCell.appendChild(divLabelBar);
+
+        //let templateLabelBar = `<div class="container label-bar">
+        //    <div class="row">
+        //        <div class="col"></div>
+        //        <div class="col"></div>
+        //        <div class="col"></div>
+        //        <div class="col"></div>
+        //        <div class="col"></div>
+        //        <div class="col"></div>
+        //        <div class="col"></div>
+        //    </div>
+        //    <div class="label-text">${name}</div>
+        //</div>`
+    }
+
+    getBanTypeColor() {
+        this.banTypeColor = {
+            '放射假': '#0d6efd',
+            '年假': '#198754',
+            '病假': '#fd7e14',
+            '事假': '#ffc107',
+            '婚假': '#d63384',
+            '产假': '#dc3545',
+            '陪产假': '#6610f2',
+            '育儿假': '#0dcaf0',
+            '丧假': '#adb5bd',
+            '其他假': '#ca766f',
+        }
+    }
 }
 
-let iVT = new InitVacationTable();
+let iVT = new InitVacationTable(2025);
 iVT.init();
