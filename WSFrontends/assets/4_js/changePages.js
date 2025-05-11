@@ -1,7 +1,7 @@
-"use strict";
-const navLinks = document.querySelectorAll('.nav-link:not(.mine):not(.all)');
-const navLink_mine = document.querySelector('.mine');
-const navLink_all = document.querySelector('.all');
+const navbarContent = document.getElementById('navbarContent');
+const navLinks = navbarContent.querySelectorAll('.nav-link:not(.mine):not(.all)');
+const navLink_mine = navbarContent.querySelector('.mine');
+const navLink_all = navbarContent.querySelector('.all');
 const indexLinks = [navLink_mine, navLink_all];
 
 // 改变导航栏链接的状态

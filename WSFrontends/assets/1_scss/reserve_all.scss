@@ -86,6 +86,7 @@
       border-right: 1px solid #ddd; // 添加右边框
       box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1); // 添加阴影效果
     }
+
     width: 90px;
     height: 60px;
   }
@@ -102,12 +103,13 @@
     position: relative;
     height: 40%;
 
-    .row{
+    .row {
       height: 100%;
 
-      > *{
+      > * {
         padding: 0;
         background-color: transparent;
+        border: 1px solid transparent;
       }
     }
 
@@ -121,9 +123,21 @@
       color: var(--bs-body-color);
     }
 
-    &:not(:last-child){
+    &:not(:last-child) {
       margin-bottom: 2px;
     }
+  }
+}
+
+#bookingModal {
+  .better-pinjia-btn {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+
+  .better-pinjia-split{
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
   }
 }
 

@@ -77,6 +77,7 @@
 .clickable-cell .label-bar .row > * {
   padding: 0;
   background-color: transparent;
+  border: 1px solid transparent;
 }
 .clickable-cell .label-bar .label-text {
   position: absolute;
@@ -89,4 +90,13 @@
 }
 .clickable-cell .label-bar:not(:last-child) {
   margin-bottom: 2px;
+}
+
+#bookingModal .better-pinjia-btn {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+#bookingModal .better-pinjia-split {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
 }

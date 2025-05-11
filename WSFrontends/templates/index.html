@@ -2,8 +2,6 @@
 <html lang="en" data-bs-theme="auto">
 
 <head>
-  <script src="/WSFrontends/assets/plugin/offcanvas-navbar/color-modes.js"></script>
-
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="">
@@ -719,11 +717,11 @@
         <div class="modal-header">
           <h5 class="modal-title" id="bookingModalLabel">预约休假</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          <input type="hidden" id="bookingSequence" value="wu" required>
+          <input type="hidden" id="bookingSequence" data-sequence="" required>
         </div>
 
         <div id="bookingContent" class="modal-body">
-          <p class="mt-0 mb-2">预约方式：</p>
+          <p class="mt-0 mb-2 ps-2">预约方式：</p>
           <ul class="list-group list-group-horizontal reserveMode">
             <li class="list-group-item">
               <input class="form-check-input me-1" type="radio" name="reserveModeRadio" value="0" id="singleMode"
@@ -736,275 +734,235 @@
             </li>
           </ul>
 
-          <p class="mt-4 mb-2">预约人：</p>
-          <ul class="list-group list-group-horizontal list-group-flush bookingPerson">
-            <li class="list-group-item ps-2">
-              <button type="button" class="btn btn-success" disabled>张旭辉</button>
-              <input type="hidden" id="bookingPerson0" value="wu" required>
-            </li>
+          <p class="mt-4 mb-2 ps-2">预约人：</p>
+          <div class="d-flex bookingPerson">
+            <div class="d-flex me-3">
+              <button type="button" class="btn btn-outline-success">张旭辉</button>
+            </div>
 
-            <li class="list-group-item">
-              <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown"
-                aria-expanded="false" data-default="拼假人1">
-                拼假人1
+            <div class="d-flex me-3">
+              <button type="button" class="btn btn-outline-primary better-pinjia-btn" data-default="拼假人1">拼假人1</button>
+              <button type="button"
+                class="btn btn-outline-primary dropdown-toggle dropdown-toggle-split better-pinjia-split"
+                data-bs-toggle="dropdown" aria-expanded="false">
+                <span class="visually-hidden">Toggle Dropdown</span>
               </button>
               <ul class="dropdown-menu">
                 <li><span class="dropdown-item">廖中凡</span></li>
                 <li><span class="dropdown-item">尹红科</span></li>
               </ul>
-              <input type="hidden" id="bookingPerson1" value="wu" required>
-            </li>
+            </div>
 
-            <li class="list-group-item">
-              <button type="button" class="btn btn-warning dropdown-toggle" data-bs-toggle="dropdown"
-                aria-expanded="false" data-default="拼假人2">
-                拼假人2
+            <div class="d-flex">
+              <button type="button" class="btn btn-outline-warning better-pinjia-btn" data-default="拼假人2">拼假人2</button>
+              <button type="button"
+                class="btn btn-outline-warning dropdown-toggle dropdown-toggle-split better-pinjia-split"
+                data-bs-toggle="dropdown" aria-expanded="false">
+                <span class="visually-hidden">Toggle Dropdown</span>
               </button>
               <ul class="dropdown-menu">
-                <li><span class="dropdown-item">曾小洲</span></li>
                 <li><span class="dropdown-item">凌子涵</span></li>
+                <li><span class="dropdown-item">曾小洲</span></li>
               </ul>
-              <input type="hidden" id="bookingPerson2" value="wu" required>
-            </li>
-          </ul>
-
-          <p class="mt-4 mb-2">预约日期：</p>
-          <ul class="list-group bookingDate">
-            <li class="list-group-item d-flex justify-content-between align-items-center">
-              <div>
-                <input class="form-check-input me-1 border border-success" type="checkbox" value="wu"
-                  id="selectedPeriodcb1-1">
-                <label class="form-check-label text-success" for="selectedPeriodcb1-1">2025年1月30日</label>
-                <input type="hidden" id="bookingDate00" value="wu" required>
-              </div>
-              <div class="d-flex justify-content-between">
-                <div class="me-3">
-                  <input class="form-check-input border border-primary" type="checkbox" value="wu"
-                    id="selectedPeriodcb1-2">
-                  <label class="form-check-label text-primary" for="selectedPeriodcb1-2">拼假人1</label>
-                  <input type="hidden" id="bookingDate10" value="wu" required>
-                </div>
-                <div>
-                  <input class="form-check-input border border-warning" type="checkbox" value="wu"
-                    id="selectedPeriodcb1-3">
-                  <label class="form-check-label text-warning" for="selectedPeriodcb1-3">拼假人2</label>
-                  <input type="hidden" id="bookingDate20" value="wu" required>
-                </div>
-              </div>
-            </li>
-
-            <li class="list-group-item d-flex justify-content-between align-items-center">
-              <div>
-                <input class="form-check-input me-1 border border-success" type="checkbox" value="wu"
-                  id="selectedPeriodcb2-1">
-                <label class="form-check-label text-success" for="selectedPeriodcb2-1">2025年1月31日</label>
-                <input type="hidden" id="bookingDate01" value="wu" required>
-              </div>
-              <div class="d-flex justify-content-between">
-                <div class="me-3">
-                  <input class="form-check-input border border-primary" type="checkbox" value="wu"
-                    id="selectedPeriodcb2-2">
-                  <label class="form-check-label text-primary" for="selectedPeriodcb2-2">拼假人1</label>
-                  <input type="hidden" id="bookingDate11" value="wu" required>
-                </div>
-                <div>
-                  <input class="form-check-input border border-warning" type="checkbox" value="wu"
-                    id="selectedPeriodcb2-3">
-                  <label class="form-check-label text-warning" for="selectedPeriodcb2-3">拼假人2</label>
-                  <input type="hidden" id="bookingDate21" value="wu" required>
-                </div>
-              </div>
-            </li>
-
-            <li class="list-group-item d-flex justify-content-between align-items-center">
-              <div>
-                <input class="form-check-input me-1 border border-success" type="checkbox" value="wu"
-                  id="selectedPeriodcb3-1">
-                <label class="form-check-label text-success" for="selectedPeriodcb3-1">2025年2月1日</label>
-                <input type="hidden" id="bookingDate02" value="wu" required>
-              </div>
-              <div class="d-flex justify-content-between">
-                <div class="me-3">
-                  <input class="form-check-input border border-primary" type="checkbox" value="wu"
-                    id="selectedPeriodcb3-2">
-                  <label class="form-check-label text-primary" for="selectedPeriodcb3-2">拼假人1</label>
-                  <input type="hidden" id="bookingDate12" value="wu" required>
-                </div>
-                <div>
-                  <input class="form-check-input border border-warning" type="checkbox" value="wu"
-                    id="selectedPeriodcb3-3">
-                  <label class="form-check-label text-warning" for="selectedPeriodcb3-3">拼假人2</label>
-                  <input type="hidden" id="bookingDate22" value="wu" required>
-                </div>
-              </div>
-            </li>
-
-            <li class="list-group-item d-flex justify-content-between align-items-center">
-              <div>
-                <input class="form-check-input me-1 border border-success" type="checkbox" value="wu"
-                  id="selectedPeriodcb4-1">
-                <label class="form-check-label text-success" for="selectedPeriodcb4-1">2025年2月2日</label>
-                <input type="hidden" id="bookingDate03" value="wu" required>
-              </div>
-              <div class="d-flex justify-content-between">
-                <div class="me-3">
-                  <input class="form-check-input border border-primary" type="checkbox" value="wu"
-                    id="selectedPeriodcb4-2">
-                  <label class="form-check-label text-primary" for="selectedPeriodcb4-2">拼假人1</label>
-                  <input type="hidden" id="bookingDate13" value="wu" required>
-                </div>
-                <div>
-                  <input class="form-check-input border border-warning" type="checkbox" value="wu"
-                    id="selectedPeriodcb4-3">
-                  <label class="form-check-label text-warning" for="selectedPeriodcb4-3">拼假人2</label>
-                  <input type="hidden" id="bookingDate23" value="wu" required>
-                </div>
-              </div>
-            </li>
-
-            <li class="list-group-item d-flex justify-content-between align-items-center">
-              <div>
-                <input class="form-check-input me-1 border border-success" type="checkbox" value="wu"
-                  id="selectedPeriodcb5-1">
-                <label class="form-check-label text-success" for="selectedPeriodcb5-1">2025年2月3日</label>
-                <input type="hidden" id="bookingDate04" value="wu" required>
-              </div>
-              <div class="d-flex justify-content-between">
-                <div class="me-3">
-                  <input class="form-check-input border border-primary" type="checkbox" value="wu"
-                    id="selectedPeriodcb5-2">
-                  <label class="form-check-label text-primary" for="selectedPeriodcb5-2">拼假人1</label>
-                  <input type="hidden" id="bookingDate14" value="wu" required>
-                </div>
-                <div>
-                  <input class="form-check-input border border-warning" type="checkbox" value="wu"
-                    id="selectedPeriodcb5-3">
-                  <label class="form-check-label text-warning" for="selectedPeriodcb5-3">拼假人2</label>
-                  <input type="hidden" id="bookingDate24" value="wu" required>
-                </div>
-              </div>
-            </li>
-
-            <li class="list-group-item d-flex justify-content-between align-items-center">
-              <div>
-                <input class="form-check-input me-1 border border-success" type="checkbox" value="wu"
-                  id="selectedPeriodcb6-1">
-                <label class="form-check-label text-success" for="selectedPeriodcb6-1">2025年2月4日</label>
-                <input type="hidden" id="bookingDate05" value="wu" required>
-              </div>
-              <div class="d-flex justify-content-between">
-                <div class="me-3">
-                  <input class="form-check-input border border-primary" type="checkbox" value="wu"
-                    id="selectedPeriodcb6-2">
-                  <label class="form-check-label text-primary" for="selectedPeriodcb6-2">拼假人1</label>
-                  <input type="hidden" id="bookingDate15" value="wu" required>
-                </div>
-                <div>
-                  <input class="form-check-input border border-warning" type="checkbox" value="wu"
-                    id="selectedPeriodcb6-3">
-                  <label class="form-check-label text-warning" for="selectedPeriodcb6-3">拼假人2</label>
-                  <input type="hidden" id="bookingDate25" value="wu" required>
-                </div>
-              </div>
-            </li>
-
-            <li class="list-group-item d-flex justify-content-between align-items-center">
-              <div>
-                <input class="form-check-input me-1 border border-success" type="checkbox" value="wu"
-                  id="selectedPeriodcb7-1">
-                <label class="form-check-label text-success" for="selectedPeriodcb7-1">2025年2月5日</label>
-                <input type="hidden" id="bookingDate06" value="wu" required>
-              </div>
-              <div class="d-flex justify-content-between">
-                <div class="me-3">
-                  <input class="form-check-input border border-primary" type="checkbox" value="wu"
-                    id="selectedPeriodcb7-2">
-                  <label class="form-check-label text-primary" for="selectedPeriodcb7-2">拼假人1</label>
-                  <input type="hidden" id="bookingDate16" value="wu" required>
-                </div>
-                <div>
-                  <input class="form-check-input border border-warning" type="checkbox" value="wu"
-                    id="selectedPeriodcb7-3">
-                  <label class="form-check-label text-warning" for="selectedPeriodcb7-3">拼假人2</label>
-                  <input type="hidden" id="bookingDate26" value="wu" required>
-                </div>
-              </div>
-            </li>
-          </ul>
-
-          <p class="mt-4 mb-2">休假类型：</p>
-          <ul class="list-group list-group-horizontal list-group-flush relaxType">
-            <li class="list-group-item ps-2">
-              <button type="button" class="btn btn-success dropdown-toggle" data-bs-toggle="dropdown"
-                aria-expanded="false" data-default="请选择">
-                请选择
-              </button>
-              <ul class="dropdown-menu">
-                <li><span class="dropdown-item">放射假</span></li>
-                <li><span class="dropdown-item">年假</span></li>
-                <li><span class="dropdown-item">病假</span></li>
-                <li><span class="dropdown-item">事假</span></li>
-                <li><span class="dropdown-item">婚假</span></li>
-                <li><span class="dropdown-item">产假</span></li>
-                <li><span class="dropdown-item">陪产假</span></li>
-                <li><span class="dropdown-item">育儿假</span></li>
-                <li><span class="dropdown-item">丧假</span></li>
-                <li><span class="dropdown-item">其他假</span></li>
-              </ul>
-              <input type="hidden" id="relaxType0" value="wu" required>
-            </li>
-
-            <li class="list-group-item">
-              <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown"
-                aria-expanded="false" data-default="拼假人1">
-                拼假人1
-              </button>
-              <ul class="dropdown-menu">
-                <li><span class="dropdown-item">放射假</span></li>
-                <li><span class="dropdown-item">年假</span></li>
-                <li><span class="dropdown-item">病假</span></li>
-                <li><span class="dropdown-item">事假</span></li>
-                <li><span class="dropdown-item">婚假</span></li>
-                <li><span class="dropdown-item">产假</span></li>
-                <li><span class="dropdown-item">陪产假</span></li>
-                <li><span class="dropdown-item">育儿假</span></li>
-                <li><span class="dropdown-item">丧假</span></li>
-                <li><span class="dropdown-item">其他假</span></li>
-              </ul>
-              <input type="hidden" id="relaxType1" value="wu" required>
-            </li>
-
-            <li class="list-group-item">
-              <button type="button" class="btn btn-warning dropdown-toggle" data-bs-toggle="dropdown"
-                aria-expanded="false" data-default="拼假人2">
-                拼假人2
-              </button>
-              <ul class="dropdown-menu">
-                <li><span class="dropdown-item">放射假</span></li>
-                <li><span class="dropdown-item">年假</span></li>
-                <li><span class="dropdown-item">病假</span></li>
-                <li><span class="dropdown-item">事假</span></li>
-                <li><span class="dropdown-item">婚假</span></li>
-                <li><span class="dropdown-item">产假</span></li>
-                <li><span class="dropdown-item">陪产假</span></li>
-                <li><span class="dropdown-item">育儿假</span></li>
-                <li><span class="dropdown-item">丧假</span></li>
-                <li><span class="dropdown-item">其他假</span></li>
-              </ul>
-              <input type="hidden" id="relaxType2" value="wu" required>
-            </li>
-          </ul>
-        </div>
-
-        <!-- 取消预约内容 -->
-        <div id="cancelContent" class="modal-body" style="display: none;">
-          <p>已有预约信息:</p>
-          <div id="existingBookings">
-            <!-- 这里会动态填充已有的预约信息 -->
+            </div>
           </div>
-          <div class="mb-3 mt-3">
-            <input type="checkbox" class="form-check-input" id="deleteAllBookings">
-            <label class="form-check-label" for="deleteAllBookings">取消全部预约</label>
+
+          <!-- 预约内容框 -->
+          <div class="mt-4">
+            <div class="d-flex justify-content-between align-items-center">
+              <p class="mb-2 ps-2">预约日期：</p>
+              <p class="mb-2 pe-4">休假类型：</p>
+            </div>
+            <ul class="list-group bookingDate">
+              <li class="list-group-item d-flex justify-content-between align-items-center">
+                <div>
+                  <input class="form-check-input me-1 border border-success" type="checkbox" value="wu"
+                    id="bookingDateCB0">
+                  <label class="form-check-label text-success" for="bookingDateCB0">2025年1月30日</label>
+                </div>
+                <div class="dropdown">
+                  <button type="button" class="btn btn-success dropdown-toggle" data-bs-toggle="dropdown"
+                    aria-expanded="false" data-default="请选择">
+                    请选择
+                  </button>
+                  <ul class="dropdown-menu">
+                    <li><span class="dropdown-item">放射假</span></li>
+                    <li><span class="dropdown-item">年假</span></li>
+                    <li><span class="dropdown-item">病假</span></li>
+                    <li><span class="dropdown-item">事假</span></li>
+                    <li><span class="dropdown-item">婚假</span></li>
+                    <li><span class="dropdown-item">产假</span></li>
+                    <li><span class="dropdown-item">陪产假</span></li>
+                    <li><span class="dropdown-item">育儿假</span></li>
+                    <li><span class="dropdown-item">丧假</span></li>
+                    <li><span class="dropdown-item">其他假</span></li>
+                  </ul>
+                </div>
+                <input type="hidden" id="bookingDateHD0" data-relax="wu" data-date="wu" data-name="wu" required>
+              </li>
+
+              <li class="list-group-item d-flex justify-content-between align-items-center">
+                <div>
+                  <input class="form-check-input me-1 border border-success" type="checkbox" value="wu"
+                    id="bookingDateCB1">
+                  <label class="form-check-label text-success" for="bookingDateCB1">2025年1月30日</label>
+                </div>
+                <div class="dropdown">
+                  <button type="button" class="btn btn-success dropdown-toggle" data-bs-toggle="dropdown"
+                    aria-expanded="false" data-default="请选择">
+                    请选择
+                  </button>
+                  <ul class="dropdown-menu">
+                    <li><span class="dropdown-item">放射假</span></li>
+                    <li><span class="dropdown-item">年假</span></li>
+                    <li><span class="dropdown-item">病假</span></li>
+                    <li><span class="dropdown-item">事假</span></li>
+                    <li><span class="dropdown-item">婚假</span></li>
+                    <li><span class="dropdown-item">产假</span></li>
+                    <li><span class="dropdown-item">陪产假</span></li>
+                    <li><span class="dropdown-item">育儿假</span></li>
+                    <li><span class="dropdown-item">丧假</span></li>
+                    <li><span class="dropdown-item">其他假</span></li>
+                  </ul>
+                </div>
+                <input type="hidden" id="bookingDateHD1" data-relax="wu" data-date="wu" data-name="wu" required>
+              </li>
+
+              <li class="list-group-item d-flex justify-content-between align-items-center">
+                <div>
+                  <input class="form-check-input me-1 border border-success" type="checkbox" value="wu"
+                    id="bookingDateCB2">
+                  <label class="form-check-label text-success" for="bookingDateCB2">2025年1月30日</label>
+                </div>
+                <div class="dropdown">
+                  <button type="button" class="btn btn-success dropdown-toggle" data-bs-toggle="dropdown"
+                    aria-expanded="false" data-default="请选择">
+                    请选择
+                  </button>
+                  <ul class="dropdown-menu">
+                    <li><span class="dropdown-item">放射假</span></li>
+                    <li><span class="dropdown-item">年假</span></li>
+                    <li><span class="dropdown-item">病假</span></li>
+                    <li><span class="dropdown-item">事假</span></li>
+                    <li><span class="dropdown-item">婚假</span></li>
+                    <li><span class="dropdown-item">产假</span></li>
+                    <li><span class="dropdown-item">陪产假</span></li>
+                    <li><span class="dropdown-item">育儿假</span></li>
+                    <li><span class="dropdown-item">丧假</span></li>
+                    <li><span class="dropdown-item">其他假</span></li>
+                  </ul>
+                </div>
+                <input type="hidden" id="bookingDateHD2" data-relax="wu" data-date="wu" data-name="wu" required>
+              </li>
+
+              <li class="list-group-item d-flex justify-content-between align-items-center">
+                <div>
+                  <input class="form-check-input me-1 border border-success" type="checkbox" value="wu"
+                    id="bookingDateCB3">
+                  <label class="form-check-label text-success" for="bookingDateCB3">2025年1月30日</label>
+                </div>
+                <div class="dropdown">
+                  <button type="button" class="btn btn-success dropdown-toggle" data-bs-toggle="dropdown"
+                    aria-expanded="false" data-default="请选择">
+                    请选择
+                  </button>
+                  <ul class="dropdown-menu">
+                    <li><span class="dropdown-item">放射假</span></li>
+                    <li><span class="dropdown-item">年假</span></li>
+                    <li><span class="dropdown-item">病假</span></li>
+                    <li><span class="dropdown-item">事假</span></li>
+                    <li><span class="dropdown-item">婚假</span></li>
+                    <li><span class="dropdown-item">产假</span></li>
+                    <li><span class="dropdown-item">陪产假</span></li>
+                    <li><span class="dropdown-item">育儿假</span></li>
+                    <li><span class="dropdown-item">丧假</span></li>
+                    <li><span class="dropdown-item">其他假</span></li>
+                  </ul>
+                </div>
+                <input type="hidden" id="bookingDateHD3" data-relax="wu" data-date="wu" data-name="wu" required>
+              </li>
+
+              <li class="list-group-item d-flex justify-content-between align-items-center">
+                <div>
+                  <input class="form-check-input me-1 border border-success" type="checkbox" value="wu"
+                    id="bookingDateCB4">
+                  <label class="form-check-label text-success" for="bookingDateCB4">2025年1月30日</label>
+                </div>
+                <div class="dropdown">
+                  <button type="button" class="btn btn-success dropdown-toggle" data-bs-toggle="dropdown"
+                    aria-expanded="false" data-default="请选择">
+                    请选择
+                  </button>
+                  <ul class="dropdown-menu">
+                    <li><span class="dropdown-item">放射假</span></li>
+                    <li><span class="dropdown-item">年假</span></li>
+                    <li><span class="dropdown-item">病假</span></li>
+                    <li><span class="dropdown-item">事假</span></li>
+                    <li><span class="dropdown-item">婚假</span></li>
+                    <li><span class="dropdown-item">产假</span></li>
+                    <li><span class="dropdown-item">陪产假</span></li>
+                    <li><span class="dropdown-item">育儿假</span></li>
+                    <li><span class="dropdown-item">丧假</span></li>
+                    <li><span class="dropdown-item">其他假</span></li>
+                  </ul>
+                </div>
+                <input type="hidden" id="bookingDateHD4" data-relax="wu" data-date="wu" data-name="wu" required>
+              </li>
+
+              <li class="list-group-item d-flex justify-content-between align-items-center">
+                <div>
+                  <input class="form-check-input me-1 border border-success" type="checkbox" value="wu"
+                    id="bookingDateCB5">
+                  <label class="form-check-label text-success" for="bookingDateCB5">2025年1月30日</label>
+                </div>
+                <div class="dropdown">
+                  <button type="button" class="btn btn-success dropdown-toggle" data-bs-toggle="dropdown"
+                    aria-expanded="false" data-default="请选择">
+                    请选择
+                  </button>
+                  <ul class="dropdown-menu">
+                    <li><span class="dropdown-item">放射假</span></li>
+                    <li><span class="dropdown-item">年假</span></li>
+                    <li><span class="dropdown-item">病假</span></li>
+                    <li><span class="dropdown-item">事假</span></li>
+                    <li><span class="dropdown-item">婚假</span></li>
+                    <li><span class="dropdown-item">产假</span></li>
+                    <li><span class="dropdown-item">陪产假</span></li>
+                    <li><span class="dropdown-item">育儿假</span></li>
+                    <li><span class="dropdown-item">丧假</span></li>
+                    <li><span class="dropdown-item">其他假</span></li>
+                  </ul>
+                </div>
+                <input type="hidden" id="bookingDateHD5" data-relax="wu" data-date="wu" data-name="wu" required>
+              </li>
+
+              <li class="list-group-item d-flex justify-content-between align-items-center">
+                <div>
+                  <input class="form-check-input me-1 border border-success" type="checkbox" value="wu"
+                    id="bookingDateCB6">
+                  <label class="form-check-label text-success" for="bookingDateCB6">2025年1月30日</label>
+                </div>
+                <div class="dropdown">
+                  <button type="button" class="btn btn-success dropdown-toggle" data-bs-toggle="dropdown"
+                    aria-expanded="false" data-default="请选择">
+                    请选择
+                  </button>
+                  <ul class="dropdown-menu">
+                    <li><span class="dropdown-item">放射假</span></li>
+                    <li><span class="dropdown-item">年假</span></li>
+                    <li><span class="dropdown-item">病假</span></li>
+                    <li><span class="dropdown-item">事假</span></li>
+                    <li><span class="dropdown-item">婚假</span></li>
+                    <li><span class="dropdown-item">产假</span></li>
+                    <li><span class="dropdown-item">陪产假</span></li>
+                    <li><span class="dropdown-item">育儿假</span></li>
+                    <li><span class="dropdown-item">丧假</span></li>
+                    <li><span class="dropdown-item">其他假</span></li>
+                  </ul>
+                </div>
+                <input type="hidden" id="bookingDateHD6" data-relax="wu" data-date="wu" data-name="wu" required>
+              </li>
+            </ul>
           </div>
         </div>
 
@@ -1013,7 +971,6 @@
           <div>
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
             <button type="button" class="btn btn-primary" id="confirmBooking">确认预约</button>
-            <button type="button" class="btn btn-danger" id="cancelBooking" style="display: none;">取消预约</button>
           </div>
         </div>
       </div>
@@ -1029,6 +986,7 @@
   <script src="/WSFrontends/assets/plugin/node_modules/dayjs/plugin/isoWeek.js"></script>
   <script src="/WSFrontends/assets/plugin/node_modules/dayjs/plugin/localeData.js"></script>
   <script src="/WSFrontends/assets/plugin/node_modules/dayjs/locale/zh-cn.js"></script>
+  <script src="/WSFrontends/assets/plugin/offcanvas-navbar/color-modes.js"></script>
 
   <!-- 我的js文件, 按顺序引入 -->
   <script src="/WSFrontends/assets/4_js/myConstant.js"></script>
