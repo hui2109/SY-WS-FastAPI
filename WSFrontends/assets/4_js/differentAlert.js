@@ -95,3 +95,12 @@ function showMultipleAlerts() {
         showAlert('dark', '多个提示示例', '这是第三个提示', 5000);
     }, 2000);
 }
+
+
+function loginExpiredAlert() {
+    showAlert({
+        type: 'danger',
+        title: '登录过期',
+        message: '登录已过期，请重新登录',
+    });
+}

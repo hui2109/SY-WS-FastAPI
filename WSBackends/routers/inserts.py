@@ -28,8 +28,8 @@ class OneSchedule(BaseModel):
 class OneReserve(BaseModel):
     sequence: int
     name: str
-    ban: Bans
-    reserve_dates: list[datetime]
+    relax: Bans
+    date: datetime
 
 
 @router.post('/create-ban')
@@ -79,21 +79,17 @@ async def create_reserve(reserves: list[OneReserve], session: SessionDep):
         if not personnel:
             raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail='没有这个人!')
 
-        bantype = session.exec(select(Bantype).where(Bantype.ban == one_reserve.ban)).first()
+        bantype = session.exec(select(Bantype).where(Bantype.ban == one_reserve.relax)).first()
         if not bantype:
             raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail='没有班种信息! 请先创建班种!')
 
-        for reserve_date in one_reserve.reserve_dates:
-            current_reserve_vacation = session.exec(select(ReserveVacation).where(
-                ReserveVacation.sequence == one_reserve.sequence,
-                ReserveVacation.reserve_date == reserve_date,
-                ReserveVacation.sequence == one_reserve.sequence,
-                ReserveVacation.personnel == personnel
-            )).first()
-            if not current_reserve_vacation:
-                current_reserve_vacation = ReserveVacation(**one_reserve.model_dump(), reserve_date=reserve_date, bantype=bantype, personnel=personnel)
-                session.add(current_reserve_vacation)
-            else:
-                current_reserve_vacation.bantype = bantype
-        session.commit()
+        current_reserve_vacation = session.exec(select(ReserveVacation).where(
+            ReserveVacation.sequence == one_reserve.sequence,
+            ReserveVacation.reserve_date == one_reserve.date,
+        )).first()
+        if not current_reserve_vacation:
+            current_reserve_vacation = ReserveVacation(sequence=one_reserve.sequence, reserve_date=one_reserve.date, bantype=bantype, personnel=personnel)
+            session.add(current_reserve_vacation)
+
+    session.commit()
     return {'detail': '预约休假成功!'}

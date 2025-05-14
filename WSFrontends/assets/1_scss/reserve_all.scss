@@ -139,5 +139,20 @@
     border-top-left-radius: 0;
     border-bottom-left-radius: 0;
   }
+
+  .bookingPerson .dropdown-menu{
+    cursor: pointer !important;
+  }
+
+  .modal-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.01); /* 几乎透明 */
+    z-index: 1060; /* 确保高于模态框内容 */
+    cursor: not-allowed;
+  }
 }
 

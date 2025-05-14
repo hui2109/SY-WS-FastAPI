@@ -717,7 +717,7 @@
         <div class="modal-header">
           <h5 class="modal-title" id="bookingModalLabel">预约休假</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          <input type="hidden" id="bookingSequence" data-sequence="" required>
+          <input type="hidden" id="bookingSequence" required>
         </div>
 
         <div id="bookingContent" class="modal-body">
@@ -970,8 +970,9 @@
           <button type="button" class="btn btn-info" id="resetBooking">重置</button>
           <div>
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
-            <button type="button" class="btn btn-primary" id="confirmBooking">确认预约</button>
+            <button type="button" class="btn btn-info" id="confirmBooking">确认预约</button>
           </div>
+          <button type="button" class="btn btn-danger d-none" id="deleteReserve">删除整个预约</button>
         </div>
       </div>
     </div>

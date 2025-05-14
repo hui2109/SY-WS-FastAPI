@@ -54,6 +54,7 @@ function getToken() {
     const token = sessionStorage.getItem('access_token');
     if (!token) {
         // 如果没有令牌，重定向到登录页面
+        loginExpiredAlert();
         window.location.href = '/login';
         return;
     }
