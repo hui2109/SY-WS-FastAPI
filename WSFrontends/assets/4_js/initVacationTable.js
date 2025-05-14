@@ -551,9 +551,16 @@ class InitVacationTable {
             body: JSON.stringify(data)
         }).then(response => {
             response.json().then(data => {
-                this.server_reserve_data = data;
-                this.renderTableCells();
+                if (response.ok) {
+                    this.server_reserve_data = data;
+                    this.renderTableCells();
+                } else {
+                    loginExpiredAlert();
+                }
             })
+        }).catch(error => {
+            alert('未知错误！');
+            console.error(error);
         })
 
     }
