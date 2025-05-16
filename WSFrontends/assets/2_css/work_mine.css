@@ -1,3 +1,6 @@
+#work-content-mine #datetimepicker2 > span:hover {
+  cursor: pointer;
+}
 #work-content-mine .container {
   max-width: 600px;
   padding: 0 10px;
@@ -52,6 +55,7 @@
   justify-content: space-between;
   padding: 8px 5px;
   border-bottom: 1px solid var(--bs-border-color);
+  margin-bottom: 12px;
 }
 #work-content-mine .date-item {
   flex: 1;

@@ -37,7 +37,7 @@ async def update_avatar(avatar_data: AvatarUpdate, session: SessionDep, user: Ac
     session.commit()
     session.refresh(user)
 
-    return {"status": "success", "message": "头像更新成功"}
+    return {"status": "success", "detail": "头像更新成功"}
 
 
 @router.post("/update-user", response_model=AvatarUpdate)

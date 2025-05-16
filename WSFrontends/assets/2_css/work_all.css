@@ -46,9 +46,3 @@
   border-right: 1px solid #ddd;
   box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
 }
-
-.tempus-dominus-widget {
-  top: var(--td-top) !important;
-  left: var(--td-left) !important;
-  transform: none !important;
-}

@@ -18,9 +18,9 @@
   <link rel="stylesheet" href="/WSFrontends/assets/plugin/node_modules/swiper/swiper-bundle.min.css">
 
   <!-- 我的CSS样式 -->
+  <link rel="stylesheet" href="/WSFrontends/assets/2_css/commons.css">
   <link rel="stylesheet" href="/WSFrontends/assets/2_css/index.css">
   <link rel="stylesheet" href="/WSFrontends/assets/2_css/work_all.css">
-  <link rel="stylesheet" href="/WSFrontends/assets/2_css/commons.css">
   <link rel="stylesheet" href="/WSFrontends/assets/2_css/work_mine.css">
   <link rel="stylesheet" href="/WSFrontends/assets/2_css/reserve_all.css">
 </head>
@@ -181,10 +181,10 @@
     <!-- 首页内容 -->
     <div id="work-content-mine" class="content-section">
       <div class="container">
-        <h5 class="text-center mb-3">信息查看组件</h5>
+        <h5 class="text-center mb-3">我的排班表</h5>
 
         <!-- 日期切换组件 -->
-        <div class="row">
+        <div class="row mb-4">
           <div class="col-2"></div>
           <div class="col-8">
             <div class="d-flex justify-content-between">
@@ -218,87 +218,11 @@
             <div class="swiper mySwiper">
               <div class="swiper-wrapper">
                 <!-- 第一周 -->
-                <div class="swiper-slide">
-                  <div class="card">
-                    <div class="date-row">
-                      <div class="date-item">1</div>
-                      <div class="date-item">2</div>
-                      <div class="date-item">3</div>
-                      <div class="date-item">4</div>
-                      <div class="date-item">5</div>
-                      <div class="date-item">6</div>
-                      <div class="date-item">7</div>
-                    </div>
-                    <div class="info-row first">
-                      <div class="info-item">会议</div>
-                      <div class="info-item">休息</div>
-                      <div class="info-item">培训</div>
-                      <div class="info-item">出差</div>
-                      <div class="info-item">汇报</div>
-                      <div class="info-item">自习</div>
-                      <div class="info-item">休息</div>
-                    </div>
-                    <div class="info-row last">
-                      <div class="info-item">会议</div>
-                      <div class="info-item">休息</div>
-                      <div class="info-item">培训</div>
-                      <div class="info-item">出差</div>
-                      <div class="info-item">汇报</div>
-                      <div class="info-item">自习</div>
-                      <div class="info-item">休息</div>
-                    </div>
-                  </div>
-                </div>
+
                 <!-- 第二周 -->
-                <div class="swiper-slide">
-                  <div class="card">
-                    <div class="date-row">
-                      <div class="date-item">8</div>
-                      <div class="date-item">9</div>
-                      <div class="date-item">10</div>
-                      <div class="date-item">11</div>
-                      <div class="date-item">12</div>
-                      <div class="date-item">13</div>
-                      <div class="date-item">14</div>
-                    </div>
-                    <div class="info-row">
-                      <div class="info-item">
-                        <div>3A</div>
-                        <div>张旭辉</div>
-                        <div>廖中凡</div>
-                      </div>
-                      <div class="info-item">参观</div>
-                      <div class="info-item">检查</div>
-                      <div class="info-item">学习</div>
-                      <div class="info-item">活动</div>
-                      <div class="info-item">比赛</div>
-                      <div class="info-item">休假</div>
-                    </div>
-                  </div>
-                </div>
+
                 <!-- 第三周 -->
-                <div class="swiper-slide">
-                  <div class="card">
-                    <div class="date-row">
-                      <div class="date-item">15</div>
-                      <div class="date-item">16</div>
-                      <div class="date-item">17</div>
-                      <div class="date-item">18</div>
-                      <div class="date-item">19</div>
-                      <div class="date-item">20</div>
-                      <div class="date-item">21</div>
-                    </div>
-                    <div class="info-row">
-                      <div class="info-item">讲座</div>
-                      <div class="info-item">评审</div>
-                      <div class="info-item">研讨</div>
-                      <div class="info-item">总结</div>
-                      <div class="info-item">考核</div>
-                      <div class="info-item">庆祝</div>
-                      <div class="info-item">休息</div>
-                    </div>
-                  </div>
-                </div>
+
               </div>
               <div class="swiper-pagination"></div>
               <div class="swipe-hint">左右滑动查看</div>
@@ -990,15 +914,14 @@
   <script src="/WSFrontends/assets/plugin/offcanvas-navbar/color-modes.js"></script>
 
   <!-- 我的js文件, 按顺序引入 -->
-  <script src="/WSFrontends/assets/4_js/myConstant.js"></script>
-  <script src="/WSFrontends/assets/4_js/differentAlert.js"></script>
-  <script src="/WSFrontends/assets/4_js/changePages.js"></script>
-  <script src="/WSFrontends/assets/4_js/initTables.js"></script>
-  <script src="/WSFrontends/assets/4_js/datePicker.js"></script>
   <script src="/WSFrontends/assets/4_js/commons.js"></script>
-  <script src="/WSFrontends/assets/4_js/userInfo.js"></script>
-  <script src="/WSFrontends/assets/4_js/initMineCards.js"></script>
+  <script src="/WSFrontends/assets/4_js/differentAlert.js"></script>
   <script src="/WSFrontends/assets/4_js/getWeekGroups.js"></script>
+  <script src="/WSFrontends/assets/4_js/changePages.js"></script>
+
+  <script src="/WSFrontends/assets/4_js/initUserInfo.js"></script>
+  <script src="/WSFrontends/assets/4_js/initWorkAllTables.js"></script>
+  <script src="/WSFrontends/assets/4_js/initWorkMineCards.js"></script>
   <script src="/WSFrontends/assets/4_js/initVacationTable.js"></script>
 
   <!-- <script src="/WSFrontends/assets/4_js/verify.js"></script> -->

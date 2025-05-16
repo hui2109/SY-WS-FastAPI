@@ -1,24 +1,114 @@
 "use strict";
 
-function goThroughDate(startDate, endDate) {
-    let dateList = [];
-    // 创建副本，不影响原始对象
-    let currentDate = new Date(startDate);
-    while (currentDate <= endDate) {
-        dateList.push(new Date(currentDate));
-        currentDate.setDate(currentDate.getDate() + 1);
-    }
-    return dateList;
-}
 
 class InitTables {
     constructor(today) {
         this.today = today
+        this.lookElement();
+        this._updateDateLabel(this.today);
+        this.initDatePicker();
+        this.bindClick();
     }
 
     init() {
         this.getStartEndDate();
         this.getRecordsFromServer();
+    }
+
+    _updateDateLabel(date) {
+        // 写入日期: XX年XX月
+        this.dateLabel.textContent = `${date.getFullYear()}年${date.getMonth() + 1}月`;
+    }
+
+    lookElement() {
+        this.paibanTable = document.querySelector('.paiban-table');
+        this.dateLabel = document.querySelector('#work-content-all .mounianmouyue');
+        this.preMonth = document.querySelector('#work-content-all .pre-month');
+        this.nextMonth = document.querySelector('#work-content-all .next-month');
+        this.datetimepicker1 = document.getElementById('datetimepicker1');
+    }
+
+    bindClick() {
+        this.preMonth.addEventListener('click', () => {
+            // 获取当前月的上一个月的第一天
+            this.today = new Date(this.today.getFullYear(), this.today.getMonth() - 1, 1);
+            this.picker.dates.setValue(new tempusDominus.DateTime(this.today));
+        });
+
+        this.nextMonth.addEventListener('click', () => {
+            // 获取当前月的下一个月的第一天
+            this.today = new Date(this.today.getFullYear(), this.today.getMonth() + 1, 1);
+            this.picker.dates.setValue(new tempusDominus.DateTime(this.today));
+        });
+    }
+
+    initDatePicker() {
+        this.picker = new tempusDominus.TempusDominus(this.datetimepicker1, {
+            display: {
+                icons: {
+                    // 自定义各个按钮的图标
+                    today: 'bi bi-calendar-check', // Bootstrap Icons
+                    clear: 'bi bi-x-circle',
+                    close: 'bi bi-x-circle-fill',
+                    time: 'bi bi-clock',
+                    date: 'bi bi-calendar',
+                    up: 'bi bi-arrow-up',
+                    down: 'bi bi-arrow-down',
+                    previous: 'bi bi-chevron-left',
+                    next: 'bi bi-chevron-right',
+                    type: 'icons' // 使用图标而不是SVG
+                },
+                viewMode: 'months',
+                theme: 'auto',
+                components: {
+                    calendar: true,
+                    decades: true,
+                    year: true,
+                    month: true,
+                    date: false,
+                    hours: false,
+                    minutes: false,
+                    seconds: false
+                },
+                buttons: {
+                    today: true,
+                    close: true
+                },
+            },
+            localization: {
+                locale: 'zh-CN'
+            },
+        });
+        let tempusDominusWidget = document.querySelector('.tempus-dominus-widget');
+
+        // 先把已有的日期选择控件删了
+        if (tempusDominusWidget) {
+            tempusDominusWidget.remove();
+        }
+
+        // 监听日期改变事件
+        this.datetimepicker1.addEventListener('change.td', (event) => {
+            this.today = event.detail.date;
+            this._updateDateLabel(this.today);
+            this.init();
+        });
+
+        // 监听日期显示事件
+        this.datetimepicker1.addEventListener('show.td', () => {
+            adjustDatePickerPosition(this.dateLabel);
+        });
+
+        // 监听日期隐藏事件
+        this.datetimepicker1.addEventListener('hide.td', () => {
+            //let tempusDominusWidgets = document.querySelectorAll('.tempus-dominus-widget');
+
+            // 已有的日期选择控件删了
+            //if (tempusDominusWidgets.length !== 0) {
+            //    tempusDominusWidgets.forEach((widget) => {
+            //        widget.remove();
+            //    })
+            //}
+        });
     }
 
     getStartEndDate() {
@@ -38,12 +128,12 @@ class InitTables {
     }
 
     getRecordsFromServer() {
-        const token = sessionStorage.getItem('access_token');
+        // 获取token
+        const token = getToken();
         if (!token) {
-            // 如果没有令牌，重定向到登录页面
-            window.location.href = '/login';
-            return null;
+            return;
         }
+
         let data = {
             month_start: this.startDate,
             month_end: this.endDate
@@ -56,26 +146,21 @@ class InitTables {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(data)
-        }).then(
-            response => {
+        }).then(response => {
+            response.json().then(data => {
                 if (response.ok) {
-                    return response.json();
+                    this.records = data;
+                    this.generateThead();
+                    this.generateTbody();
+                } else {
+                    loginExpiredAlert();
+                    window.location.href = '/login';
                 }
-                console.error('请求失败:', response.status, response.statusText);
-                window.location.href = '/login';
-                throw new Error('请求失败');
-            }
-        ).then(data => {
-            this.records = data;
-            this.lookElement();
-            this.generateThead();
-            this.generateTbody();
-            // this.checkForRestDays();
+            })
+        }).catch(error => {
+            alert('未知错误！');
+            console.error(error);
         })
-    }
-
-    lookElement() {
-        this.paibanTable = document.querySelector('.paiban-table');
     }
 
     generateThead() {

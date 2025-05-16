@@ -1,37 +1,187 @@
 class InitVacationTable {
     constructor(year) {
-        this.true_day_start = dayjs(`2099-01-01`);
-        this.true_day_end = dayjs(`1900-01-01`);
         this.init_year = year;
+        this.lookForElement();
+        this.bindClickEvent();  // 事件绑定只能调用一次
     }
 
     init() {
+        this.true_day_start = dayjs(`2099-01-01`);
+        this.true_day_end = dayjs(`1900-01-01`);
+        this.getData();
+    }
+
+    _renderWholeTable() {
         this.modifyHalfTableHead('firstHalfTableHead', this.init_year, 1, this.init_year, 6);
         this.generateTableRows('firstHalfTableBody', 10);
 
         this.modifyHalfTableHead('secondHalfTableHead', this.init_year, 7, this.init_year, 12, 6);
         this.generateTableRows('secondHalfTableBody', 10);
+    }
 
-        this.lookForElement();
-        this.bindClickEvent();
+    _getStartEndDates() {
+        let year = Object.keys(this.GroupedDates)[0];
+        let month_start = Object.keys(this.GroupedDates[year])[0];
+        let month_end = Object.keys(this.GroupedDates[year])[Object.keys(this.GroupedDates[year]).length - 1];
+        let day_start = this.GroupedDatesObj[year][month_start][0][0];
+        let day_end = this.GroupedDatesObj[year][month_end][Object.keys(this.GroupedDates[year][month_end]).length - 1][1];
 
-        this.getReserveData();
+        return [day_start, day_end];
+    }
 
-        console.log(this.true_day_start, this.true_day_end);
+    _getCellDateRange(colNum) {
+        let index = 0;
+        for (const year in this.GroupedDates) {
+            for (const month in this.GroupedDates[year]) {
+                let daysRange_length = this.GroupedDates[year][month].length
+                if (colNum < daysRange_length) {
+                    let startDate = this.GroupedDatesObj[year][month][colNum][0].format('YYYY-MM-DD')
+                    let endDate = this.GroupedDatesObj[year][month][colNum][1].format('YYYY-MM-DD')
+                    return [startDate, endDate]
+                } else {
+                    colNum -= daysRange_length;
+                }
+            }
+        }
+    }
+
+    _resetAll() {
+        const dropdownButtons = this.bookingModal.querySelectorAll('.dropdown-toggle[data-default]');
+        const bookingDateAllCB = this.bookingModal.querySelectorAll('input[type="checkbox"]');
+        const pinjiaBTN = this.bookingModal.querySelectorAll('.better-pinjia-btn');
+
+        dropdownButtons.forEach(button => {
+            button.textContent = button.dataset.default;
+        })
+
+        bookingDateAllCB.forEach(checkbox => {
+            checkbox.checked = false;
+        })
+
+        pinjiaBTN.forEach(button => {
+            button.textContent = button.dataset.default;
+        })
+
+        this.inputHiddens.forEach(inputHidden => {
+            inputHidden.dataset.date = 'wu';
+            inputHidden.dataset.name = 'wu';
+            inputHidden.dataset.relax = 'wu';
+        })
+
+        // 激活按钮0 禁用按钮1和2
+        this.bookingPerson0.click();
+
+        // 禁用 拼假人1和拼假人2 按钮
+        this.bookingPerson1.disabled = true;
+        this.bookingPerson2.disabled = true;
+        this.bookingPerson[1].style.cursor = 'not-allowed';
+        this.bookingPerson[2].style.cursor = 'not-allowed';
+    }
+
+    _setBookingPersonBtnProperties() {
+        this.bookingPerson0.active = function () {
+            this.classList.remove('btn-outline-success');
+            this.classList.add('btn-success');
+        }
+        this.bookingPerson0.inactive = function () {
+            this.classList.add('btn-outline-success');
+            this.classList.remove('btn-success');
+        }
+        this.bookingPerson1.active = function () {
+            this.classList.remove('btn-outline-primary');
+            this.classList.add('btn-primary');
+        }
+        this.bookingPerson1.inactive = function () {
+            this.classList.add('btn-outline-primary');
+            this.classList.remove('btn-primary');
+        }
+        this.bookingPerson2.active = function () {
+            this.classList.remove('btn-outline-warning');
+            this.classList.add('btn-warning');
+        }
+        this.bookingPerson2.inactive = function () {
+            this.classList.add('btn-outline-warning');
+            this.classList.remove('btn-warning');
+        }
+    }
+
+    _detectInputHDStatus(color) {
+        this.inputHiddens.forEach(inputHidden => {
+            let bigLi = inputHidden.parentNode;
+            let inputEl = bigLi.querySelector('input');
+            let labelEl = bigLi.querySelector('label');
+            let btnEl = bigLi.querySelector('button');
+
+            if (inputHidden.dataset.name === 'wu' || inputHidden.dataset.name === this.currentPerson) {
+                inputEl.className = inputEl.className.replace(/border-\S+/, `border-${color}`);
+                labelEl.className = labelEl.className.replace(/text-\S+/, `text-${color}`);
+                btnEl.className = btnEl.className.replace(/btn-\S+/, `btn-${color}`);
+
+                inputEl.disabled = false;
+                btnEl.disabled = false;
+                bigLi.style.cursor = 'auto';
+            } else {
+                // 证明这个选项是其他人选过的
+                inputEl.disabled = true;
+                btnEl.disabled = true;
+                bigLi.style.cursor = 'not-allowed';
+            }
+        })
+    }
+
+    _collectInputHD() {
+        let checkedData = [];
+        let hasError = false;
+        this.inputHiddens.forEach(inputHidden => {
+            let oneData = {};
+            oneData['sequence'] = this.bookingSequence.value;
+            oneData['date'] = inputHidden.dataset.date;
+            oneData['name'] = inputHidden.dataset.name;
+            oneData['relax'] = inputHidden.dataset.relax;
+
+            // 判断是否预约失败
+            if (this._checkFormData(oneData) === 23) {
+                hasError = true;
+            }
+
+            if (this._checkFormData(oneData)) {
+                checkedData.push(oneData);
+            }
+        })
+
+        return [checkedData, hasError]
+    }
+
+    _checkFormData(oneData) {
+        // 填了名字， 其他选项必须填
+        if (oneData['name'] !== 'wu') {
+            if (oneData['date'] === 'wu' || oneData['relax'] === 'wu') {
+                showAlert({
+                    type: 'danger',
+                    title: '预约失败！',
+                    message: '务必选择预约日期和对应的休假类型！',
+                    parentNode: this.bookingModal,
+                })
+                return 23;
+            } else {
+                return true;
+            }
+        } else {
+            return false;
+        }
+
+
     }
 
     modifyHalfTableHead(_id, startYear, startMonth, endYear, endMonth, delta = null) {
         [this.GroupedDates, this.GroupedDatesObj] = generateWeeklyGroups(startYear, startMonth, endYear, endMonth);
-        [this.day_start, this.day_end] = this.getStartEndDates();
+        [this.day_start, this.day_end] = this._getStartEndDates();
         if (this.day_start <= this.true_day_start) {
             this.true_day_start = this.day_start;
         }
         if (this.day_end >= this.true_day_end) {
             this.true_day_end = this.day_end;
         }
-
-        console.log(this.GroupedDates)
-        console.log(this.GroupedDatesObj)
 
         let thead = document.getElementById(_id);
         let tr1 = thead.querySelectorAll('tr')[0];
@@ -79,7 +229,7 @@ class InitVacationTable {
                 //cell.classList.add('position-relative');
                 cell.dataset.serialNum = i;
                 cell.dataset.colNum = j;
-                cell.dataset.dateRange = this.getCellDateRange(j);
+                cell.dataset.dateRange = this._getCellDateRange(j);
                 cell.addEventListener('click', (et) => {
                     this.handleCellClick(et);
                 });
@@ -87,32 +237,30 @@ class InitVacationTable {
             }
             tableBody.appendChild(row);
         }
-    }
 
-    getCellDateRange(colNum) {
-        let index = 0;
-        for (const year in this.GroupedDates) {
-            for (const month in this.GroupedDates[year]) {
-                let daysRange_length = this.GroupedDates[year][month].length
-                if (colNum < daysRange_length) {
-                    let startDate = this.GroupedDatesObj[year][month][colNum][0].format('YYYY-MM-DD')
-                    let endDate = this.GroupedDatesObj[year][month][colNum][1].format('YYYY-MM-DD')
-                    return [startDate, endDate]
-                } else {
-                    colNum -= daysRange_length;
-                }
-            }
-        }
+
     }
 
     lookForElement() {
         this.bookingModal = document.getElementById('bookingModal');
         this.bookingModalLabel = document.getElementById('bookingModalLabel');
-        this.bookingPerson = this.bookingModal.querySelectorAll('.modal-body .bookingPerson>li')
-        this.bookingDate = this.bookingModal.querySelectorAll('.modal-body .bookingDate li')
-        this.relaxType = this.bookingModal.querySelectorAll('.modal-body .relaxType>li')
-        this.reserveMode = this.bookingModal.querySelectorAll('.modal-body .reserveMode input')
+        this.bookingSequence = document.getElementById('bookingSequence');
+        this.bookingDate = this.bookingModal.querySelectorAll('.modal-body .bookingDate>li')
+        this.relaxType = this.bookingModal.querySelectorAll('.modal-body .bookingDate>li>div:nth-of-type(2)')
+        this.inputHiddens = this.bookingModal.querySelectorAll('.modal-body .bookingDate>li>input')
+        this.bookingDateAllCB = this.bookingModal.querySelectorAll('.modal-body .bookingDate>li input[type="checkbox"]')
+        this.reserveMode = this.bookingModal.querySelectorAll('.modal-body .reserveMode>li')
+        this.reserveMode0 = this.reserveMode[0].querySelector('input')
+        this.reserveMode1 = this.reserveMode[1].querySelector('input')
+        this.bookingPerson = this.bookingModal.querySelectorAll('.modal-body .bookingPerson>div')
+        this.bookingPerson0 = this.bookingPerson[0].querySelector('button');
+        this.bookingPerson1 = this.bookingPerson[1].querySelector('.better-pinjia-btn');
+        this.bookingPerson2 = this.bookingPerson[2].querySelector('.better-pinjia-btn');
+        this.footer = this.bookingModal.querySelector('.modal-footer')
+
         this.resetBooking = document.getElementById('resetBooking');
+        this.confirmBooking = document.getElementById('confirmBooking');
+        this.deleteReserve = document.getElementById('deleteReserve');
         this.weekMap = {
             0: '周日',
             1: '周一',
@@ -122,182 +270,19 @@ class InitVacationTable {
             5: '周五',
             6: '周六',
         };
-
-        this.bookingSequence = document.getElementById('bookingSequence');
-        this.bookingPerson0 = document.getElementById('bookingPerson0');
-        this.bookingPerson1 = document.getElementById('bookingPerson1');
-        this.bookingPerson2 = document.getElementById('bookingPerson2');
-        this.relaxType0 = document.getElementById('relaxType0');
-        this.relaxType1 = document.getElementById('relaxType1');
-        this.relaxType2 = document.getElementById('relaxType2');
-        this.confirmBooking = document.getElementById('confirmBooking');
-        this.inputHiddens = document.querySelectorAll('.modal-content input[type="hidden"]');
-    }
-
-    bindClickEvent() {
-        // 处理 [独立预约方式] 点击事件
-        this.reserveMode[0].addEventListener('click', () => {
-            for (let i = 1; i < this.bookingPerson.length; i++) {
-                this.bookingPerson[i].classList.add('d-none')
-                this.relaxType[i].classList.add('d-none')
-            }
-            for (const bookingDateLi of this.bookingDate) {
-                bookingDateLi.children[1].classList.add('d-none');
-            }
-            this.resetAll();
-        })
-
-        // 处理 [拼假预约方式] 点击事件
-        this.reserveMode[1].addEventListener('click', () => {
-            for (let i = 1; i < this.bookingPerson.length; i++) {
-                this.bookingPerson[i].classList.remove('d-none')
-                this.relaxType[i].classList.remove('d-none')
-            }
-            for (const bookingDateLi of this.bookingDate) {
-                bookingDateLi.children[1].classList.remove('d-none');
-            }
-            this.resetAll();
-        })
-
-        // 处理 [重置按钮] 点击事件
-        this.resetBooking.addEventListener('click', () => {
-            this.resetAll();
-        });
-
-        // 处理 [确认预约] 点击事件
-        this.confirmBooking.addEventListener('click', () => {
-            this.uncheckData = {};
-            this.inputHiddens.forEach(inputHidden => {
-                this.uncheckData[inputHidden.id] = inputHidden.value
-            })
-            console.log(this.uncheckData);
-
-            // 确认必填字段是否填了
-            // 首先判断预约模式
-            let result;
-            const selectedReserveMode = document.querySelector('input[name="reserveModeRadio"]:checked'); // 获取选中的 radio
-            if (selectedReserveMode.value === '0') {
-                result = this.checkShareFormValidation(1)
-                if (result.length === 0) return;
-            } else {
-                // 拼假预约方式
-                // 首先判断想要预约几个人
-                let index = 1;
-                for (let j = 1; j < this.bookingPerson.length; j++) {
-                    const hiddenInput = this.bookingPerson[j].querySelector('input[type="hidden"]');
-                    if (hiddenInput.value !== 'wu') {
-                        index += 1;
-                    }
-                }
-                result = this.checkShareFormValidation(Math.max(index, 2))
-                if (result.length === 0) return;
-            }
-
-            this.sendData(result);
-        })
-
-        // 处理  [预约人]  的点击事件
-        for (let j = 1; j < this.bookingPerson.length; j++) {
-            let dropdownButton = this.bookingPerson[j].querySelector('button');
-            let dropdownItems = this.bookingPerson[j].querySelectorAll('.dropdown-item');
-            const relaxDropdownButton = this.relaxType[j].querySelector('button');
-            const hiddenInput = this.bookingPerson[j].querySelector('input[type="hidden"]');
-
-            // 给每个下拉项绑定点击事件
-            dropdownItems.forEach(item => {
-                item.addEventListener('click', (event) => {
-                    // 使用 event.currentTarget 代替事件元素的 this
-                    const elementThis = event.currentTarget;
-
-                    // 更新按钮文字
-                    dropdownButton.textContent = elementThis.textContent;
-                    hiddenInput.value = elementThis.textContent;
-
-                    // 同步更新休假类型中的名字
-                    relaxDropdownButton.textContent = elementThis.textContent;
-
-                    // 同步更新日期中的 拼假人 名字
-                    for (let k = 0; k < this.bookingDate.length; k++) {
-                        const bookingDateLabel = this.bookingDate[k].querySelectorAll('label')[j];
-                        bookingDateLabel.textContent = elementThis.textContent;
-                    }
-                });
-            });
+        this.currentPerson = null;
+        this.banTypeColor = {
+            '放射假': '#0d6efd',
+            '年假': '#198754',
+            '病假': '#fd7e14',
+            '事假': '#ffc107',
+            '婚假': '#d63384',
+            '产假': '#dc3545',
+            '陪产假': '#6610f2',
+            '育儿假': '#0dcaf0',
+            '丧假': '#adb5bd',
+            '其他假': '#ca766f',
         }
-
-        // 处理 [休假类型] 点击事件
-        for (let j = 0; j < this.relaxType.length; j++) {
-            const relaxDropdownButton = this.relaxType[j].querySelector('button');
-            const relaxDropdownItems = this.relaxType[j].querySelectorAll('.dropdown-item');
-            const hiddenInput = this.relaxType[j].querySelector('input[type="hidden"]');
-
-            // 单独处理第一个休假类型的点击事件
-            if (j === 0) {
-                relaxDropdownItems.forEach(item => {
-                    item.addEventListener('click', function () {
-                        // 更新按钮文字
-                        relaxDropdownButton.textContent = this.textContent;
-                        hiddenInput.value = this.textContent;
-                    })
-                })
-            } else {
-                relaxDropdownItems.forEach(item => {
-                    item.addEventListener('click', function () {
-                        // 更新按钮文字
-                        let personName = relaxDropdownButton.textContent.split(' - ')[0]
-                        relaxDropdownButton.textContent = personName + ' - ' + this.textContent;
-                        hiddenInput.value = this.textContent;
-                    })
-                })
-            }
-        }
-
-        // 处理 [预约日期] 点击事件
-        for (const bookingDateLi of this.bookingDate) {
-            const checkboxes = bookingDateLi.querySelectorAll('input[type="checkbox"]');
-
-            // 这3个checkbox为一组, 需要互斥
-            checkboxes.forEach(checkbox => {
-                checkbox.addEventListener('change', function () {
-                    const hiddenInput = checkbox.parentNode.querySelector('input[type="hidden"]');
-                    if (this.checked) {
-                        hiddenInput.value = this.value;
-                        checkboxes.forEach(otherCheckbox => {
-                            if (otherCheckbox !== this) {
-                                otherCheckbox.checked = false;
-                                otherCheckbox.parentNode.querySelector('input[type="hidden"]').value = 'wu';
-                            }
-                        });
-                    } else {
-                        hiddenInput.value = 'wu';
-                    }
-                });
-            });
-        }
-    }
-
-    resetAll() {
-        const dropdownButtons = this.bookingModal.querySelectorAll('.dropdown-toggle');
-        const bookingDateAllCB = document.querySelectorAll('.bookingDate input[type="checkbox"]');
-        const bookingDateLabels = document.querySelectorAll('.bookingDate label[data-default]');
-
-        dropdownButtons.forEach(button => {
-            button.textContent = button.dataset.default;
-        })
-
-        bookingDateAllCB.forEach(checkbox => {
-            checkbox.checked = false;
-        })
-
-        bookingDateLabels.forEach(bookingDateLabel => {
-            bookingDateLabel.textContent = bookingDateLabel.dataset.default;
-        })
-
-        this.inputHiddens.forEach(input => {
-            if (input.id !== 'bookingSequence' && input.id !== 'bookingPerson0') {
-                input.value = 'wu';
-            }
-        })
     }
 
     handleCellClick(et) {
@@ -315,13 +300,11 @@ class InitVacationTable {
             currentDay = currentDay.add(1, 'day');
         }
         for (let i = 0; i < dateList.length; i++) {
-            const bookingDateLabel = this.bookingDate[i].querySelectorAll('label')[0];
-            const bookingDateCheckboxes = this.bookingDate[i].querySelectorAll('input[type="checkbox"]');
+            const bookingDateLabel = this.bookingDate[i].querySelector('label');
+            const bookingDateCheckbox = this.bookingDate[i].querySelector('input[type="checkbox"]');
 
             bookingDateLabel.textContent = `${dateList[i].format('YYYY年M月D日')}（${this.weekMap[dateList[i].day()]}）`;
-            for (const bookingDateCheckbox of bookingDateCheckboxes) {
-                bookingDateCheckbox.value = dateList[i].format('YYYY-MM-DD');
-            }
+            bookingDateCheckbox.value = dateList[i].format('YYYY-MM-DD');
         }
 
         // 更新顺序位
@@ -329,73 +312,181 @@ class InitVacationTable {
         this.bookingModalLabel.textContent = '预约休假' + ' -- ' + `第 ${serialNum} 优先位`
 
         // 更新本人
-        this.bookingPerson[0].querySelector('button').textContent = sessionStorage.getItem('user_name');
-        this.bookingPerson0.value = sessionStorage.getItem('user_name');
+        this.bookingPerson0.textContent = sessionStorage.getItem('user_name');
+        this.currentPerson = sessionStorage.getItem('user_name');
 
         // 判断单元格上是否已有预约
         if (srcCell.children.length === 0) {
             // 模拟 [独立预约方式] 的点击事件
-            this.reserveMode[0].click();
+            this.reserveMode0.click();
+
+            // 显示脚
+            let footerChildren = this.footer.children
+            for (let footerChild of footerChildren) {
+                footerChild.classList.remove('d-none');
+            }
+            this.deleteReserve.classList.add('d-none');
+            // 启用交互
+            let overlay = this.bookingModal.querySelector('.modal-overlay');
+            if (overlay) {
+                overlay.remove();
+            }
         } else {
-            this.loadExistReserve(srcCell);
+            this.recoverModal(srcCell);
+
+            // 隐藏脚
+            let footerChildren = this.footer.children
+            for (let footerChild of footerChildren) {
+                footerChild.classList.add('d-none');
+            }
+            this.deleteReserve.classList.remove('d-none');
+            // 禁止交互
+            let overlay = document.createElement('div');
+            overlay.className = 'modal-overlay';
+            this.bookingModal.querySelector('.modal-body').appendChild(overlay);
         }
 
         const modalInstance = new bootstrap.Modal(this.bookingModal);
         modalInstance.show();
     }
 
-    checkSingleFormValidation(index) {
-        let bookingSequence = this.uncheckData['bookingSequence'];
-        let bookingPerson = this.uncheckData[`bookingPerson${index}`];
-        let relaxType = this.uncheckData[`relaxType${index}`];
-        let bookingDates = []
-        for (let i = 0; i < 7; i++) {
-            let bookingDate = this.uncheckData[`bookingDate${index}${i}`];
-            if (bookingDate !== 'wu') {
-                bookingDates.push(bookingDate);
-            }
+    bindClickEvent() {
+        // 先绑定 激活/失活 属性
+        this._setBookingPersonBtnProperties();
+
+        // 处理 [重置按钮] 点击事件
+        this.resetBooking.addEventListener('click', () => {
+            this._resetAll();
+        })
+
+        // 处理 [独立预约方式] 点击事件
+        this.reserveMode0.addEventListener('click', () => {
+            this.bookingPerson[0].style.cursor = 'not-allowed';
+            this.bookingPerson[1].classList.add('d-none');
+            this.bookingPerson[2].classList.add('d-none');
+            this._resetAll();
+            this.bookingPerson0.disabled = true;
+        })
+
+        // 处理 [拼假预约方式] 点击事件
+        this.reserveMode1.addEventListener('click', () => {
+            this.bookingPerson[0].style.cursor = 'pointer';
+            this.bookingPerson[1].classList.remove('d-none');
+            this.bookingPerson[2].classList.remove('d-none');
+            this._resetAll();
+            this.bookingPerson0.disabled = false;
+        })
+
+        // 处理 [休假类型] 点击事件
+        for (let i = 0; i < this.relaxType.length; i++) {
+            const relaxDropdownButton = this.relaxType[i].querySelector('button');
+            const relaxDropdownItems = this.relaxType[i].querySelectorAll('.dropdown-item');
+            const inputHidden = relaxDropdownButton.parentNode.parentNode.querySelector('input[type="hidden"]');
+
+            relaxDropdownItems.forEach(item => {
+                item.addEventListener('click', (event) => {
+                    const elementThis = event.currentTarget;
+
+                    // 更新按钮文字
+                    relaxDropdownButton.textContent = elementThis.textContent;
+                    inputHidden.dataset.relax = elementThis.textContent;
+                    inputHidden.dataset.name = this.currentPerson;
+                })
+            })
         }
 
-        if (bookingPerson === 'wu') {
-            showAlert({
-                type: 'danger',
-                title: '预约失败！',
-                message: '拼假模式下，至少选择2名预约人！',
-                parentNode: this.bookingModal,
+        // 处理 [预约日期] 点击事件
+        this.bookingDateAllCB.forEach(checkbox => {
+            checkbox.addEventListener('change', (event) => {
+                const elementThis = event.currentTarget;
+                const inputHidden = elementThis.parentNode.parentNode.querySelector('input[type="hidden"]');
+                if (elementThis.checked) {
+                    inputHidden.dataset.date = elementThis.value;
+                    inputHidden.dataset.name = this.currentPerson;
+                } else {
+                    inputHidden.dataset.date = 'wu';
+                    inputHidden.dataset.name = 'wu';
+                }
             });
-            return false;
-        }
-        if (bookingDates.length === 0 || relaxType === 'wu') {
-            showAlert({
-                type: 'danger',
-                title: '预约失败！',
-                message: '每个预约人至少选择一个预约日期和休假类型！',
-                parentNode: this.bookingModal,
-            });
-            return false;
-        }
+        });
 
-        //return {bookingSequence, bookingPerson, relaxType, bookingDates};
-        return {'sequence': bookingSequence, 'name': bookingPerson, 'ban': relaxType, 'reserve_dates': bookingDates};
-    }
+        // 处理 [预约人] 的点击事件
+        this.bookingPerson0.addEventListener('click', (event) => {
+            const elementThis = event.currentTarget;
+            elementThis.active();
+            this.bookingPerson1.inactive();
+            this.bookingPerson2.inactive();
+            this.currentPerson = elementThis.textContent;
+            this._detectInputHDStatus('success');
+        })
+        this.bookingPerson1.addEventListener('click', (event) => {
+            const elementThis = event.currentTarget;
+            elementThis.active();
+            this.bookingPerson0.inactive();
+            this.bookingPerson2.inactive();
+            this.currentPerson = elementThis.textContent;
+            this._detectInputHDStatus('primary');
+        })
+        this.bookingPerson2.addEventListener('click', (event) => {
+            const elementThis = event.currentTarget;
+            elementThis.active();
+            this.bookingPerson0.inactive();
+            this.bookingPerson1.inactive();
+            this.currentPerson = elementThis.textContent;
+            this._detectInputHDStatus('warning');
+        })
 
-    checkShareFormValidation(maxIndex) {
-        let pureData = []
-        for (let i = 0; i < maxIndex; i++) {
-            let res = this.checkSingleFormValidation(i);
-            if (res) {
-                pureData.push(res);
-            } else {
-                return []
+        // 处理 [预约人 下拉框] 的点击事件
+        let dropDownItems1 = this.bookingPerson[1].querySelectorAll('.dropdown-item')
+        dropDownItems1.forEach(item => {
+            item.addEventListener('click', (event) => {
+                const elementThis = event.currentTarget;
+                this.bookingPerson1.textContent = elementThis.textContent;
+                if (this.bookingPerson1.disabled) {
+                    this.bookingPerson1.disabled = false;
+                    this.bookingPerson[1].style.cursor = 'pointer';
+                }
+            })
+        })
+        let dropDownItems2 = this.bookingPerson[2].querySelectorAll('.dropdown-item')
+        dropDownItems2.forEach(item => {
+            item.addEventListener('click', (event) => {
+                const elementThis = event.currentTarget;
+                this.bookingPerson2.textContent = elementThis.textContent;
+                if (this.bookingPerson2.disabled) {
+                    this.bookingPerson2.disabled = false;
+                    this.bookingPerson[2].style.cursor = 'pointer';
+                }
+            })
+        })
+
+        // 处理 [确认预约] 点击事件
+        this.confirmBooking.addEventListener('click', () => {
+            let [checkedData, hasError] = this._collectInputHD();
+
+            if (checkedData.length === 0 || hasError) {
+                return;
             }
-        }
-        return pureData
+            this.sendData(checkedData);
+        })
+
+        // 处理 [删除预约] 点击事件
+        this.deleteReserve.addEventListener('click', () => {
+            let [checkedData, hasError] = this._collectInputHD();
+
+            if (checkedData.length === 0 || hasError) {
+                return;
+            }
+            console.log(checkedData)
+            this.deleteData(checkedData);
+        })
     }
 
     sendData(result) {
         // 获取token
         const token = getToken();
         if (!token) {
+            loginExpiredAlert()
             return;
         }
 
@@ -416,8 +507,13 @@ class InitVacationTable {
                         title: '预约成功！',
                         message: data.detail,
                     });
+
+                    // 隐藏对话框
                     const modalInstance = bootstrap.Modal.getInstance(this.bookingModal);
                     modalInstance.hide();
+
+                    // 获取数据
+                    this.getData();
                 } else {
                     showAlert({
                         type: 'danger',
@@ -432,17 +528,8 @@ class InitVacationTable {
         })
     }
 
-    getStartEndDates() {
-        let year = Object.keys(this.GroupedDates)[0];
-        let month_start = Object.keys(this.GroupedDates[year])[0];
-        let month_end = Object.keys(this.GroupedDates[year])[Object.keys(this.GroupedDates[year]).length - 1];
-        let day_start = this.GroupedDatesObj[year][month_start][0][0];
-        let day_end = this.GroupedDatesObj[year][month_end][Object.keys(this.GroupedDates[year][month_end]).length - 1][1];
-
-        return [day_start, day_end];
-    }
-
-    getReserveData() {
+    getData() {
+        this._renderWholeTable();  // 先清空整个表格
         let data = {
             month_start: this.true_day_start,
             month_end: this.true_day_end,
@@ -450,6 +537,7 @@ class InitVacationTable {
         // 获取token
         const token = getToken();
         if (!token) {
+            loginExpiredAlert()
             return;
         }
 
@@ -463,80 +551,26 @@ class InitVacationTable {
             body: JSON.stringify(data)
         }).then(response => {
             response.json().then(data => {
-                this.server_reserve_data = data;
-                console.log(this.server_reserve_data);
-                this.renderTableCells();
+                if (response.ok) {
+                    this.server_reserve_data = data;
+                    this.renderTableCells();
+                } else {
+                    loginExpiredAlert();
+                    window.location.href = '/login';
+                }
             })
+        }).catch(error => {
+            alert('未知错误！');
+            console.error(error);
         })
 
     }
 
     renderTableCells() {
-        let tableCells = document.querySelectorAll('#reserve-content-all .clickable-cell');
-        let tryCell = tableCells[0];
-        //tryCell.innerHTML = `
-        //<div class="container position-relative" style="height: 40%;">
-        //    <div class="row h-100">
-        //        <div class="col-3 bg-success p-0"></div>
-        //        <div class="col-6 bg-warning p-0"></div>
-        //        <div class="col-3 bg-primary p-0"></div>
-        //    </div>
-        //    <div class="position-absolute" style="top: 50%;left: 50%;transform: translate(-50%, -50%);font-size: 12px;color: #a52834">张旭辉</div>
-        //</div>
-        //`;
-
-        tryCell.innerHTML += `
-        <div class="container label-bar">
-            <div class="row">
-                <div class="col" style="background-color:transparent;"></div>
-                <div class="col" style="background-color:transparent;"></div>
-                <div class="col" style="background-color:transparent;"></div>
-                <div class="col" style="background-color:transparent;"></div>
-                <div class="col" style="background-color:transparent;"></div>
-                <div class="col" style="background-color:transparent;"></div>
-                <div class="col" style="background-color:transparent;"></div>
-            </div>
-            <div class="label-text">张旭辉</div>
-        </div>
-        `;
-
-        tryCell.innerHTML += `
-        <div class="container label-bar">
-            <div class="row">
-                <div class="col bg-success"></div>
-                <div class="col bg-warning"></div>
-                <div class="col bg-primary"></div>
-                <div class="col bg-danger"></div>
-                <div class="col bg-body"></div>
-                <div class="col bg-info"></div>
-                <div class="col bg-black"></div>
-            </div>
-            <div class="label-text">廖中凡</div>
-        </div>
-        `;
-
-        tryCell.innerHTML += `
-        <div class="container label-bar">
-            <div class="row">
-                <div class="col bg-success"></div>
-                <div class="col bg-warning"></div>
-                <div class="col bg-primary"></div>
-                <div class="col bg-danger"></div>
-                <div class="col bg-body"></div>
-                <div class="col bg-info"></div>
-                <div class="col bg-black"></div>
-            </div>
-            <div class="label-text">曾小洲</div>
-        </div>
-        `;
-        // 以上都是无用的
-
-
         this.targetCells = {}
         if (this.server_reserve_data.length === 0) {
             return;
         }
-        this.getBanTypeColor();
 
         for (let server_data of this.server_reserve_data) {
             let targetCell = {
@@ -556,7 +590,7 @@ class InitVacationTable {
             const startDate = reserve_date.startOf('isoWeek');
             const endDate = reserve_date.endOf('isoWeek');
             let xingQi;  // 星期一到星期天  对应 0-6
-            if (xingQi !== 0) {
+            if (reserve_date.day() !== 0) {
                 xingQi = reserve_date.day() - 1
             } else {
                 xingQi = 6
@@ -574,13 +608,18 @@ class InitVacationTable {
                     targetCell['bantype_days'].push({bantype: bantype, days: [xingQi]})
                     this.targetCells[index] = targetCell
                 } else {
+                    // 构建索引， 方便查找
                     let bantype_days = this.targetCells[index]['bantype_days']
-                    for (let bantypeDay of bantype_days) {
-                        if (bantype === bantypeDay['bantype']) {
-                            bantypeDay['days'].push(xingQi);
-                        } else {
-                            bantype_days.push({bantype: bantype, days: [xingQi]})
-                        }
+                    let allBantypes = {};
+                    for (let i = 0; i < bantype_days.length; i++) {
+                        let bantypeDay = bantype_days[i]
+                        allBantypes[bantypeDay['bantype']] = i;
+                    }
+
+                    if (allBantypes[bantype]) {
+                        bantype_days[allBantypes[bantype]]['days'].push(xingQi);
+                    } else {
+                        bantype_days.push({bantype: bantype, days: [xingQi]})
                     }
                 }
             } else {
@@ -588,7 +627,6 @@ class InitVacationTable {
             }
         }
 
-        console.log(this.targetCells)
         this.renderTableCell();
     }
 
@@ -656,52 +694,139 @@ class InitVacationTable {
         //</div>`
     }
 
-    getBanTypeColor() {
-        this.banTypeColor = {
-            '放射假': '#0d6efd',
-            '年假': '#198754',
-            '病假': '#fd7e14',
-            '事假': '#ffc107',
-            '婚假': '#d63384',
-            '产假': '#dc3545',
-            '陪产假': '#6610f2',
-            '育儿假': '#0dcaf0',
-            '丧假': '#adb5bd',
-            '其他假': '#ca766f',
-        }
-    }
-
-    loadExistReserve(srcCell) {
+    recoverModal(srcCell) {
         this.bookingModalLabel.textContent = '（审查）' + this.bookingModalLabel.textContent.split('）').at(-1);
         let srcCellChildren = srcCell.children;
 
-        // 隐藏预约方式
-        document.getElementById('bookingContent').children[0].classList.add('d-none');
-        document.getElementById('bookingContent').children[1].classList.add('d-none');
-        document.getElementById('bookingContent').children[2].classList.remove('mt-4');
-        document.getElementById('bookingContent').children[2].classList.add('mt-0');
-
+        // 接下来模拟点击事件
         if (srcCellChildren.length === 1) {
-            this.reserveMode[0].click();
+            this.reserveMode0.click();
+            let srcCellChild = srcCellChildren[0];
 
-            let childLabelBar = srcCellChildren[0];
-            let childCols = childLabelBar.querySelectorAll('.col[data-index]');
-            for (let i = 0; i < childCols.length; i++) {
-                let childCol = childCols[i];
-                let index = childCol.dataset.index;
-                let name = childCol.dataset.name;
-                let bantype = childCol.dataset.bantype;
+            let colEls = srcCellChild.querySelectorAll('.col[data-index]')
+            for (let colEl of colEls) {
+                let index = colEl.dataset.index;
+                let name = colEl.dataset.name;
+                let bantype = colEl.dataset.bantype;
 
-                this.bookingPerson0.value = name;
-                this.bookingDate[index].querySelectorAll('input[type="checkbox"]')[0].checked = true;
-                this.relaxType0.parentNode.querySelector('button').textContent = bantype;
+                this.currentPerson = name
+                this.bookingPerson0.textContent = name;
+                this.bookingDateAllCB[index].checked = true;
+                this.bookingDateAllCB[index].dispatchEvent(new Event('change', {bubbles: true}));  // 手动触发 change 事件
+                this.relaxType[index].querySelectorAll('.dropdown-item').forEach(item => {
+                    if (item.textContent === bantype) {
+                        item.click();
+                    }
+                })
+
             }
         } else {
-            this.reserveMode[1].click();
+            this.reserveMode1.click();
+            for (let i = 0; i < srcCellChildren.length; i++) {
+                let srcCellChild = srcCellChildren[i];
+                let colEls = srcCellChild.querySelectorAll('.col[data-index]')
+
+                for (let colEl of colEls) {
+                    let index = colEl.dataset.index;
+                    let name = colEl.dataset.name;
+                    let bantype = colEl.dataset.bantype;
+
+                    this[`bookingPerson${i}`].textContent = name;
+                    this[`bookingPerson${i}`].disabled = false;
+                    this[`bookingPerson${i}`].parentNode.style.cursor = 'pointer';
+                    this[`bookingPerson${i}`].click();
+                    this.bookingDateAllCB[index].checked = true;
+                    this.bookingDateAllCB[index].dispatchEvent(new Event('change', {bubbles: true}));
+                    this.relaxType[index].querySelectorAll('.dropdown-item').forEach(item => {
+                        if (item.textContent === bantype) {
+                            item.click();
+                        }
+                    })
+                }
+            }
+        }
+    }
+
+    deleteData(result) {
+        // 获取token
+        const token = getToken();
+        if (!token) {
+            loginExpiredAlert()
+            return;
         }
 
+        // 向服务器发请求
+        fetch('/delete-reserve', {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(result)
+        }).then(response =>
+            response.json().then(data => {
+                if (response.ok) {
+                    showAlert({
+                        type: 'success',
+                        title: '删除成功！',
+                        message: data.detail,
+                    });
+
+                    // 隐藏对话框
+                    const modalInstance = bootstrap.Modal.getInstance(this.bookingModal);
+                    modalInstance.hide();
+
+                    // 获取数据
+                    this.getData();
+                } else {
+                    showAlert({
+                        type: 'danger',
+                        title: '删除失败！',
+                        message: data.detail,
+                    });
+                }
+            })
+        ).catch(error => {
+            alert('删除失败！未知错误！');
+            console.error(error);
+        })
     }
 }
 
-let iVT = new InitVacationTable(2025);
-iVT.init();
+let iVT;
+
+function setAllDropdownToggleYear(year) {
+    let dropdownToggles = document.querySelectorAll('#reserve-content-all .dropdown-toggle');
+    for (let dropdownToggle of dropdownToggles) {
+        dropdownToggle.textContent = year;
+    }
+}
+
+function chooseVacationTableYear() {
+    let dropdownItems = document.querySelectorAll('#reserve-content-all .dropdown-item.custom-select-item');
+
+    dropdownItems.forEach(item => {
+        item.addEventListener('click', (event) => {
+            const elementThis = event.currentTarget;
+            let year = elementThis.textContent;
+            setAllDropdownToggleYear(year)
+
+            iVT.init_year = year;
+            iVT.init();
+        });
+    })
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    let today = new Date();
+    let year = today.getFullYear();
+
+    setAllDropdownToggleYear(year)
+    iVT = new InitVacationTable(year);
+    iVT.init();
+
+    chooseVacationTableYear()
+})
+
+

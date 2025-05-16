@@ -30,7 +30,6 @@ class InitVacationTable {
     }
 
     _getCellDateRange(colNum) {
-        let index = 0;
         for (const year in this.GroupedDates) {
             for (const month in this.GroupedDates[year]) {
                 let daysRange_length = this.GroupedDates[year][month].length
@@ -169,8 +168,12 @@ class InitVacationTable {
         } else {
             return false;
         }
+    }
 
-
+    _setAllDropdownToggleYear(year) {
+        for (let dropdownYearToggle of this.dropdownYearToggles) {
+            dropdownYearToggle.textContent = year;
+        }
     }
 
     modifyHalfTableHead(_id, startYear, startMonth, endYear, endMonth, delta = null) {
@@ -256,7 +259,8 @@ class InitVacationTable {
         this.bookingPerson0 = this.bookingPerson[0].querySelector('button');
         this.bookingPerson1 = this.bookingPerson[1].querySelector('.better-pinjia-btn');
         this.bookingPerson2 = this.bookingPerson[2].querySelector('.better-pinjia-btn');
-        this.footer = this.bookingModal.querySelector('.modal-footer')
+        this.footer = this.bookingModal.querySelector('.modal-footer');
+        this.dropdownYearToggles = document.querySelectorAll('#reserve-content-all .dropdown-toggle');
 
         this.resetBooking = document.getElementById('resetBooking');
         this.confirmBooking = document.getElementById('confirmBooking');
@@ -556,6 +560,7 @@ class InitVacationTable {
                     this.renderTableCells();
                 } else {
                     loginExpiredAlert();
+                    window.location.href = '/login';
                 }
             })
         }).catch(error => {
@@ -795,12 +800,6 @@ class InitVacationTable {
 
 let iVT;
 
-function setAllDropdownToggleYear(year) {
-    let dropdownToggles = document.querySelectorAll('#reserve-content-all .dropdown-toggle');
-    for (let dropdownToggle of dropdownToggles) {
-        dropdownToggle.textContent = year;
-    }
-}
 
 function chooseVacationTableYear() {
     let dropdownItems = document.querySelectorAll('#reserve-content-all .dropdown-item.custom-select-item');
@@ -825,7 +824,7 @@ document.addEventListener('DOMContentLoaded', () => {
     iVT = new InitVacationTable(year);
     iVT.init();
 
-    chooseVacationTableYear()
+    chooseVacationTableYear();
 })
 
 

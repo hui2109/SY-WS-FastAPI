@@ -1,54 +1,3 @@
-function initAvatarModal() {
-    // 初始化所有工具提示
-    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
-    const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl, {
-        placement: 'top',
-        delay: {show: 500, hide: 50},
-        container: '.avatar-grid'
-    }));
-
-    // 监听头像网格滚动事件，滚动时隐藏所有tooltip
-    document.querySelector('.avatar-grid').addEventListener('scroll', function () {
-        tooltipList.forEach(tooltip => tooltip.hide());
-    });
-
-    // 头像选择逻辑
-    const avatarOptions = document.querySelectorAll('.avatar-option');
-    const selectedAvatarInput = document.getElementById('selectedAvatar');
-    const avatarPreview = document.getElementById('avatarPreview');
-
-    // 头像模态框打开时，确保正确显示当前选中的头像
-    const avatarModal = document.getElementById('avatarModal');
-    avatarModal.addEventListener('show.bs.modal', function () {
-        // 移除所有头像的选中状态
-        avatarOptions.forEach(opt => opt.classList.remove('selected'));
-
-        // 找到并选中当前已选择的头像
-        const currentAvatarFile = selectedAvatarInput.value;
-        const currentAvatarOption = document.querySelector(`.avatar-option[data-avatar="${currentAvatarFile}"]`);
-        if (currentAvatarOption) {
-            currentAvatarOption.classList.add('selected');
-        }
-    });
-
-    // 头像点击 - 选择逻辑
-    avatarOptions.forEach(option => {
-        option.addEventListener('click', function () {
-            // 移除其他选中状态
-            avatarOptions.forEach(opt => opt.classList.remove('selected'));
-
-            // 添加当前选中状态
-            this.classList.add('selected');
-
-            // 更新预览图和隐藏输入值
-            const avatarFile = this.getAttribute('data-avatar');
-            selectedAvatarInput.value = avatarFile;
-            avatarPreview.src = `/WSFrontends/assets/img/avatars/${avatarFile}`;
-        });
-    });
-}
-
-
 function getToken() {
     // 获取token
     const token = sessionStorage.getItem('access_token');
@@ -61,6 +10,26 @@ function getToken() {
     return token;
 }
 
-document.addEventListener('DOMContentLoaded', function () {
-    initAvatarModal();
-});
+function goThroughDate(startDate, endDate) {
+    let dateList = [];
+    // 创建副本，不影响原始对象
+    let currentDate = new Date(startDate);
+    while (currentDate <= endDate) {
+        dateList.push(new Date(currentDate));
+        currentDate.setDate(currentDate.getDate() + 1);
+    }
+    return dateList;
+}
+
+// 根据dateLabel标签的位置, 改变日期选择器(.tempus-dominus-widget)弹出的位置
+function adjustDatePickerPosition(dateLabel) {
+    let datePicker = document.querySelector('.tempus-dominus-widget.show');
+    const datePickerRect = datePicker.getBoundingClientRect();
+    const dateLabelRect = dateLabel.getBoundingClientRect();
+    let new_x = dateLabelRect.x + (dateLabelRect.width / 2) - (datePickerRect.width / 2);
+    let new_y = dateLabelRect.y + dateLabelRect.height + 20;
+
+    // 设置新的位置
+    datePicker.style.setProperty('--td-left', `${new_x}px`);
+    datePicker.style.setProperty('--td-top', `${new_y}px`);
+}
