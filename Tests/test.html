@@ -1,43 +1,927 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh">
 
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
-  <link rel="stylesheet" href="../WSFrontends/assets/plugin/node_modules/swiper/swiper-bundle.min.css">
+  <title>响应式导航菜单</title>
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Bootstrap Icons -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.5/font/bootstrap-icons.min.css"
+    rel="stylesheet">
   <style>
-    .swiper {
-      width: 600px;
-      height: 300px;
+    body {
+      padding-top: 70px;
+      padding-bottom: 60px;
+      min-height: 100vh;
+      background-color: #f8f9fa;
+      transition: background-color 0.3s;
+    }
+
+    .content {
+      min-height: calc(100vh - 140px);
+      padding: 20px;
+      background-color: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    /* 顶部导航样式（桌面端） */
+    .top-nav {
+      background-color: white;
+      padding: 0;
+      box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+      transition: all 0.3s ease;
+    }
+
+    .top-nav .nav-link {
+      color: #6c757d;
+      padding: 1rem 1rem;
+      font-weight: 500;
+      transition: all 0.3s ease;
+    }
+
+    .top-nav .nav-link:hover {
+      color: #212529;
+    }
+
+    .top-nav .nav-link.active {
+      color: #4a6bff;
+      font-weight: 600;
+    }
+
+    .top-nav .nav-icon {
+      font-size: 1.1rem;
+      margin-right: 6px;
+    }
+
+    /* 手机端顶部导航样式 */
+    .mobile-top-bar {
+      display: none;
+      background-color: white;
+      padding: 10px 0;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      position: fixed;
+      top: 0;
+      width: 100%;
+      z-index: 1000;
+      transform: translateY(0);
+      transition: transform 0.3s ease, background-color 0.3s;
+      will-change: transform;
+    }
+
+    .mobile-top-bar .logo {
+      font-weight: 600;
+      color: #4a6bff;
+      text-decoration: none;
+      font-size: 1.1rem;
+    }
+
+    /* 用户控件样式 */
+    .user-controls {
+      display: flex;
+      align-items: center;
+    }
+
+    .theme-toggle-wrapper {
+      position: relative;
+    }
+
+    .theme-toggle {
+      background: none;
+      border: none;
+      font-size: 1.2rem;
+      color: #6c757d;
+      cursor: pointer;
+      transition: color 0.3s;
+      padding: 5px 8px;
+    }
+
+    .theme-toggle:hover {
+      color: #212529;
+    }
+
+    .user-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      padding: 5px 8px;
+      border-radius: 30px;
+      transition: background-color 0.2s;
+    }
+
+    .user-wrapper:hover {
+      background-color: rgba(0, 0, 0, 0.05);
+    }
+
+    .user-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background-color: #e9ecef;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 8px;
+      color: #495057;
+      font-weight: 600;
+    }
+
+    .user-name {
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: #495057;
+    }
+
+    /* 下拉菜单样式 */
+    .dropdown-menu {
+      display: none;
+      position: absolute;
+      right: 0;
+      top: 100%;
+      min-width: 160px;
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 3px 15px rgba(0, 0, 0, 0.1);
+      padding: 8px 0;
+      z-index: 1100;
+      margin-top: 5px;
+      transition: background-color 0.3s;
+    }
+
+    /* 移动端头像下拉菜单位置修正 */
+    #mobileUserDropdown {
+      right: auto;
+      left: 0;
+    }
+
+    .dropdown-menu.show {
+      display: block;
+    }
+
+    .dropdown-menu::before {
+      content: '';
+      position: absolute;
+      top: -6px;
+      right: 15px;
+      width: 12px;
+      height: 12px;
+      background-color: white;
+      transform: rotate(45deg);
+      border-left: 1px solid rgba(0, 0, 0, 0.05);
+      border-top: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    /* 移动端头像下拉菜单箭头位置修正 */
+    #mobileUserDropdown::before {
+      right: auto;
+      left: 15px;
+    }
+
+    .dropdown-item {
+      padding: 8px 20px;
+      font-size: 0.9rem;
+      color: #495057;
+      display: flex;
+      align-items: center;
+      transition: background-color 0.2s;
+    }
+
+    .dropdown-item:hover {
+      background-color: #f8f9fa;
+    }
+
+    .dropdown-item i {
+      margin-right: 8px;
+      font-size: 1rem;
+    }
+
+    .dropdown-divider {
+      height: 1px;
+      background-color: rgba(0, 0, 0, 0.05);
+      margin: 6px 0;
+    }
+
+    /* 底部导航样式 */
+    .bottom-nav {
+      display: none;
+      background-color: white;
+      box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+      padding: 5px 0;
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      z-index: 1000;
+      transition: background-color 0.3s;
+    }
+
+    .bottom-nav:after {
+      content: '';
+      position: absolute;
+      bottom: -50px;
+      /* 确保覆盖足够的区域，防止内容透出 */
+      left: 0;
+      right: 0;
+      height: 50px;
+      background-color: white;
+      z-index: -1;
+      transition: background-color 0.3s;
+    }
+
+    body.dark-mode .bottom-nav:after {
+      background-color: #1e1e1e;
+    }
+
+    .bottom-nav .nav-link {
+      color: #9aa0a6;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 6px 0;
+      transition: all 0.3s ease;
+    }
+
+    .bottom-nav .nav-link:hover {
+      color: #4a6bff;
+    }
+
+    .bottom-nav .nav-link.active {
+      color: #4a6bff;
+    }
+
+    .bottom-nav .nav-icon {
+      font-size: 1.3rem;
+      margin-bottom: 1px;
+    }
+
+    /* 响应式设置 */
+    @media (max-width: 991px) {
+      .top-nav {
+        display: none;
+      }
+
+      .mobile-top-bar {
+        display: block;
+      }
+
+      .bottom-nav {
+        display: block;
+      }
+
+      body {
+        padding-top: 60px;
+        padding-bottom: 60px;
+      }
+    }
+
+    /* 内容显示区域 */
+    .tab-content {
+      padding: 20px;
+    }
+
+    /* 动画效果 */
+    .fade-in {
+      animation: fadeIn 0.5s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* 暗黑模式样式 */
+    body.dark-mode {
+      background-color: #121212;
+    }
+
+    body.dark-mode .content {
+      background-color: #1e1e1e;
+      color: #e9ecef;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    body.dark-mode .top-nav,
+    body.dark-mode .mobile-top-bar,
+    body.dark-mode .bottom-nav {
+      background-color: #1e1e1e;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    body.dark-mode .top-nav .nav-link {
+      color: #adb5bd;
+    }
+
+    body.dark-mode .top-nav .nav-link:hover {
+      color: #e9ecef;
+    }
+
+    body.dark-mode .user-name {
+      color: #adb5bd;
+    }
+
+    body.dark-mode .theme-toggle {
+      color: #adb5bd;
+    }
+
+    body.dark-mode .theme-toggle:hover {
+      color: #e9ecef;
+    }
+
+    body.dark-mode .dropdown-menu {
+      background-color: #2c2c2c;
+      box-shadow: 0 3px 15px rgba(0, 0, 0, 0.3);
+    }
+
+    body.dark-mode .dropdown-menu::before {
+      background-color: #2c2c2c;
+      border-color: #444;
+    }
+
+    body.dark-mode .dropdown-item {
+      color: #adb5bd;
+    }
+
+    body.dark-mode .dropdown-item:hover {
+      background-color: #383838;
+    }
+
+    body.dark-mode .dropdown-divider {
+      background-color: #444;
+    }
+
+    body.dark-mode .user-wrapper:hover {
+      background-color: rgba(255, 255, 255, 0.05);
+    }
+
+    body.dark-mode .user-avatar {
+      background-color: #444;
+      color: #adb5bd;
+    }
+
+    body.dark-mode .bottom-nav .nav-link {
+      color: #888;
+    }
+
+    body.dark-mode .navbar-brand {
+      color: #4a6bff !important;
     }
   </style>
 </head>
 
 <body>
-  <!-- Slider main container -->
-  <div class="swiper">
-    <!-- Additional required wrapper -->
-    <div class="swiper-wrapper">
-      <!-- Slides -->
-      <div class="swiper-slide">Slide 1</div>
-      <div class="swiper-slide">Slide 2</div>
-      <div class="swiper-slide">Slide 3</div>
-      ...
+  <!-- 顶部导航栏（桌面端） -->
+  <nav class="navbar navbar-expand-lg fixed-top top-nav">
+    <div class="container">
+      <a class="navbar-brand" href="#" style="color: #4a6bff; font-weight: 600;">
+        <i class="bi bi-gem me-2"></i>品牌名称
+      </a>
+      <div class="collapse navbar-collapse">
+        <ul class="navbar-nav mx-auto">
+          <li class="nav-item">
+            <a class="nav-link active" href="#home">
+              <i class="bi bi-house nav-icon"></i>首页
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#services">
+              <i class="bi bi-grid nav-icon"></i>服务
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#products">
+              <i class="bi bi-bag nav-icon"></i>产品
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#message">
+              <i class="bi bi-chat-dots nav-icon"></i>消息
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#notifications">
+              <i class="bi bi-bell nav-icon"></i>通知
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#profile">
+              <i class="bi bi-person nav-icon"></i>个人
+            </a>
+          </li>
+        </ul>
+
+        <!-- 用户控件部分 -->
+        <div class="user-controls">
+          <div class="theme-toggle-wrapper me-2">
+            <button class="theme-toggle" id="desktopThemeToggle">
+              <i class="bi bi-sun"></i>
+            </button>
+            <div class="dropdown-menu" id="themeDropdown">
+              <a class="dropdown-item theme-option" data-theme="light" href="#">
+                <i class="bi bi-sun"></i>浅色模式
+              </a>
+              <a class="dropdown-item theme-option" data-theme="dark" href="#">
+                <i class="bi bi-moon"></i>深色模式
+              </a>
+              <a class="dropdown-item theme-option" data-theme="auto" href="#">
+                <i class="bi bi-circle-half"></i>自动模式
+              </a>
+            </div>
+          </div>
+
+          <div class="user-wrapper" id="desktopUserDropdownToggle">
+            <div class="user-avatar">
+              <i class="bi bi-person-fill"></i>
+            </div>
+            <span class="user-name">用户名</span>
+            <div class="dropdown-menu" id="userDropdown">
+              <a class="dropdown-item" href="#">
+                <i class="bi bi-person-circle"></i>个人资料
+              </a>
+              <a class="dropdown-item" href="#">
+                <i class="bi bi-gear"></i>设置
+              </a>
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item" href="#">
+                <i class="bi bi-image"></i>修改头像
+              </a>
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item" href="#" style="color: #dc3545;">
+                <i class="bi bi-box-arrow-right"></i>退出登录
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-    <!-- If we need pagination -->
-    <div class="swiper-pagination"></div>
+  </nav>
 
-    <!-- If we need navigation buttons -->
-    <div class="swiper-button-prev"></div>
-    <div class="swiper-button-next"></div>
+  <!-- 移动端顶部栏 -->
+  <div class="mobile-top-bar">
+    <div class="container">
+      <div class="d-flex justify-content-between align-items-center">
+        <!-- 左侧用户头像和名称 -->
+        <div class="user-wrapper" id="mobileUserDropdownToggle">
+          <div class="user-avatar">
+            <i class="bi bi-person-fill"></i>
+          </div>
+          <span class="user-name d-none d-sm-inline">用户名</span>
+          <div class="dropdown-menu" id="mobileUserDropdown">
+            <a class="dropdown-item" href="#">
+              <i class="bi bi-person-circle"></i>个人资料
+            </a>
+            <a class="dropdown-item" href="#">
+              <i class="bi bi-gear"></i>设置
+            </a>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item" href="#">
+              <i class="bi bi-image"></i>修改头像
+            </a>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item" href="#" style="color: #dc3545;">
+              <i class="bi bi-box-arrow-right"></i>退出登录
+            </a>
+          </div>
+        </div>
 
-    <!-- If we need scrollbar -->
-    <div class="swiper-scrollbar"></div>
+        <!-- 中间 Logo -->
+        <a href="#" class="logo text-center">
+          <i class="bi bi-gem me-1"></i>品牌名称
+        </a>
+
+        <!-- 右侧主题切换按钮 -->
+        <div class="theme-toggle-wrapper">
+          <button class="theme-toggle" id="mobileThemeToggle">
+            <i class="bi bi-sun"></i>
+          </button>
+          <div class="dropdown-menu" id="mobileThemeDropdown">
+            <a class="dropdown-item theme-option" data-theme="light" href="#">
+              <i class="bi bi-sun"></i>浅色模式
+            </a>
+            <a class="dropdown-item theme-option" data-theme="dark" href="#">
+              <i class="bi bi-moon"></i>深色模式
+            </a>
+            <a class="dropdown-item theme-option" data-theme="auto" href="#">
+              <i class="bi bi-circle-half"></i>自动模式
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 
-  <script src="../WSFrontends/assets/plugin/node_modules/swiper/swiper-bundle.min.js"></script>
-  <script src="./test.js"></script>
+  <!-- 底部导航栏（移动端） -->
+  <nav class="bottom-nav">
+    <div class="container">
+      <div class="row justify-content-around">
+        <div class="col-2 text-center">
+          <a class="nav-link active" href="#home">
+            <i class="bi bi-house nav-icon"></i>
+          </a>
+        </div>
+        <div class="col-2 text-center">
+          <a class="nav-link" href="#services">
+            <i class="bi bi-grid nav-icon"></i>
+          </a>
+        </div>
+        <div class="col-2 text-center">
+          <a class="nav-link" href="#products">
+            <i class="bi bi-bag nav-icon"></i>
+          </a>
+        </div>
+        <div class="col-2 text-center">
+          <a class="nav-link" href="#message">
+            <i class="bi bi-chat-dots nav-icon"></i>
+          </a>
+        </div>
+        <div class="col-2 text-center">
+          <a class="nav-link" href="#notifications">
+            <i class="bi bi-bell nav-icon"></i>
+          </a>
+        </div>
+        <div class="col-2 text-center">
+          <a class="nav-link" href="#profile">
+            <i class="bi bi-person nav-icon"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- 主要内容区域 -->
+  <div class="container">
+    <div class="content">
+      <div class="tab-content" id="navContent">
+        <div class="tab-pane fade show active" id="home">
+          <div class="fade-in">
+            <h2>首页</h2>
+            <p>这是首页内容区域。您可以在这里展示重要信息或者网站介绍。</p>
+            <p>这是首页内容区域。您可以在这里展示重要信息或者网站介绍。</p>
+            <p>这是首页内容区域。您可以在这里展示重要信息或者网站介绍。</p>
+            <p>这是首页内容区域。您可以在这里展示重要信息或者网站介绍。</p>
+            <p>这是首页内容区域。您可以在这里展示重要信息或者网站介绍。</p>
+            <p>这是首页内容区域。您可以在这里展示重要信息或者网站介绍。</p>
+            <p>这是首页内容区域。您可以在这里展示重要信息或者网站介绍。</p>
+            <p>这是首页内容区域。您可以在这里展示重要信息或者网站介绍。</p>
+            <p>这是首页内容区域。您可以在这里展示重要信息或者网站介绍。</p>
+            <p>这是首页内容区域。您可以在这里展示重要信息或者网站介绍。</p>
+            <p>这是首页内容区域。您可以在这里展示重要信息或者网站介绍。</p>
+            <p>这是首页内容区域。您可以在这里展示重要信息或者网站介绍。</p>
+            <p>这是首页内容区域。您可以在这里展示重要信息或者网站介绍。</p>
+            <p>这是首页内容区域。您可以在这里展示重要信息或者网站介绍。</p>
+            <p>这是首页内容区域。您可以在这里展示重要信息或者网站介绍。</p>
+            <p>这是首页内容区域。您可以在这里展示重要信息或者网站介绍。</p>
+            <p>这是首页内容区域。您可以在这里展示重要信息或者网站介绍。</p>
+            <p>这是首页内容区域。您可以在这里展示重要信息或者网站介绍。</p>
+            <p>这是首页内容区域。您可以在这里展示重要信息或者网站介绍。</p>
+            <p>这是首页内容区域。您可以在这里展示重要信息或者网站介绍。</p>
+            <p>这是首页内容区域。您可以在这里展示重要信息或者网站介绍。</p>
+            <p>这是首页内容区域。您可以在这里展示重要信息或者网站介绍。</p>
+            <p>这是首页内容区域。您可以在这里展示重要信息或者网站介绍。</p>
+            <p>这是首页内容区域。您可以在这里展示重要信息或者网站介绍。</p>
+            <p>这是首页内容区域。您可以在这里展示重要信息或者网站介绍。</p>
+            <p>这是首页内容区域。您可以在这里展示重要信息或者网站介绍。</p>
+            <p>这是首页内容区域。您可以在这里展示重要信息或者网站介绍。</p>
+            <p>这是首页内容区域。您可以在这里展示重要信息或者网站介绍。</p>
+            <p>这是首页内容区域。您可以在这里展示重要信息或者网站介绍。</p>
+            <p>这是首页内容区域。您可以在这里展示重要信息或者网站介绍。</p>
+            <p>这是首页内容区域。您可以在这里展示重要信息或者网站介绍。</p>
+            <p>这是首页内容区域。您可以在这里展示重要信息或者网站介绍。</p>
+            <p>这是首页内容区域。您可以在这里展示重要信息或者网站介绍。</p>
+            <p>这是首页内容区域。您可以在这里展示重要信息或者网站介绍。</p>
+            <p>这是首页内容区域。您可以在这里展示重要信息或者网站介绍。</p>
+            <p>这是首页内容区域。您可以在这里展示重要信息或者网站介绍。</p>
+            <p>这是首页内容区域。您可以在这里展示重要信息或者网站介绍。</p>
+            <p>这是首页内容区域。您可以在这里展示重要信息或者网站介绍。</p>
+            <p>这是首页内容区域。您可以在这里展示重要信息或者网站介绍。</p>
+            <p>这是首页内容区域。您可以在这里展示重要信息或者网站介绍。</p>
+            <p>这是首页内容区域。您可以在这里展示重要信息或者网站介绍。</p>
+            <p>这是首页内容区域。您可以在这里展示重要信息或者网站介绍。</p>
+            <p>这是首页内容区域。您可以在这里展示重要信息或者网站介绍。</p>
+            <p>这是首页内容区域。您可以在这里展示重要信息或者网站介绍。</p>
+            <p>这是首页内容区域。您可以在这里展示重要信息或者网站介绍。</p>
+            <p>这是首页内容区域。您可以在这里展示重要信息或者网站介绍。</p>
+            <p>这是首页内容区域。您可以在这里展示重要信息或者网站介绍。</p>
+            <p>这是首页内容区域。您可以在这里展示重要信息或者网站介绍。</p>
+            <p>这是首页内容区域。您可以在这里展示重要信息或者网站介绍。</p>
+            <p>这是首页内容区域。您可以在这里展示重要信息或者网站介绍。</p>
+            <p>这是首页内容区域。您可以在这里展示重要信息或者网站介绍。</p>
+            <p>这是首页内容区域。您可以在这里展示重要信息或者网站介绍。</p>
+            <p>这是首页内容区域。您可以在这里展示重要信息或者网站介绍。</p>
+            <p>这是首页内容区域。您可以在这里展示重要信息或者网站介绍。</p>
+            <p>这是首页内容区域。您可以在这里展示重要信息或者网站介绍。</p>
+            <p>这是首页内容区域。您可以在这里展示重要信息或者网站介绍。</p>
+            <p>这是首页内容区域。您可以在这里展示重要信息或者网站介绍。</p>
+            <p>这是首页内容区域。您可以在这里展示重要信息或者网站介绍。</p>
+            <p>这是首页内容区域。您可以在这里展示重要信息或者网站介绍。</p>
+            <p>这是首页内容区域。您可以在这里展示重要信息或者网站介绍。</p>
+            <p>这是首页内容区域。您可以在这里展示重要信息或者网站介绍。</p>
+            <p>这是首页内容区域。您可以在这里展示重要信息或者网站介绍。</p>
+            <p>这是首页内容区域。您可以在这里展示重要信息或者网站介绍。</p>
+            <p>这是首页内容区域。您可以在这里展示重要信息或者网站介绍。</p>
+            <p>这是首页内容区域。您可以在这里展示重要信息或者网站介绍。</p>
+            <p>这是首页内容区域。您可以在这里展示重要信息或者网站介绍。</p>
+            <p>这是首页内容区域。您可以在这里展示重要信息或者网站介绍。</p>
+            <p>这是首页内容区域。您可以在这里展示重要信息或者网站介绍。</p>
+            <p>这是首页内容区域。您可以在这里展示重要信息或者网站介绍。</p>
+            <p>这是首页内容区域。您可以在这里展示重要信息或者网站介绍。</p>
+            <p>这是首页内容区域。您可以在这里展示重要信息或者网站介绍。</p>
+          </div>
+        </div>
+        <div class="tab-pane fade" id="services">
+          <div class="fade-in">
+            <h2>服务</h2>
+            <p>这是服务内容区域。您可以在这里展示您提供的服务项目。</p>
+          </div>
+        </div>
+        <div class="tab-pane fade" id="products">
+          <div class="fade-in">
+            <h2>产品</h2>
+            <p>这是产品内容区域。您可以在这里展示您的产品信息。</p>
+          </div>
+        </div>
+        <div class="tab-pane fade" id="message">
+          <div class="fade-in">
+            <h2>消息</h2>
+            <p>这是消息内容区域。您可以在这里查看和管理您的消息。</p>
+          </div>
+        </div>
+        <div class="tab-pane fade" id="notifications">
+          <div class="fade-in">
+            <h2>通知</h2>
+            <p>这是通知内容区域。您可以在这里查看您的通知信息。</p>
+          </div>
+        </div>
+        <div class="tab-pane fade" id="profile">
+          <div class="fade-in">
+            <h2>个人中心</h2>
+            <p>这是个人中心内容区域。您可以在这里管理您的个人信息。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap 5 JS + Popper -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      // 获取所有导航链接
+      const navLinks = document.querySelectorAll('.nav-link');
+
+      // 为每个链接添加点击事件
+      navLinks.forEach(link => {
+        link.addEventListener('click', function (e) {
+          e.preventDefault();
+
+          // 移除所有链接的active类
+          navLinks.forEach(l => l.classList.remove('active'));
+
+          // 为当前点击的链接添加active类
+          this.classList.add('active');
+
+          // 匹配相应的同名链接也添加active类
+          const href = this.getAttribute('href');
+          document.querySelectorAll(`.nav-link[href="${href}"]`).forEach(l => {
+            l.classList.add('active');
+          });
+
+          // 显示对应的内容区域
+          const targetId = href.substring(1);
+          const tabPanes = document.querySelectorAll('.tab-pane');
+
+          tabPanes.forEach(pane => {
+            pane.classList.remove('show', 'active');
+          });
+
+          const targetPane = document.getElementById(targetId);
+          if (targetPane) {
+            targetPane.classList.add('show', 'active');
+          }
+        });
+      });
+
+      // 用户头像下拉菜单（桌面端）
+      const desktopUserDropdownToggle = document.getElementById('desktopUserDropdownToggle');
+      const userDropdown = document.getElementById('userDropdown');
+
+      desktopUserDropdownToggle.addEventListener('click', function (e) {
+        e.stopPropagation();
+        userDropdown.classList.toggle('show');
+
+        // 关闭主题切换下拉菜单
+        themeDropdown.classList.remove('show');
+        mobileUserDropdown.classList.remove('show');
+        mobileThemeDropdown.classList.remove('show');
+      });
+
+      // 用户头像下拉菜单（移动端）
+      const mobileUserDropdownToggle = document.getElementById('mobileUserDropdownToggle');
+      const mobileUserDropdown = document.getElementById('mobileUserDropdown');
+
+      mobileUserDropdownToggle.addEventListener('click', function (e) {
+        e.stopPropagation();
+        mobileUserDropdown.classList.toggle('show');
+
+        // 关闭其他下拉菜单
+        userDropdown.classList.remove('show');
+        themeDropdown.classList.remove('show');
+        mobileThemeDropdown.classList.remove('show');
+      });
+
+      // 主题切换下拉菜单（桌面端）
+      const desktopThemeToggle = document.getElementById('desktopThemeToggle');
+      const themeDropdown = document.getElementById('themeDropdown');
+
+      desktopThemeToggle.addEventListener('click', function (e) {
+        e.stopPropagation();
+        themeDropdown.classList.toggle('show');
+
+        // 关闭用户下拉菜单
+        userDropdown.classList.remove('show');
+        mobileUserDropdown.classList.remove('show');
+        mobileThemeDropdown.classList.remove('show');
+      });
+
+      // 主题切换下拉菜单（移动端）
+      const mobileThemeToggle = document.getElementById('mobileThemeToggle');
+      const mobileThemeDropdown = document.getElementById('mobileThemeDropdown');
+
+      mobileThemeToggle.addEventListener('click', function (e) {
+        e.stopPropagation();
+        mobileThemeDropdown.classList.toggle('show');
+
+        // 关闭其他下拉菜单
+        userDropdown.classList.remove('show');
+        themeDropdown.classList.remove('show');
+        mobileUserDropdown.classList.remove('show');
+      });
+
+      // 点击页面其他地方关闭所有下拉菜单
+      document.addEventListener('click', function () {
+        userDropdown.classList.remove('show');
+        themeDropdown.classList.remove('show');
+        mobileUserDropdown.classList.remove('show');
+        mobileThemeDropdown.classList.remove('show');
+      });
+
+      // 阻止下拉菜单内部点击冒泡
+      const dropdownMenus = document.querySelectorAll('.dropdown-menu');
+      dropdownMenus.forEach(menu => {
+        menu.addEventListener('click', function (e) {
+          e.stopPropagation();
+        });
+      });
+
+      // 主题切换功能
+      const themeOptions = document.querySelectorAll('.theme-option');
+      const body = document.body;
+
+      // 检查本地存储中的主题设置
+      const savedTheme = localStorage.getItem('theme');
+      if (savedTheme) {
+        applyTheme(savedTheme);
+      } else {
+        // 如果没有保存的主题，检查系统偏好
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+          applyTheme('dark');
+        } else {
+          applyTheme('light');
+        }
+      }
+
+      // 为主题选项添加点击事件
+      themeOptions.forEach(option => {
+        option.addEventListener('click', function (e) {
+          e.preventDefault();
+          const theme = this.getAttribute('data-theme');
+          applyTheme(theme);
+
+          // 保存主题设置到本地存储
+          if (theme === 'auto') {
+            localStorage.removeItem('theme');
+          } else {
+            localStorage.setItem('theme', theme);
+          }
+
+          // 关闭下拉菜单
+          themeDropdown.classList.remove('show');
+          mobileThemeDropdown.classList.remove('show');
+        });
+      });
+
+      // 应用主题函数
+      function applyTheme(theme) {
+        if (theme === 'dark') {
+          body.classList.add('dark-mode');
+          updateThemeIcons('dark');
+        } else if (theme === 'light') {
+          body.classList.remove('dark-mode');
+          updateThemeIcons('light');
+        } else if (theme === 'auto') {
+          // 跟随系统主题
+          if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            body.classList.add('dark-mode');
+            updateThemeIcons('dark');
+          } else {
+            body.classList.remove('dark-mode');
+            updateThemeIcons('light');
+          }
+        }
+      }
+
+      // 更新主题图标
+      function updateThemeIcons(mode) {
+        if (mode === 'dark') {
+          desktopThemeToggle.innerHTML = '<i class="bi bi-moon"></i>';
+          mobileThemeToggle.innerHTML = '<i class="bi bi-moon"></i>';
+        } else {
+          desktopThemeToggle.innerHTML = '<i class="bi bi-sun"></i>';
+          mobileThemeToggle.innerHTML = '<i class="bi bi-sun"></i>';
+        }
+      }
+
+      // 监听系统主题变化
+      if (window.matchMedia) {
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+          if (localStorage.getItem('theme') === null) {
+            applyTheme('auto');
+          }
+        });
+      }
+
+      // 响应窗口大小变化
+      function handleResize() {
+        const isMobile = window.innerWidth < 992;
+        const body = document.body;
+
+        if (isMobile) {
+          body.style.paddingTop = '60px';
+          body.style.paddingBottom = '70px'; // 增加底部内边距，确保内容不会被底部导航栏遮挡
+        } else {
+          body.style.paddingTop = '70px';
+          body.style.paddingBottom = '20px';
+        }
+      }
+
+      // 监听窗口大小变化
+      window.addEventListener('resize', handleResize);
+
+      // 初始化调用一次
+      handleResize();
+
+      // 滚动渐进式隐藏/显示顶部导航栏（仅移动端）
+      const mobileTopBar = document.querySelector('.mobile-top-bar');
+      let lastScrollTop = 0;
+      const scrollDistance = 60; // 完全隐藏所需的滚动距离
+      const topThreshold = 100; // 只有滚动到这个阈值内才开始显示导航栏
+
+      window.addEventListener('scroll', function () {
+        // 仅在移动端激活此功能
+        if (window.innerWidth >= 992) return;
+
+        const currentScrollTop = window.pageYOffset || document.documentElement.scrollTop;
+
+        // 计算应该隐藏的比例 (0 到 1)
+        let hideRatio = 0;
+
+        if (currentScrollTop > lastScrollTop) {
+          // 向下滚动时
+          if (currentScrollTop < scrollDistance) {
+            // 在滚动距离内，按比例隐藏
+            hideRatio = currentScrollTop / scrollDistance;
+          } else {
+            // 超过滚动距离，完全隐藏
+            hideRatio = 1;
+          }
+        } else {
+          // 向上滚动时，只有接近顶部才显示
+          if (currentScrollTop <= topThreshold) {
+            // 在顶部阈值内，按比例显示
+            hideRatio = currentScrollTop / topThreshold;
+          } else {
+            // 未接近顶部，保持隐藏
+            hideRatio = 1;
+          }
+        }
+
+        // 应用变换
+        mobileTopBar.style.transform = `translateY(-${hideRatio * 100}%)`;
+
+        lastScrollTop = currentScrollTop;
+      });
+    });
+  </script>
 </body>
 
 </html>

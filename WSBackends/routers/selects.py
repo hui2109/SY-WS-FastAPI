@@ -5,7 +5,7 @@ from pydantic import BaseModel
 from sqlmodel import select
 from pypinyin import pinyin, load_phrases_dict, lazy_pinyin
 
-from .utils import convert_UTC_Chinese
+from .utils import convert_UTC_Chinese, CURRENT_PERSONNEL
 from ..database.models import Workschedule, Account, WorkschedulePersonnelLink, ReserveVacation
 from ..dependencies import get_current_user, SessionDep
 
@@ -96,7 +96,7 @@ async def select_my_month_schedule(queryMonth: QueryMonth, session: SessionDep, 
     return queryMyMonthResponse
 
 
-@router.post("/select_all-reservations", dependencies=None)
+@router.post("/select_all-reservations")
 async def select_all_reservations(queryMonth: QueryMonth, session: SessionDep):
     # UTC时区 转 中国时区
     queryMonth.month_start = convert_UTC_Chinese(queryMonth.month_start)
@@ -124,3 +124,8 @@ async def select_all_reservations(queryMonth: QueryMonth, session: SessionDep):
         })
 
     return queryAllReservationsResponse
+
+
+@router.post("/get_current_personnel_list")
+async def get_current_personnel_list():
+    return CURRENT_PERSONNEL

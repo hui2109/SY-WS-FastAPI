@@ -1,130 +1,132 @@
-.table-container {
-  width: 90%;
-  height: 40vh;
-  overflow: auto;
+#reserve-content-all {
+  .table-container {
+    width: 90%;
+    height: 40vh;
+    overflow: auto;
 
-  margin-bottom: 30px;
-  // max-width: 1300px;
-  border: 1px solid #dee2e6;
-  z-index: 0;
-}
-
-.vacation-table {
-  // min-width: 1200px;
-  width: 2800px;
-  // overflow: auto;
-  table-layout: fixed;
-  border-collapse: separate; // 重要：使用 separate 而不是 collapse
-  border-spacing: 2px;
-
-  th,
-  td {
-    text-align: center;
-    vertical-align: middle;
+    margin-bottom: 30px;
+    // max-width: 1300px;
     border: 1px solid #dee2e6;
-    //padding: 8px;
-    // min-width: 80px;
-  }
+    z-index: 0;
 
-  thead tr {
-    &:first-child {
-      th {
+    .vacation-table {
+      // min-width: 1200px;
+      width: 2800px;
+      // overflow: auto;
+      table-layout: fixed;
+      border-collapse: separate; // 重要：使用 separate 而不是 collapse
+      border-spacing: 2px;
+
+      th,
+      td {
+        text-align: center;
+        vertical-align: middle;
+        border: 1px solid #dee2e6;
+        //padding: 8px;
+        // min-width: 80px;
+      }
+
+      thead tr {
         &:first-child {
-          // 固定左上角单元格
-          left: 0;
-          z-index: 4;
-          background-color: var(--bs-success);
-          width: 105px;
-
-          .dropdown {
-            .custom-select-menu {
-              width: 89px;
-              min-width: unset;
-
-              border-radius: 8px;
-              box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
-              padding: 0;
-              text-align-last: center;
-            }
-
-            .custom-select-item:hover {
+          th {
+            &:first-child {
+              // 固定左上角单元格
+              left: 0;
+              z-index: 4;
               background-color: var(--bs-success);
+              width: 105px;
+
+              .dropdown {
+                .custom-select-menu {
+                  width: 89px;
+                  min-width: unset;
+
+                  border-radius: 8px;
+                  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+                  padding: 0;
+                  text-align-last: center;
+                }
+
+                .custom-select-item:hover {
+                  background-color: var(--bs-success);
+                }
+              }
             }
+
+            // position: sticky 只能在 父容器有 固定高度 和 滚动条 的情况下生效
+            // .table-container {
+            //   height: 400px;
+            //   overflow: auto;
+            // }
+            position: sticky;
+            top: 0;
+            z-index: 2;
+            background-color: var(--bs-primary-bg-subtle);
+            // height: 44px;
           }
         }
 
-        // position: sticky 只能在 父容器有 固定高度 和 滚动条 的情况下生效
-        // .table-container {
-        //   height: 400px;
-        //   overflow: auto;
-        // }
-        position: sticky;
-        top: 0;
-        z-index: 2;
-        background-color: var(--bs-primary-bg-subtle);
-        // height: 44px;
+        &:last-child {
+          th {
+            position: sticky;
+            top: 44px;
+            z-index: 2;
+            background-color: var(--bs-primary-bg-subtle);
+          }
+        }
       }
-    }
 
-    &:last-child {
-      th {
-        position: sticky;
-        top: 44px;
-        z-index: 2;
-        background-color: var(--bs-primary-bg-subtle);
+      tbody tr td {
+        &:first-child {
+          position: sticky;
+          left: 0;
+          z-index: 3;
+          background-color: var(--bs-primary-bg-subtle);
+
+          border-right: 1px solid #ddd; // 添加右边框
+          box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1); // 添加阴影效果
+        }
+
+        width: 90px;
+        height: 60px;
       }
-    }
-  }
 
-  tbody tr td {
-    &:first-child {
-      position: sticky;
-      left: 0;
-      z-index: 3;
-      background-color: var(--bs-primary-bg-subtle);
+      .clickable-cell {
+        cursor: pointer;
 
-      border-right: 1px solid #ddd; // 添加右边框
-      box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1); // 添加阴影效果
-    }
+        &:hover {
+          background-color: #f1f1f1;
+        }
 
-    width: 90px;
-    height: 60px;
-  }
-}
+        .label-bar {
+          position: relative;
+          height: 40%;
 
-.clickable-cell {
-  cursor: pointer;
+          .row {
+            height: 100%;
 
-  &:hover {
-    background-color: #f1f1f1;
-  }
+            > * {
+              padding: 0;
+              background-color: transparent;
+              border: 1px solid transparent;
+            }
+          }
 
-  .label-bar {
-    position: relative;
-    height: 40%;
+          .label-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 12px;
+            font-weight: bolder;
+            color: var(--bs-body-color);
+          }
 
-    .row {
-      height: 100%;
-
-      > * {
-        padding: 0;
-        background-color: transparent;
-        border: 1px solid transparent;
+          &:not(:last-child) {
+            margin-bottom: 2px;
+          }
+        }
       }
-    }
-
-    .label-text {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      font-size: 12px;
-      font-weight: bolder;
-      color: var(--bs-body-color);
-    }
-
-    &:not(:last-child) {
-      margin-bottom: 2px;
     }
   }
 }
@@ -135,12 +137,12 @@
     border-bottom-right-radius: 0;
   }
 
-  .better-pinjia-split{
+  .better-pinjia-split {
     border-top-left-radius: 0;
     border-bottom-left-radius: 0;
   }
 
-  .bookingPerson .dropdown-menu{
+  .bookingPerson .dropdown-menu {
     cursor: pointer !important;
   }
 
@@ -153,6 +155,11 @@
     background-color: rgba(0, 0, 0, 0.01); /* 几乎透明 */
     z-index: 1060; /* 确保高于模态框内容 */
     cursor: not-allowed;
+  }
+
+  .dropdown-menu-scrollable {
+    max-height: 400px;
+    overflow-y: auto;
   }
 }
 

@@ -2,6 +2,8 @@ class InitVacationTable {
     constructor(year) {
         this.init_year = year;
         this.lookForElement();
+        this._setAllDropdownToggleYear(this.init_year);
+        this._getCurrentPersonnelList();
         this.bindClickEvent();  // 事件绑定只能调用一次
     }
 
@@ -176,6 +178,63 @@ class InitVacationTable {
         }
     }
 
+    _getCurrentPersonnelList() {
+        // 获取token
+        const token = getToken();
+        if (!token) {
+            return;
+        }
+
+        let currentPersonnelList = sessionStorage.getItem('currentPersonnelList');
+        if (currentPersonnelList) {
+            this.currentPersonnelList = JSON.parse(currentPersonnelList);
+            this._renderPinJiaList();
+        } else {
+            fetch('/get_current_personnel_list', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                }
+            }).then(response => {
+                response.json().then(data => {
+                    if (response.ok) {
+                        sessionStorage.setItem('currentPersonnelList', JSON.stringify(data));
+                        this.currentPersonnelList = data;
+                        this._renderPinJiaList();
+                    } else {
+                        loginExpiredAlert();
+                        window.location.href = '/login';
+                    }
+                })
+            }).catch(error => {
+                alert('未知错误！');
+                console.error('error!!!', error);
+            });
+        }
+    }
+
+    _renderPinJiaList() {
+        // 渲染拼假人选择列
+        let dropDownMenuPersonnel1 = this.bookingPerson[1].querySelector('.dropdown-menu');
+        let dropDownMenuPersonnel2 = this.bookingPerson[2].querySelector('.dropdown-menu');
+        dropDownMenuPersonnel1.innerHTML = '';
+        dropDownMenuPersonnel2.innerHTML = '';
+
+        for (let currentPersonnel of this.currentPersonnelList) {
+            let li = document.createElement('li');
+            let span = document.createElement('span');
+            span.classList.add('dropdown-item');
+            span.textContent = currentPersonnel;
+
+            li.appendChild(span);
+            dropDownMenuPersonnel1.appendChild(li);
+        }
+
+        dropDownMenuPersonnel2.innerHTML = dropDownMenuPersonnel1.innerHTML;
+    }
+
     modifyHalfTableHead(_id, startYear, startMonth, endYear, endMonth, delta = null) {
         [this.GroupedDates, this.GroupedDatesObj] = generateWeeklyGroups(startYear, startMonth, endYear, endMonth);
         [this.day_start, this.day_end] = this._getStartEndDates();
@@ -261,6 +320,7 @@ class InitVacationTable {
         this.bookingPerson2 = this.bookingPerson[2].querySelector('.better-pinjia-btn');
         this.footer = this.bookingModal.querySelector('.modal-footer');
         this.dropdownYearToggles = document.querySelectorAll('#reserve-content-all .dropdown-toggle');
+        this.dropdownItems = document.querySelectorAll('#reserve-content-all .dropdown-item.custom-select-item');
 
         this.resetBooking = document.getElementById('resetBooking');
         this.confirmBooking = document.getElementById('confirmBooking');
@@ -484,6 +544,18 @@ class InitVacationTable {
             console.log(checkedData)
             this.deleteData(checkedData);
         })
+
+        // 绑定 [年份选择按键] 点击事件
+        this.dropdownItems.forEach(item => {
+            item.addEventListener('click', (event) => {
+                const elementThis = event.currentTarget;
+                let year = elementThis.textContent;
+                this._setAllDropdownToggleYear(year)
+
+                this.init_year = year;
+                iVT.init();
+            });
+        })
     }
 
     sendData(result) {
@@ -541,7 +613,6 @@ class InitVacationTable {
         // 获取token
         const token = getToken();
         if (!token) {
-            loginExpiredAlert()
             return;
         }
 
@@ -798,33 +869,6 @@ class InitVacationTable {
     }
 }
 
-let iVT;
-
-
-function chooseVacationTableYear() {
-    let dropdownItems = document.querySelectorAll('#reserve-content-all .dropdown-item.custom-select-item');
-
-    dropdownItems.forEach(item => {
-        item.addEventListener('click', (event) => {
-            const elementThis = event.currentTarget;
-            let year = elementThis.textContent;
-            setAllDropdownToggleYear(year)
-
-            iVT.init_year = year;
-            iVT.init();
-        });
-    })
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-    let today = new Date();
-    let year = today.getFullYear();
-
-    setAllDropdownToggleYear(year)
-    iVT = new InitVacationTable(year);
-    iVT.init();
-
-    chooseVacationTableYear();
-})
-
-
+let today = new Date();
+let iVT = new InitVacationTable(today.getFullYear());
+iVT.init();

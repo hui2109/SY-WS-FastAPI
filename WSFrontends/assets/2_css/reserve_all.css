@@ -1,5 +1,5 @@
 @charset "UTF-8";
-.table-container {
+#reserve-content-all .table-container {
   width: 90%;
   height: 40vh;
   overflow: auto;
@@ -7,32 +7,31 @@
   border: 1px solid #dee2e6;
   z-index: 0;
 }
-
-.vacation-table {
+#reserve-content-all .table-container .vacation-table {
   width: 2800px;
   table-layout: fixed;
   border-collapse: separate;
   border-spacing: 2px;
 }
-.vacation-table th,
-.vacation-table td {
+#reserve-content-all .table-container .vacation-table th,
+#reserve-content-all .table-container .vacation-table td {
   text-align: center;
   vertical-align: middle;
   border: 1px solid #dee2e6;
 }
-.vacation-table thead tr:first-child th {
+#reserve-content-all .table-container .vacation-table thead tr:first-child th {
   position: sticky;
   top: 0;
   z-index: 2;
   background-color: var(--bs-primary-bg-subtle);
 }
-.vacation-table thead tr:first-child th:first-child {
+#reserve-content-all .table-container .vacation-table thead tr:first-child th:first-child {
   left: 0;
   z-index: 4;
   background-color: var(--bs-success);
   width: 105px;
 }
-.vacation-table thead tr:first-child th:first-child .dropdown .custom-select-menu {
+#reserve-content-all .table-container .vacation-table thead tr:first-child th:first-child .dropdown .custom-select-menu {
   width: 89px;
   min-width: unset;
   border-radius: 8px;
@@ -40,20 +39,20 @@
   padding: 0;
   text-align-last: center;
 }
-.vacation-table thead tr:first-child th:first-child .dropdown .custom-select-item:hover {
+#reserve-content-all .table-container .vacation-table thead tr:first-child th:first-child .dropdown .custom-select-item:hover {
   background-color: var(--bs-success);
 }
-.vacation-table thead tr:last-child th {
+#reserve-content-all .table-container .vacation-table thead tr:last-child th {
   position: sticky;
   top: 44px;
   z-index: 2;
   background-color: var(--bs-primary-bg-subtle);
 }
-.vacation-table tbody tr td {
+#reserve-content-all .table-container .vacation-table tbody tr td {
   width: 90px;
   height: 60px;
 }
-.vacation-table tbody tr td:first-child {
+#reserve-content-all .table-container .vacation-table tbody tr td:first-child {
   position: sticky;
   left: 0;
   z-index: 3;
@@ -61,26 +60,25 @@
   border-right: 1px solid #ddd;
   box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
 }
-
-.clickable-cell {
+#reserve-content-all .table-container .vacation-table .clickable-cell {
   cursor: pointer;
 }
-.clickable-cell:hover {
+#reserve-content-all .table-container .vacation-table .clickable-cell:hover {
   background-color: #f1f1f1;
 }
-.clickable-cell .label-bar {
+#reserve-content-all .table-container .vacation-table .clickable-cell .label-bar {
   position: relative;
   height: 40%;
 }
-.clickable-cell .label-bar .row {
+#reserve-content-all .table-container .vacation-table .clickable-cell .label-bar .row {
   height: 100%;
 }
-.clickable-cell .label-bar .row > * {
+#reserve-content-all .table-container .vacation-table .clickable-cell .label-bar .row > * {
   padding: 0;
   background-color: transparent;
   border: 1px solid transparent;
 }
-.clickable-cell .label-bar .label-text {
+#reserve-content-all .table-container .vacation-table .clickable-cell .label-bar .label-text {
   position: absolute;
   top: 50%;
   left: 50%;
@@ -89,7 +87,7 @@
   font-weight: bolder;
   color: var(--bs-body-color);
 }
-.clickable-cell .label-bar:not(:last-child) {
+#reserve-content-all .table-container .vacation-table .clickable-cell .label-bar:not(:last-child) {
   margin-bottom: 2px;
 }
 
@@ -113,4 +111,8 @@
   background-color: rgba(0, 0, 0, 0.01); /* 几乎透明 */
   z-index: 1060; /* 确保高于模态框内容 */
   cursor: not-allowed;
+}
+#bookingModal .dropdown-menu-scrollable {
+  max-height: 400px;
+  overflow-y: auto;
 }
