@@ -4,6 +4,11 @@ class initUserInfo {
         this.initAvatarModal();
     }
 
+    init() {
+        this.loadUserInfo();
+        this.bindClick();
+    }
+
     _updateAvatar() {
         // 获取token
         const token = getToken();
@@ -11,7 +16,7 @@ class initUserInfo {
             return;
         }
 
-        const avatarFileName = this.selectedAvatarInput.value;
+        const avatarFileName = this.selectedAvatarInputMobile.value;
         // 构建头像URL
         const avatarUrl = '/WSFrontends/assets/img/avatars/' + avatarFileName;
 
@@ -48,17 +53,17 @@ class initUserInfo {
         });
     }
 
-    init() {
-        this.loadUserInfo();
-        this.bindClick();
-    }
-
     lookElement() {
         this.avatarModal = document.getElementById('avatarModal');
-        this.userNameElement = document.getElementById('user-name');
-        this.userAvatarElement = document.getElementById('avatarPreview');
-        this.selectedAvatarInput = document.getElementById('selectedAvatar');
-        this.logoutBtn = document.getElementById('logoutBtn');
+        let desktopUserDropdownToggle = document.getElementById('desktopUserDropdownToggle');
+        let mobileUserDropdownToggle = document.getElementById('mobileUserDropdownToggle');
+        this.userDropdownToggles = [desktopUserDropdownToggle, mobileUserDropdownToggle];
+
+        this.selectedAvatarInputDesktop = desktopUserDropdownToggle.querySelector('input[type="hidden"]');
+        this.selectedAvatarInputMobile = mobileUserDropdownToggle.querySelector('input[type="hidden"]');
+        this.avatarPreviewDesktop = desktopUserDropdownToggle.querySelector('.avatarPreview');
+        this.avatarPreviewMobile = mobileUserDropdownToggle.querySelector('.avatarPreview');
+
         this.tooltipTriggerList = document.querySelectorAll('#avatarModal [data-bs-toggle="tooltip"]');
         this.avatarGrid = document.querySelector('#avatarModal .avatar-grid')
         this.avatarOptions = document.querySelectorAll('#avatarModal .avatar-option');
@@ -106,58 +111,66 @@ class initUserInfo {
     }
 
     displayUserInfo() {
-        // 设置用户头像
-        this.userAvatarElement.src = this.userData[0];
-        this.selectedAvatarInput.value = this.userData[0].split('/').pop();
-        sessionStorage.setItem('user_avatar', this.userData[0].split('/').pop());
+        // 同时设置移动端和桌面端的用户头像
+        for (let userDropdownToggle of this.userDropdownToggles) {
+            let avatarPreview = userDropdownToggle.querySelector('.avatarPreview');
+            let selectedAvatar = userDropdownToggle.querySelector('input[type="hidden"]');
+            let userName = userDropdownToggle.querySelector('.user-name');
 
-        // 设置用户名
-        this.userNameElement.textContent = this.userData[1];
-        sessionStorage.setItem('user_name', this.userData[1]);
+            avatarPreview.src = this.userData[0];
+            selectedAvatar.value = this.userData[0].split('/').at(-1);
+            sessionStorage.setItem('user_avatar', selectedAvatar.value);
 
+            // 设置用户名
+            userName.textContent = this.userData[1];
+            sessionStorage.setItem('user_name', this.userData[1]);
+        }
     }
 
     bindClick() {
-        this.logoutBtn.addEventListener('click', (e) => {
-            e.preventDefault();
+        for (let userDropdownToggle of this.userDropdownToggles) {
+            let logoutBtn = userDropdownToggle.querySelector('.logoutBtn');
+            logoutBtn.addEventListener('click', (e) => {
+                e.preventDefault();
 
-            // 获取token
-            const token = getToken();
-            if (!token) {
-                return;
-            }
-
-            // 发送登出请求
-            fetch('/logout', {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json'
+                // 获取token
+                const token = getToken();
+                if (!token) {
+                    return;
                 }
-            }).then(response => {
-                response.json().then(data => {
-                    showAlert({
-                        type: 'success',
-                        title: '登出成功',
-                        message: '请重新登录',
-                    });
 
-                    // 无论成功与否，都清除本地token并重定向
-                    // 清除会话存储中的token
+                // 发送登出请求
+                fetch('/logout', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    }
+                }).then(response => {
+                    response.json().then(data => {
+                        showAlert({
+                            type: 'success',
+                            title: '登出成功',
+                            message: '请重新登录',
+                        });
+
+                        // 无论成功与否，都清除本地token并重定向
+                        // 清除会话存储中的token
+                        sessionStorage.removeItem('access_token');
+                        // 重定向到登录页面
+                        window.location.href = '/login';
+                    })
+                }).catch(error => {
+                    alert('未知错误！');
+                    console.error('error!!!', error);
+
+                    // 出错也清除token并重定向
                     sessionStorage.removeItem('access_token');
-                    // 重定向到登录页面
                     window.location.href = '/login';
-                })
-            }).catch(error => {
-                alert('未知错误！');
-                console.error('error!!!', error);
-
-                // 出错也清除token并重定向
-                sessionStorage.removeItem('access_token');
-                window.location.href = '/login';
-            });
-        })
+                });
+            })
+        }
 
         // 监听头像网格滚动事件，滚动时隐藏所有tooltip
         this.avatarGrid.addEventListener('scroll', () => {
@@ -170,7 +183,7 @@ class initUserInfo {
             this.avatarOptions.forEach(option => option.classList.remove('selected'));
 
             // 找到并选中当前已选择的头像
-            const currentAvatarFile = this.selectedAvatarInput.value;
+            const currentAvatarFile = this.selectedAvatarInputMobile.value;
             const currentAvatarOption = document.querySelector(`#avatarModal .avatar-option[data-avatar="${currentAvatarFile}"]`);
             if (currentAvatarOption) {
                 currentAvatarOption.classList.add('selected');
@@ -190,8 +203,12 @@ class initUserInfo {
 
                 // 更新预览图和隐藏输入值
                 const avatarFile = elementThis.getAttribute('data-avatar');
-                this.selectedAvatarInput.value = avatarFile;
-                this.userAvatarElement.src = `/WSFrontends/assets/img/avatars/${avatarFile}`;
+
+                this.selectedAvatarInputDesktop.value = avatarFile;
+                this.selectedAvatarInputMobile.value = avatarFile;
+
+                this.avatarPreviewDesktop.src = `/WSFrontends/assets/img/avatars/${avatarFile}`;
+                this.avatarPreviewMobile.src = `/WSFrontends/assets/img/avatars/${avatarFile}`;
 
                 // 发送数据到服务器
                 this._updateAvatar();

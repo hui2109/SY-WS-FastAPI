@@ -1,5 +1,5 @@
 #work-content-mine {
-  #datetimepicker2>span {
+  #datetimepicker2 > span {
     &:hover {
       cursor: pointer;
     }
@@ -17,6 +17,7 @@
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     background-color: var(--bs-card-bg);
     margin-bottom: 20px;
+    border: 1px solid var(--bs-body-color);
 
     // 聚焦效果
     &:focus {

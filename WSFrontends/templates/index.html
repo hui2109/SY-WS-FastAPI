@@ -1,17 +1,13 @@
-<!doctype html>
-<html lang="en" data-bs-theme="auto">
+<!DOCTYPE html>
+<html lang="zh" data-bs-theme="auto">
 
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="">
-  <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
-  <meta name="generator" content="Hugo 0.122.0">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>省院电离排版站</title>
   <link rel="icon" type="image/png" href="/WSFrontends/assets/img/radiation.png">
 
   <link rel="stylesheet" href="/WSFrontends/assets/plugin/node_modules/bootstrap/dist/css/bootstrap.min.css">
-  <link rel="stylesheet" href="/WSFrontends/assets/plugin/offcanvas-navbar/offcanvas-navbar.css">
   <link rel="stylesheet"
     href="/WSFrontends/assets/plugin/node_modules/@eonasdan/tempus-dominus/dist/css/tempus-dominus.min.css">
   <link rel="stylesheet" href="/WSFrontends/assets/plugin/node_modules/bootstrap-icons/font/bootstrap-icons.min.css">
@@ -25,488 +21,386 @@
   <link rel="stylesheet" href="/WSFrontends/assets/2_css/reserve_all.css">
 </head>
 
-<body class="bg-body-tertiary">
-  <!-- 底部切换主题明暗色的 [图标], 不用管 -->
-  <svg xmlns="http://www.w3.org/2000/svg" class="d-none">
-    <symbol id="check2" viewBox="0 0 16 16">
-      <path
-        d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0z">
-      </path>
-    </symbol>
-    <symbol id="circle-half" viewBox="0 0 16 16">
-      <path d="M8 15A7 7 0 1 0 8 1v14zm0 1A8 8 0 1 1 8 0a8 8 0 0 1 0 16z"></path>
-    </symbol>
-    <symbol id="moon-stars-fill" viewBox="0 0 16 16">
-      <path
-        d="M6 .278a.768.768 0 0 1 .08.858 7.208 7.208 0 0 0-.878 3.46c0 4.021 3.278 7.277 7.318 7.277.527 0 1.04-.055 1.533-.16a.787.787 0 0 1 .81.316.733.733 0 0 1-.031.893A8.349 8.349 0 0 1 8.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.752.752 0 0 1 6 .278z">
-      </path>
-      <path
-        d="M10.794 3.148a.217.217 0 0 1 .412 0l.387 1.162c.173.518.579.924 1.097 1.097l1.162.387a.217.217 0 0 1 0 .412l-1.162.387a1.734 1.734 0 0 0-1.097 1.097l-.387 1.162a.217.217 0 0 1-.412 0l-.387-1.162A1.734 1.734 0 0 0 9.31 6.593l-1.162-.387a.217.217 0 0 1 0-.412l1.162-.387a1.734 1.734 0 0 0 1.097-1.097l.387-1.162zM13.863.099a.145.145 0 0 1 .274 0l.258.774c.115.346.386.617.732.732l.774.258a.145.145 0 0 1 0 .274l-.774.258a1.156 1.156 0 0 0-.732.732l-.258.774a.145.145 0 0 1-.274 0l-.258-.774a1.156 1.156 0 0 0-.732-.732l-.774-.258a.145.145 0 0 1 0-.274l.774-.258c.346-.115.617-.386.732-.732L13.863.1z">
-      </path>
-    </symbol>
-    <symbol id="sun-fill" viewBox="0 0 16 16">
-      <path
-        d="M8 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM8 0a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 0zm0 13a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 13zm8-5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2a.5.5 0 0 1 .5.5zM3 8a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2A.5.5 0 0 1 3 8zm10.657-5.657a.5.5 0 0 1 0 .707l-1.414 1.415a.5.5 0 1 1-.707-.708l1.414-1.414a.5.5 0 0 1 .707 0zm-9.193 9.193a.5.5 0 0 1 0 .707L3.05 13.657a.5.5 0 0 1-.707-.707l1.414-1.414a.5.5 0 0 1 .707 0zm9.193 2.121a.5.5 0 0 1-.707 0l-1.414-1.414a.5.5 0 0 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .707zM4.464 4.465a.5.5 0 0 1-.707 0L2.343 3.05a.5.5 0 1 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .708z">
-      </path>
-    </symbol>
-  </svg>
-
-  <!-- 底部切换主题明暗色的 [文字], 不用管 -->
-  <div class="dropdown position-fixed bottom-0 end-0 mb-3 me-3 bd-mode-toggle">
-    <button class="btn btn-bd-primary py-2 dropdown-toggle d-flex align-items-center" id="bd-theme" type="button"
-      aria-expanded="false" data-bs-toggle="dropdown" aria-label="Toggle theme (auto)">
-      <svg class="bi my-1 theme-icon-active" width="1em" height="1em">
-        <use href="#circle-half"></use>
-      </svg>
-      <span class="visually-hidden" id="bd-theme-text">Toggle theme</span>
-    </button>
-    <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="bd-theme-text">
-      <li>
-        <button type="button" class="dropdown-item d-flex align-items-center" data-bs-theme-value="light"
-          aria-pressed="false">
-          <svg class="bi me-2 opacity-50" width="1em" height="1em">
-            <use href="#sun-fill"></use>
-          </svg>
-          Light
-          <svg class="bi ms-auto d-none" width="1em" height="1em">
-            <use href="#check2"></use>
-          </svg>
-        </button>
-      </li>
-      <li>
-        <button type="button" class="dropdown-item d-flex align-items-center" data-bs-theme-value="dark"
-          aria-pressed="false">
-          <svg class="bi me-2 opacity-50" width="1em" height="1em">
-            <use href="#moon-stars-fill"></use>
-          </svg>
-          Dark
-          <svg class="bi ms-auto d-none" width="1em" height="1em">
-            <use href="#check2"></use>
-          </svg>
-        </button>
-      </li>
-      <li>
-        <button type="button" class="dropdown-item d-flex align-items-center active" data-bs-theme-value="auto"
-          aria-pressed="true">
-          <svg class="bi me-2 opacity-50" width="1em" height="1em">
-            <use href="#circle-half"></use>
-          </svg>
-          Auto
-          <svg class="bi ms-auto d-none" width="1em" height="1em">
-            <use href="#check2"></use>
-          </svg>
-        </button>
-      </li>
-    </ul>
-  </div>
-
-  <!-- 主要的导航条 -->
-  <nav class="navbar navbar-expand-lg fixed-top navbar-dark bg-dark" aria-label="Main navigation">
-    <div class="container-fluid">
-      <!-- 主页logo, 点击可以回到主页 -->
-      <a class="navbar-brand" href="#">省院电离排版站</a>
-
-      <!-- 页面缩小后, 会显示☰, 用于展示菜单 -->
-      <button class="navbar-toggler p-0 border-0" type="button" id="navbarSideCollapse" data-bs-toggle="collapse"
-        data-bs-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false"
-        aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-
-      <!-- 真正的导航条 -->
-      <div class="navbar-collapse offcanvas-collapse" id="navbarContent">
-        <!-- 主要的功能菜单 -->
-        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-          <li class="nav-item">
-            <a class="nav-link active" href="#work" data-bs-target="work-content">上班</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#reserve" data-bs-target="reserve-content">预约</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#change" data-bs-target="change-content">换班</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#statistics" data-bs-target="statistics-content">统计</a>
-          </li>
-          <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" aria-expanded="false">排班</a>
-            <ul class="dropdown-menu">
-              <li><a class="dropdown-item" href="#">Action</a></li>
-              <li><a class="dropdown-item" href="#">Another action</a></li>
-              <li><a class="dropdown-item" href="#">Something else here</a></li>
-            </ul>
-          </li>
-        </ul>
-
-        <!-- 中间的切换按钮 -->
-        <ul class="navbar-nav me-5 mb-2 mb-lg-0">
-          <li class=" nav-item">
-            <a class="nav-link active mine" aria-current="page" href="#">我的</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link all" href="#">全科</a>
-          </li>
-        </ul>
-
-        <!-- 右边的搜索框 -->
-        <form class="d-flex" role="search">
-          <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-          <button class="btn btn-outline-success" type="submit">Search</button>
-        </form>
-
-        <!-- 显示当前的用户名及头像 -->
-        <div class="dropdown text-end ms-3">
-          <a href="#" class="d-block link-body-emphasis text-decoration-none dropdown-toggle" data-bs-toggle="dropdown"
-            aria-expanded="false">
-            <img id="avatarPreview" src="" alt="用户头像" width="32" height="32" class="rounded-circle">
-            <input type="hidden" id="selectedAvatar" name="selectedAvatar" value="001-pirate.svg">
-            <span id="user-name" class="text-light ms-2">用户名</span>
-          </a>
-          <ul class="dropdown-menu text-small">
-            <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#avatarModal">切换头像</a></li>
-            <li>
-              <hr class="dropdown-divider">
+<body>
+  <!-- 桌面端-顶部导航栏 -->
+  <nav class="navbar navbar-expand-lg fixed-top top-nav">
+    <div class="container">
+      <div class="d-flex align-items-center">
+        <!-- 标题logo -->
+        <a class="navbar-brand" href="#" style="font-weight: 600;">
+          <img src="/WSFrontends/assets/img/radiation.png" alt="Logo" width="25"
+            class="d-inline-block align-text-top me-2">
+          省医电离排班站
+        </a>
+        <!-- 菜单项 -->
+        <div class="d-flex align-items-center">
+          <ul class="navbar-nav">
+            <li class="nav-item">
+              <a class="nav-link active" href="#work-mine">
+                <i class="bi bi-person-circle nav-icon"></i>我的排班
+              </a>
             </li>
-            <li><a class="dropdown-item" href="#" id="logoutBtn">退出登录</a></li>
+            <li class="nav-item">
+              <a class="nav-link" href="#work-all">
+                <i class="bi bi-people-fill nav-icon"></i>全科排班
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#reserve-all">
+                <i class="bi bi-calendar-heart-fill nav-icon"></i>预约休假
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#change-ban">
+                <i class="bi bi-arrow-left-right nav-icon"></i>换班
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#statistics-all">
+                <i class="bi bi-calculator-fill nav-icon"></i>统计
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#paiban-all">
+                <i class="bi bi-slack nav-icon"></i>排班
+              </a>
+            </li>
           </ul>
         </div>
+      </div>
 
+      <div class="d-flex align-items-center">
+        <!-- 主题颜色切换 -->
+        <div class="theme-toggle-wrapper me-2">
+          <button class="theme-toggle" id="desktopThemeDropdownToggle">
+            <i class="bi bi-sun"></i>
+          </button>
+          <div class="dropdown-menu" id="desktopThemeDropdown">
+            <a class="dropdown-item theme-option" data-theme="light" href="#">
+              <i class="bi bi-sun"></i>浅色模式
+            </a>
+            <a class="dropdown-item theme-option" data-theme="dark" href="#">
+              <i class="bi bi-moon"></i>深色模式
+            </a>
+            <a class="dropdown-item theme-option" data-theme="auto" href="#">
+              <i class="bi bi-circle-half"></i>自动模式
+            </a>
+          </div>
+        </div>
+
+        <!-- 用户名及头像 -->
+        <div class="user-wrapper" id="desktopUserDropdownToggle">
+          <div class="user-avatar">
+            <img src="" alt="用户头像" width="32" height="32" class="rounded-circle avatarPreview">
+            <input type="hidden" name="selectedAvatar" value="001-pirate.svg">
+          </div>
+          <span class="user-name">用户名</span>
+          <div class="dropdown-menu" id="desktopUserDropdown">
+            <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#avatarModal">
+              <i class="bi bi-person-bounding-box"></i>修改头像
+            </a>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item logoutBtn" href="#" style="color: #dc3545;">
+              <i class="bi bi-box-arrow-right"></i>退出登录
+            </a>
+          </div>
+        </div>
       </div>
     </div>
   </nav>
 
-  <!-- 主要的内容区域 -->
-  <main class="container mt-3 pt-2">
-    <!-- 首页内容 -->
-    <div id="work-content-mine" class="content-section">
-      <div class="container">
-        <h5 class="text-center mb-3">我的排班表</h5>
-
-        <!-- 日期切换组件 -->
-        <div class="row mb-4">
-          <div class="col-2"></div>
-          <div class="col-8">
-            <div class="d-flex justify-content-between">
-              <button type="button" class="btn btn-success pre-month">上一月</button>
-              <div id="datetimepicker2" data-td-target-input="nearest" data-td-target-toggle="nearest">
-                <span class="input-group-text" data-td-target="#datetimepicker2" data-td-toggle="datetimepicker">
-                  <span class="mounianmouyue">某年某月</span>
-                </span>
-              </div>
-              <button type="button" class="btn btn-success next-month">下一月</button>
-            </div>
+  <!-- 移动端-顶部栏 -->
+  <div class="mobile-top-bar">
+    <div class="container">
+      <div class="d-flex justify-content-between align-items-center">
+        <!-- 左侧用户头像和名称 -->
+        <div class="user-wrapper" id="mobileUserDropdownToggle">
+          <div class="user-avatar">
+            <img src="" alt="用户头像" width="32" height="32" class="rounded-circle avatarPreview">
+            <input type="hidden" name="selectedAvatar" value="001-pirate.svg">
           </div>
-          <div class="col-2"></div>
-        </div>
-
-        <!-- 整体容器，添加tabindex使其可接收键盘焦点 -->
-        <div class="component-wrapper" tabindex="0">
-          <!-- 固定的星期容器 -->
-          <div class="weekday-container">
-            <div class="weekday-item">周一</div>
-            <div class="weekday-item">周二</div>
-            <div class="weekday-item">周三</div>
-            <div class="weekday-item">周四</div>
-            <div class="weekday-item">周五</div>
-            <div class="weekday-item">周六</div>
-            <div class="weekday-item">周日</div>
-          </div>
-
-          <!-- Swiper 滑动容器 -->
-          <div class="swiper-container">
-            <div class="swiper mySwiper">
-              <div class="swiper-wrapper">
-                <!-- 第一周 -->
-
-                <!-- 第二周 -->
-
-                <!-- 第三周 -->
-
-              </div>
-              <div class="swiper-pagination"></div>
-              <div class="swipe-hint">左右滑动查看</div>
-            </div>
+          <span class="user-name">用户名</span>
+          <div class="dropdown-menu" id="mobileUserDropdown">
+            <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#avatarModal">
+              <i class="bi bi-person-bounding-box"></i>修改头像
+            </a>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item logoutBtn" href="#" style="color: #dc3545;">
+              <i class="bi bi-box-arrow-right"></i>退出登录
+            </a>
           </div>
         </div>
 
-        <div class="keyboard-hint">提示：使用键盘 ← 和 → 箭头键可切换卡片</div>
-      </div>
-    </div>
-    <div id="work-content-all" class="content-section d-none">
-      <div class="p-3 border border-secondary border-opacity-75 border-2 rounded-3">
-        <!-- 日期切换组件 -->
-        <div class="row">
-          <div class="col-lg-4"></div>
-          <div class="col-lg-4">
-            <div class="d-flex justify-content-between">
-              <button type="button" class="btn btn-success pre-month">上一月</button>
-              <div id="datetimepicker1" data-td-target-input="nearest" data-td-target-toggle="nearest">
-                <span class="input-group-text" data-td-target="#datetimepicker1" data-td-toggle="datetimepicker">
-                  <span class="mounianmouyue">某年某月</span>
-                </span>
-              </div>
-              <button type="button" class="btn btn-success next-month">下一月</button>
-            </div>
-          </div>
-          <div class="col-lg-4"></div>
-        </div>
+        <!-- 中间 Logo -->
+        <a class="d-flex navbar-brand" href="#" style="font-weight: 600;">
+          <img src="/WSFrontends/assets/img/radiation.png" alt="Logo" width="25"
+            class="d-inline-block align-text-top me-2">
+          省医电离排班站
+        </a>
 
-        <!-- 表格本体 -->
-        <div class="table-container m-auto mt-3 table-responsive">
-          <table class="paiban-table m-auto table table-bordered">
-            <thead>
-            </thead>
-            <tbody>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-
-    <!-- 预约内容 -->
-    <div id="reserve-content-mine" class="content-section d-none">
-      <h2>我的</h2>
-      <p>这是关于我们页面的内容。您可以在这里介绍您的公司或组织。</p>
-      <div class="row">
-        <div class="col-lg-8">
-          <p>我们是一家专注于提供高质量服务的企业。我们的团队由经验丰富的专业人士组成，致力于为客户提供最佳解决方案。</p>
-          <p>我们的使命是通过创新和卓越的服务来满足客户的需求，并在行业中保持领先地位。</p>
-        </div>
-        <div class="col-lg-4">
-          <div class="card">
-            <div class="card-body">
-              <h5 class="card-title">我们的价值观</h5>
-              <ul>
-                <li>诚信</li>
-                <li>创新</li>
-                <li>合作</li>
-                <li>卓越</li>
-              </ul>
-            </div>
+        <!-- 右侧主题切换按钮 -->
+        <div class="theme-toggle-wrapper">
+          <button class="theme-toggle" id="mobileThemeDropdownToggle">
+            <i class="bi bi-sun"></i>
+          </button>
+          <div class="dropdown-menu" id="mobileThemeDropdown">
+            <a class="dropdown-item theme-option" data-theme="light" href="#">
+              <i class="bi bi-sun"></i>浅色模式
+            </a>
+            <a class="dropdown-item theme-option" data-theme="dark" href="#">
+              <i class="bi bi-moon"></i>深色模式
+            </a>
+            <a class="dropdown-item theme-option" data-theme="auto" href="#">
+              <i class="bi bi-circle-half"></i>自动模式
+            </a>
           </div>
         </div>
       </div>
     </div>
-    <div id="reserve-content-all" class="content-section d-none">
-      <div class="container">
-        <h2 class="text-center mb-4">预约休假表</h2>
+  </div>
 
-        <!-- 上半年预约表 -->
-        <div class="table-container m-auto mb-5">
-          <table class="table vacation-table table-bordered table-responsive">
-            <thead id="firstHalfTableHead">
-              <tr>
-                <th rowspan="2" class="half-year-selector">
-                  <div class="dropdown">
-                    <button class="btn btn-success btn-sm dropdown-toggle fw-bold" type="button"
-                      data-bs-toggle="dropdown" aria-expanded="false">
-                      选择年份
-                    </button>
-                    <ul class="dropdown-menu custom-select-menu">
-                      <li><button class="dropdown-item custom-select-item" type="button">2025</button></li>
-                      <li><button class="dropdown-item custom-select-item" type="button">2026</button></li>
-                      <li><button class="dropdown-item custom-select-item" type="button">2027</button></li>
-                    </ul>
+  <!-- 移动端-底部导航栏 -->
+  <nav class="bottom-nav">
+    <div class="container">
+      <div class="row justify-content-around">
+        <div class="col-2 text-center">
+          <a class="nav-link active" href="#work-mine">
+            <i class="bi bi-person-circle nav-icon"></i>
+          </a>
+        </div>
+        <div class="col-2 text-center">
+          <a class="nav-link" href="#work-all">
+            <i class="bi bi-people-fill nav-icon"></i>
+          </a>
+        </div>
+        <div class="col-2 text-center">
+          <a class="nav-link" href="#reserve-all">
+            <i class="bi bi-calendar-heart-fill nav-icon"></i>
+          </a>
+        </div>
+        <div class="col-2 text-center">
+          <a class="nav-link" href="#change-ban">
+            <i class="bi bi-arrow-left-right nav-icon"></i>
+          </a>
+        </div>
+        <div class="col-2 text-center">
+          <a class="nav-link" href="#statistics-all">
+            <i class="bi bi-calculator-fill nav-icon"></i>
+          </a>
+        </div>
+        <div class="col-2 text-center">
+          <a class="nav-link" href="#paiban-all">
+            <i class="bi bi-slack nav-icon"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- 主要内容区域 -->
+  <main class="container">
+    <div class="main-content">
+      <div class="tab-content" id="navContent">
+        <!-- 我的排班 -->
+        <div class="tab-pane fade show active" id="work-mine">
+          <div class="fade-in">
+            <div id="work-content-mine" class="content-section">
+              <div class="container">
+                <h5 class="text-center mb-3">我的排班表</h5>
+
+                <!-- 日期切换组件 -->
+                <div class="row mb-4">
+                  <div class="col-2"></div>
+                  <div class="col-8">
+                    <div class="d-flex justify-content-between">
+                      <button type="button" class="btn btn-success pre-month">上一月</button>
+                      <div id="datetimepicker2" data-td-target-input="nearest" data-td-target-toggle="nearest">
+                        <span class="input-group-text" data-td-target="#datetimepicker2"
+                          data-td-toggle="datetimepicker">
+                          <span class="mounianmouyue">某年某月</span>
+                        </span>
+                      </div>
+                      <button type="button" class="btn btn-success next-month">下一月</button>
+                    </div>
                   </div>
-                  <div>上半年</div>
-                </th>
-                <th colspan="5" class="month-header">1月</th>
-                <th colspan="4" class="month-header">2月</th>
-                <th colspan="4" class="month-header">3月</th>
-                <th colspan="5" class="month-header">4月</th>
-                <th colspan="4" class="month-header">5月</th>
-                <th colspan="5" class="month-header">6月</th>
-              </tr>
-              <tr>
-              </tr>
-            </thead>
-            <tbody id="firstHalfTableBody">
-              <!-- 生成10行 -->
-            </tbody>
-          </table>
-        </div>
+                  <div class="col-2"></div>
+                </div>
 
-        <!-- 下半年预约表 -->
-        <div class="table-container m-auto">
-          <table class="table vacation-table table-bordered table-responsive">
-            <thead id="secondHalfTableHead">
-              <tr>
-                <th rowspan="2" class="half-year-selector">
-                  <div class="dropdown">
-                    <button class="btn btn-success btn-sm dropdown-toggle fw-bold" type="button"
-                      data-bs-toggle="dropdown" aria-expanded="false">
-                      选择年份
-                    </button>
-                    <ul class="dropdown-menu custom-select-menu">
-                      <li><button class="dropdown-item custom-select-item" type="button">2025</button></li>
-                      <li><button class="dropdown-item custom-select-item" type="button">2026</button></li>
-                      <li><button class="dropdown-item custom-select-item" type="button">2027</button></li>
-                    </ul>
+                <!-- 整体容器，添加tabindex使其可接收键盘焦点 -->
+                <div class="component-wrapper" tabindex="0">
+                  <!-- 固定的星期容器 -->
+                  <div class="weekday-container">
+                    <div class="weekday-item">周一</div>
+                    <div class="weekday-item">周二</div>
+                    <div class="weekday-item">周三</div>
+                    <div class="weekday-item">周四</div>
+                    <div class="weekday-item">周五</div>
+                    <div class="weekday-item">周六</div>
+                    <div class="weekday-item">周日</div>
                   </div>
-                  <div>下半年</div>
-                </th>
-                <th colspan="5" class="month-header">7月</th>
-                <th colspan="4" class="month-header">8月</th>
-                <th colspan="4" class="month-header">9月</th>
-                <th colspan="5" class="month-header">10月</th>
-                <th colspan="4" class="month-header">11月</th>
-                <th colspan="5" class="month-header">12月</th>
-              </tr>
-              <tr>
-              </tr>
-            </thead>
-            <tbody id="secondHalfTableBody">
-              <!-- 生成10行 -->
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
 
-    <!-- 服务内容 -->
-    <div id="change-content-mine" class="content-section d-none">
-      <h2>我的</h2>
-      <p>这是服务页面的内容。您可以在这里列出您提供的各种服务。</p>
-      <div class="row">
-        <div class="col-md-6 mb-4">
-          <div class="card h-100">
-            <div class="card-body">
-              <h5 class="card-title">服务 A</h5>
-              <p class="card-text">这是关于服务A的详细描述。我们提供全面的解决方案来满足您的需求。</p>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-6 mb-4">
-          <div class="card h-100">
-            <div class="card-body">
-              <h5 class="card-title">服务 B</h5>
-              <p class="card-text">这是关于服务B的详细描述。我们的专业团队将确保您获得最佳体验。</p>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-6 mb-4">
-          <div class="card h-100">
-            <div class="card-body">
-              <h5 class="card-title">服务 C</h5>
-              <p class="card-text">这是关于服务C的详细描述。我们致力于提供创新的解决方案。</p>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-6 mb-4">
-          <div class="card h-100">
-            <div class="card-body">
-              <h5 class="card-title">服务 D</h5>
-              <p class="card-text">这是关于服务D的详细描述。我们的服务以客户满意度为导向。</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div id="change-content-all" class="content-section d-none">
-      <h2>全科</h2>
-      <p>这是服务页面的内容。您可以在这里列出您提供的各种服务。</p>
-      <div class="row">
-        <div class="col-md-6 mb-4">
-          <div class="card h-100">
-            <div class="card-body">
-              <h5 class="card-title">服务 A</h5>
-              <p class="card-text">这是关于服务A的详细描述。我们提供全面的解决方案来满足您的需求。</p>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-6 mb-4">
-          <div class="card h-100">
-            <div class="card-body">
-              <h5 class="card-title">服务 B</h5>
-              <p class="card-text">这是关于服务B的详细描述。我们的专业团队将确保您获得最佳体验。</p>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-6 mb-4">
-          <div class="card h-100">
-            <div class="card-body">
-              <h5 class="card-title">服务 C</h5>
-              <p class="card-text">这是关于服务C的详细描述。我们致力于提供创新的解决方案。</p>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-6 mb-4">
-          <div class="card h-100">
-            <div class="card-body">
-              <h5 class="card-title">服务 D</h5>
-              <p class="card-text">这是关于服务D的详细描述。我们的服务以客户满意度为导向。</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+                  <!-- Swiper 滑动容器 -->
+                  <div class="swiper-container">
+                    <div class="swiper mySwiper">
+                      <div class="swiper-wrapper">
+                        <!-- 第一周 -->
 
-    <!-- 联系我们内容 -->
-    <div id="statistics-content-mine" class="content-section d-none">
-      <h2>我的</h2>
-      <p>这是联系页面的内容。您可以在这里提供您的联系信息和表单。</p>
-      <div class="row">
-        <div class="col-md-6">
-          <form>
-            <div class="mb-3">
-              <label for="name" class="form-label">姓名</label>
-              <input type="text" class="form-control" id="name" required>
-            </div>
-            <div class="mb-3">
-              <label for="email" class="form-label">电子邮件</label>
-              <input type="email" class="form-control" id="email" required>
-            </div>
-            <div class="mb-3">
-              <label for="message" class="form-label">留言</label>
-              <textarea class="form-control" id="message" rows="5" required></textarea>
-            </div>
-            <button type="submit" class="btn btn-primary">发送</button>
-          </form>
-        </div>
-        <div class="col-md-6">
-          <div class="card">
-            <div class="card-body">
-              <h5 class="card-title">我们的联系方式</h5>
-              <p><strong>地址：</strong>某某市某某区某某街123号</p>
-              <p><strong>电话：</strong>123-456-7890</p>
-              <p><strong>电子邮件：</strong>info@example.com</p>
-              <p><strong>营业时间：</strong>周一至周五 9:00-18:00</p>
+                        <!-- 第二周 -->
+
+                        <!-- 第三周 -->
+
+                      </div>
+                      <div class="swiper-pagination"></div>
+                      <div class="swipe-hint">左右滑动查看</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="keyboard-hint">提示：使用键盘 ← 和 → 箭头键可切换卡片</div>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    </div>
-    <div id="statistics-content-all" class="content-section d-none">
-      <h2>全科</h2>
-      <p>这是联系页面的内容。您可以在这里提供您的联系信息和表单。</p>
-      <div class="row">
-        <div class="col-md-6">
-          <form>
-            <div class="mb-3">
-              <label for="name" class="form-label">姓名</label>
-              <input type="text" class="form-control" id="name1" required>
+
+        <!-- 全科排班 -->
+        <div class="tab-pane fade" id="work-all">
+          <div class="fade-in">
+            <div id="work-content-all" class="content-section">
+              <div class="p-3 border border-secondary border-opacity-75 border-2 rounded-3">
+                <!-- 日期切换组件 -->
+                <div class="row">
+                  <div class="col-lg-4"></div>
+                  <div class="col-lg-4">
+                    <div class="d-flex justify-content-between">
+                      <button type="button" class="btn btn-success pre-month">上一月</button>
+                      <div id="datetimepicker1" data-td-target-input="nearest" data-td-target-toggle="nearest">
+                        <span class="input-group-text" data-td-target="#datetimepicker1"
+                          data-td-toggle="datetimepicker">
+                          <span class="mounianmouyue">某年某月</span>
+                        </span>
+                      </div>
+                      <button type="button" class="btn btn-success next-month">下一月</button>
+                    </div>
+                  </div>
+                  <div class="col-lg-4"></div>
+                </div>
+
+                <!-- 表格本体 -->
+                <div class="table-container m-auto mt-3 table-responsive">
+                  <table class="paiban-table m-auto table table-bordered">
+                    <thead>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
             </div>
-            <div class="mb-3">
-              <label for="email" class="form-label">电子邮件</label>
-              <input type="email" class="form-control" id="email1" required>
-            </div>
-            <div class="mb-3">
-              <label for="message" class="form-label">留言</label>
-              <textarea class="form-control" id="message1" rows="5" required></textarea>
-            </div>
-            <button type="submit" class="btn btn-primary">发送</button>
-          </form>
+          </div>
         </div>
-        <div class="col-md-6">
-          <div class="card">
-            <div class="card-body">
-              <h5 class="card-title">我们的联系方式</h5>
-              <p><strong>地址：</strong>某某市某某区某某街123号</p>
-              <p><strong>电话：</strong>123-456-7890</p>
-              <p><strong>电子邮件：</strong>info@example.com</p>
-              <p><strong>营业时间：</strong>周一至周五 9:00-18:00</p>
+
+        <!-- 预约休假 -->
+        <div class="tab-pane fade" id="reserve-all">
+          <div class="fade-in">
+            <div id="reserve-content-all" class="content-section">
+              <div class="container">
+                <h2 class="text-center mb-4">预约休假表</h2>
+
+                <!-- 上半年预约表 -->
+                <div class="table-container m-auto mb-5">
+                  <table class="table vacation-table table-bordered table-responsive">
+                    <thead id="firstHalfTableHead">
+                      <tr>
+                        <th rowspan="2" class="half-year-selector">
+                          <div class="dropdown">
+                            <button class="btn btn-success btn-sm dropdown-toggle fw-bold" type="button"
+                              data-bs-toggle="dropdown" aria-expanded="false">
+                              选择年份
+                            </button>
+                            <ul class="dropdown-menu custom-select-menu">
+                              <li><button class="dropdown-item custom-select-item" type="button">2025</button></li>
+                              <li><button class="dropdown-item custom-select-item" type="button">2026</button></li>
+                              <li><button class="dropdown-item custom-select-item" type="button">2027</button></li>
+                            </ul>
+                          </div>
+                          <div>上半年</div>
+                        </th>
+                        <th colspan="5" class="month-header">1月</th>
+                        <th colspan="4" class="month-header">2月</th>
+                        <th colspan="4" class="month-header">3月</th>
+                        <th colspan="5" class="month-header">4月</th>
+                        <th colspan="4" class="month-header">5月</th>
+                        <th colspan="5" class="month-header">6月</th>
+                      </tr>
+                      <tr>
+                      </tr>
+                    </thead>
+                    <tbody id="firstHalfTableBody">
+                      <!-- 生成10行 -->
+                    </tbody>
+                  </table>
+                </div>
+
+                <!-- 下半年预约表 -->
+                <div class="table-container m-auto">
+                  <table class="table vacation-table table-bordered table-responsive">
+                    <thead id="secondHalfTableHead">
+                      <tr>
+                        <th rowspan="2" class="half-year-selector">
+                          <div class="dropdown">
+                            <button class="btn btn-success btn-sm dropdown-toggle fw-bold" type="button"
+                              data-bs-toggle="dropdown" aria-expanded="false">
+                              选择年份
+                            </button>
+                            <ul class="dropdown-menu custom-select-menu">
+                              <li><button class="dropdown-item custom-select-item" type="button">2025</button></li>
+                              <li><button class="dropdown-item custom-select-item" type="button">2026</button></li>
+                              <li><button class="dropdown-item custom-select-item" type="button">2027</button></li>
+                            </ul>
+                          </div>
+                          <div>下半年</div>
+                        </th>
+                        <th colspan="5" class="month-header">7月</th>
+                        <th colspan="4" class="month-header">8月</th>
+                        <th colspan="4" class="month-header">9月</th>
+                        <th colspan="5" class="month-header">10月</th>
+                        <th colspan="4" class="month-header">11月</th>
+                        <th colspan="5" class="month-header">12月</th>
+                      </tr>
+                      <tr>
+                      </tr>
+                    </thead>
+                    <tbody id="secondHalfTableBody">
+                      <!-- 生成10行 -->
+                    </tbody>
+                  </table>
+                </div>
+              </div>
             </div>
+          </div>
+        </div>
+
+        <!-- 换班 -->
+        <div class="tab-pane fade" id="change-ban">
+          <div class="fade-in">
+            <h2>换班</h2>
+            <p>这是换班内容区域。您可以在这里查看和管理您的换班。</p>
+          </div>
+        </div>
+
+        <!-- 统计 -->
+        <div class="tab-pane fade" id="statistics-all">
+          <div class="fade-in">
+            <h2>统计</h2>
+            <p>这是统计内容区域。您可以在这里查看您的统计信息。</p>
+          </div>
+        </div>
+
+        <!-- 排班 -->
+        <div class="tab-pane fade" id="paiban-all">
+          <div class="fade-in">
+            <h2>排班中心</h2>
+            <p>这是排班中心内容区域。您可以在这里管理您的排班信息。</p>
           </div>
         </div>
       </div>
@@ -903,7 +797,6 @@
   </div>
 
   <script src="/WSFrontends/assets/plugin/node_modules/bootstrap/dist/js/bootstrap.bundle.js"></script>
-  <script src="/WSFrontends/assets/plugin/offcanvas-navbar/offcanvas-navbar.js"></script>
   <script src="/WSFrontends/assets/plugin/node_modules/@popperjs/core/dist/umd/popper.min.js"></script>
   <script src="/WSFrontends/assets/plugin/node_modules/@eonasdan/tempus-dominus/dist/js/tempus-dominus.min.js"></script>
   <script src="/WSFrontends/assets/plugin/node_modules/swiper/swiper-bundle.min.js"></script>
@@ -911,15 +804,14 @@
   <script src="/WSFrontends/assets/plugin/node_modules/dayjs/plugin/isoWeek.js"></script>
   <script src="/WSFrontends/assets/plugin/node_modules/dayjs/plugin/localeData.js"></script>
   <script src="/WSFrontends/assets/plugin/node_modules/dayjs/locale/zh-cn.js"></script>
-  <script src="/WSFrontends/assets/plugin/offcanvas-navbar/color-modes.js"></script>
 
   <!-- 我的js文件, 按顺序引入 -->
   <script src="/WSFrontends/assets/4_js/commons.js"></script>
   <script src="/WSFrontends/assets/4_js/differentAlert.js"></script>
   <script src="/WSFrontends/assets/4_js/getWeekGroups.js"></script>
-  <script src="/WSFrontends/assets/4_js/changePages.js"></script>
+  <script src="/WSFrontends/assets/4_js/index.js"></script>
 
-  <script src="/WSFrontends/assets/4_js/initUserInfo.js"></script>
+   <script src="/WSFrontends/assets/4_js/initUserInfo.js"></script>
   <script src="/WSFrontends/assets/4_js/initWorkAllTables.js"></script>
   <script src="/WSFrontends/assets/4_js/initWorkMineCards.js"></script>
   <script src="/WSFrontends/assets/4_js/initVacationTable.js"></script>
