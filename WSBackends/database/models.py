@@ -2,7 +2,7 @@ from datetime import datetime, time
 
 from sqlmodel import SQLModel, Field, Relationship
 
-from .utils import Bans
+from .utils import Bans, ScheduleStatus
 
 
 class Account(SQLModel, table=True):
@@ -65,6 +65,7 @@ class Workschedule(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
     work_date: datetime = Field(index=True)
     bantype_id: int | None = Field(default=None, foreign_key="bantype.id")
+    status: ScheduleStatus = Field(default=ScheduleStatus.DRAFT, index=True)
 
     bantype: Bantype | None = Relationship(back_populates="workschedule")
     personnel_links: list[WorkschedulePersonnelLink] = Relationship(back_populates="workschedule")

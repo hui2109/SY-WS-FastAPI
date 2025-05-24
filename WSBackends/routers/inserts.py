@@ -50,7 +50,7 @@ async def create_ban(one_ban: OneBan, session: SessionDep):
 async def create_schedule(one_schedule: OneSchedule, session: SessionDep):
     personnel = session.exec(select(Personnel).where(Personnel.name == one_schedule.name)).first()
     if not personnel:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail='没有这个人!')
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=f'没有这个人! {one_schedule.name}')
 
     bantype = session.exec(select(Bantype).where(Bantype.ban == one_schedule.ban)).first()
     if not bantype:
@@ -74,22 +74,39 @@ async def create_schedule(one_schedule: OneSchedule, session: SessionDep):
 
 @router.post('/create-reserve')
 async def create_reserve(reserves: list[OneReserve], session: SessionDep):
+    current_reserve_vacation_list = []
+
     for one_reserve in reserves:
         personnel = session.exec(select(Personnel).where(Personnel.name == one_reserve.name)).first()
         if not personnel:
-            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail='没有这个人!')
+            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail='没有这个人! {one_reserve.name}')
 
         bantype = session.exec(select(Bantype).where(Bantype.ban == one_reserve.relax)).first()
         if not bantype:
             raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail='没有班种信息! 请先创建班种!')
 
-        current_reserve_vacation = session.exec(select(ReserveVacation).where(
+        exclude_same_date_seq = session.exec(select(ReserveVacation).where(
             ReserveVacation.sequence == one_reserve.sequence,
             ReserveVacation.reserve_date == one_reserve.date,
         )).first()
-        if not current_reserve_vacation:
+        exclude_same_date_personnel = session.exec(select(ReserveVacation).where(
+            ReserveVacation.personnel == personnel,
+            ReserveVacation.reserve_date == one_reserve.date,
+        )).first()
+
+        if (not exclude_same_date_seq) and (not exclude_same_date_personnel):
             current_reserve_vacation = ReserveVacation(sequence=one_reserve.sequence, reserve_date=one_reserve.date, bantype=bantype, personnel=personnel)
-            session.add(current_reserve_vacation)
+            current_reserve_vacation_list.append(current_reserve_vacation)
+        else:
+            if exclude_same_date_seq:
+                raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='该日期已存在预约!')
+
+            if exclude_same_date_personnel:
+                raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f'{one_reserve.name} 已存在预约!')
+
+    # 全部没问题，才提交
+    for current_reserve_vacation in current_reserve_vacation_list:
+        session.add(current_reserve_vacation)
 
     session.commit()
     return {'detail': '预约休假成功!'}

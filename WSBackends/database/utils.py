@@ -19,6 +19,8 @@ class Bans(Enum):
 
     N1 = 'N1'
     N2 = 'N2'
+    N3 = 'N3'
+
     ENGAGE = '进修'
     TRAIN = '培训'
     JD = '机动'
@@ -47,3 +49,9 @@ class Bans(Enum):
     OVB = 'OVB'
 
     OPHY = 'Phy'
+
+
+class ScheduleStatus(Enum):
+    PUBLISHED = '已发布'
+    PendingReview = '待审核'
+    DRAFT = '草稿'

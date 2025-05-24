@@ -33,3 +33,30 @@ function adjustDatePickerPosition(dateLabel) {
     datePicker.style.setProperty('--td-left', `${new_x}px`);
     datePicker.style.setProperty('--td-top', `${new_y}px`);
 }
+
+function getWeekMap() {
+    return {
+        0: '周日',
+        1: '周一',
+        2: '周二',
+        3: '周三',
+        4: '周四',
+        5: '周五',
+        6: '周六',
+    };
+}
+
+function getBanTypeColor() {
+    return {
+        '放射假': '#0d6efd',
+        '年假': '#198754',
+        '病假': '#fd7e14',
+        '事假': '#ffc107',
+        '婚假': '#d63384',
+        '产假': '#dc3545',
+        '陪产假': '#6610f2',
+        '育儿假': '#0dcaf0',
+        '丧假': '#adb5bd',
+        '其他假': '#ca766f',
+    };
+}

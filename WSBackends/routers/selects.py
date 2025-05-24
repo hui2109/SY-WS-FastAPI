@@ -6,7 +6,7 @@ from sqlmodel import select
 from pypinyin import pinyin, load_phrases_dict, lazy_pinyin
 
 from .utils import convert_UTC_Chinese, CURRENT_PERSONNEL
-from ..database.models import Workschedule, Account, WorkschedulePersonnelLink, ReserveVacation
+from ..database.models import Workschedule, Account, WorkschedulePersonnelLink, ReserveVacation, Personnel
 from ..dependencies import get_current_user, SessionDep
 
 router = APIRouter(tags=["selects"], dependencies=[Depends(get_current_user)])
@@ -15,6 +15,10 @@ router = APIRouter(tags=["selects"], dependencies=[Depends(get_current_user)])
 class QueryMonth(BaseModel):
     month_start: datetime
     month_end: datetime
+
+
+class QueryMyMonth(QueryMonth):
+    name: str
 
 
 # 查询单个月的排班情况
@@ -124,6 +128,32 @@ async def select_all_reservations(queryMonth: QueryMonth, session: SessionDep):
         })
 
     return queryAllReservationsResponse
+
+
+@router.post("/select_my-reservation")
+async def select_my_reservation(queryMyMonth: QueryMyMonth, session: SessionDep):
+    # UTC时区 转 中国时区
+    queryMyMonth.month_start = convert_UTC_Chinese(queryMyMonth.month_start)
+    queryMyMonth.month_end = convert_UTC_Chinese(queryMyMonth.month_end)
+
+    personnel = session.exec(select(Personnel).where(Personnel.name == queryMyMonth.name)).first()
+    if not personnel:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=f'没有这个人! {queryMyMonth.name}')
+
+    queryMyReservationResponse = {}
+    statement = select(ReserveVacation).where(
+        ReserveVacation.reserve_date >= queryMyMonth.month_start,
+        ReserveVacation.reserve_date <= queryMyMonth.month_end,
+        ReserveVacation.personnel == personnel
+    )
+    result: ReserveVacation = session.exec(statement).first()
+
+    if result:
+        queryMyReservationResponse['sequence'] = result.sequence
+        queryMyReservationResponse['bantype'] = result.bantype.ban.value
+        queryMyReservationResponse['name'] = result.personnel.name
+
+    return queryMyReservationResponse
 
 
 @router.post("/get_current_personnel_list")

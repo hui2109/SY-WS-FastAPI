@@ -19,6 +19,7 @@
   <link rel="stylesheet" href="/WSFrontends/assets/2_css/work_all.css">
   <link rel="stylesheet" href="/WSFrontends/assets/2_css/work_mine.css">
   <link rel="stylesheet" href="/WSFrontends/assets/2_css/reserve_all.css">
+  <link rel="stylesheet" href="/WSFrontends/assets/2_css/paiban_table.css">
 </head>
 
 <body>
@@ -399,8 +400,62 @@
         <!-- 排班 -->
         <div class="tab-pane fade" id="paiban-all">
           <div class="fade-in">
-            <h2>排班中心</h2>
-            <p>这是排班中心内容区域。您可以在这里管理您的排班信息。</p>
+            <div id="paiban-content-all" class="content-section">
+              <div class="container">
+                <nav>
+                  <div class="nav nav-tabs" id="paiban-tab" role="tablist">
+                    <button class="nav-link active" id="paiban-start-tab" data-bs-toggle="tab"
+                      data-bs-target="#paiban-start" type="button" role="tab" aria-controls="paiban-start"
+                      aria-selected="true">开始排班</button>
+                    <button class="nav-link" id="vacation-setting-tab" data-bs-toggle="tab"
+                      data-bs-target="#vacation-setting" type="button" role="tab" aria-controls="vacation-setting"
+                      aria-selected="false">假期设置</button>
+                  </div>
+                </nav>
+                <div class="tab-content" id="paiban-tabContent">
+                  <div class="tab-pane fade show active" id="paiban-start" role="tabpanel"
+                    aria-labelledby="paiban-start-tab" tabindex="0">
+                    <div class="p-3 border border-secondary border-opacity-75 border-2 rounded-3">
+                      <div class="d-flex justify-content-between align-items-center">
+                        <!-- 日期切换组件 -->
+                        <div id="datetimepicker3" data-td-target-input="nearest" data-td-target-toggle="nearest">
+                          <span data-td-target="#datetimepicker3" data-td-toggle="datetimepicker">
+                            <button type="button" class="btn btn-success btn-sm mounianmouyue">某年某月</button>
+                          </span>
+                        </div>
+
+                        <!-- 自动排班组件 -->
+                        <button type="button" class="btn btn-success btn-sm">自动排班</button>
+
+                        <!-- 加载排班组合 -->
+                        <button type="button" class="btn btn-success btn-sm">清空排班</button>
+
+                        <!-- 显示上周期排班 -->
+                        <button type="button" class="btn btn-success btn-sm">显示上周期排班</button>
+
+                        <!-- 成员设置 -->
+                        <button type="button" class="btn btn-success btn-sm">成员设置</button>
+
+                        <!-- 排班检查 -->
+                        <button type="button" class="btn btn-success btn-sm">排班检查</button>
+                      </div>
+
+                      <!-- 表格本体 -->
+                      <div class="table-container m-auto mt-3 table-responsive">
+                        <table class="paiban-table m-auto table table-bordered">
+                          <thead>
+                          </thead>
+                          <tbody>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="tab-pane fade" id="vacation-setting" role="tabpanel"
+                    aria-labelledby="vacation-setting-tab" tabindex="0">...</div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -796,6 +851,99 @@
     </div>
   </div>
 
+  <!-- 排班对话框 -->
+  <div class="modal fade" id="paibanModal" tabindex="-1" aria-labelledby="paibanModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="paibanModalLabel">排班</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+
+        <div id="paibanContent" class="modal-body">
+          <p class="mb-2 ps-2">基础信息：</p>
+          <div>
+            <div class='d-flex'>
+              <span class="badge border border-primary text-primary" style="font-size: 0.9rem;"><i
+                  class="bi bi-person-badge-fill me-1"></i>被排班人：</span>
+              <span class="badge bg-primary ms-2" style="font-size: 0.9rem;" id="paibanPerson">张旭辉</span>
+            </div>
+            <div class='d-flex mt-2'>
+              <span class="badge border border-primary text-primary" style="font-size: 0.9rem;"><i
+                  class="bi bi-calendar2-plus me-1"></i>排班日期：</span>
+              <span class="badge bg-success ms-2 text-wrap" style="font-size: 0.9rem;"
+                id="paibanDate">2025年5月21日（周三）</span>
+            </div>
+          </div>
+
+          <p class="mt-4 mb-2 ps-2">预约相关：</p>
+          <div>
+            <div class='d-flex'>
+              <span class="badge border border-primary text-primary" style="font-size: 0.9rem;"><i
+                  class="bi bi-hospital me-1"></i>期望排班及原因：</span>
+              <span class="badge bg-primary ms-2" style="font-size: 0.9rem;" id="expectedPaiban"
+                data-default="暂无"></span>
+              <span class="badge bg-primary ms-2" style="font-size: 0.9rem;" id="expectedPaibanReason"></span>
+            </div>
+            <div class='d-flex mt-2'>
+              <span class="badge border border-primary text-primary" style="font-size: 0.9rem;"><i
+                  class="bi bi-controller me-1"></i>期望休假及顺序：</span>
+              <span class="badge bg-success ms-2 text-wrap" style="font-size: 0.9rem;" id="expectedRelax"
+                data-default="暂无"></span>
+              <span class="badge bg-success ms-2 text-wrap" style="font-size: 0.9rem;"
+                id="expectedRelaxSequence"></span>
+            </div>
+          </div>
+
+          <p class="mt-4 mb-2 ps-2">建议排班：</p>
+          <div class='d-flex'>
+            <span class="badge bg-primary" style="font-size: 1.1rem;" id="suggestedPaiban"></span>
+          </div>
+
+          <p class="mt-4 mb-2 ps-2">实际排班：</p>
+          <div class='d-flex align-items-center'>
+            <div class="dropdown" id="paibanSelectDropdown">
+              <button type="button" class="btn btn-warning dropdown-toggle" data-bs-toggle="dropdown"
+                aria-expanded="false" data-default="请选择">
+                请选择
+              </button>
+              <ul class="dropdown-menu">
+                <li><span class="dropdown-item">放射假</span></li>
+                <li><span class="dropdown-item">年假</span></li>
+                <li><span class="dropdown-item">病假</span></li>
+                <li><span class="dropdown-item">事假</span></li>
+                <li><span class="dropdown-item">婚假</span></li>
+                <li><span class="dropdown-item">产假</span></li>
+                <li><span class="dropdown-item">陪产假</span></li>
+                <li><span class="dropdown-item">育儿假</span></li>
+                <li><span class="dropdown-item">丧假</span></li>
+                <li><span class="dropdown-item">其他假</span></li>
+              </ul>
+              <input type="hidden" id="paibanSelectHD" data-bantype="wu" data-date="wu" data-name="wu" required>
+            </div>
+            <div class="ms-3">
+              <input class="form-check-input me-1 border border-warning" type="checkbox" value="wu" id="repeatPaiban5">
+              <label class="form-check-label text-warning" for="repeatPaiban5">重复5次</label>
+            </div>
+            <div class="ms-3">
+              <input class="form-check-input me-1 border border-warning" type="checkbox" value="wu" id="repeatPaiban2">
+              <label class="form-check-label text-warning" for="repeatPaiban2">重复2次</label>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer justify-content-between">
+          <button type="button" class="btn btn-danger" id="deletePaiban">删除排班</button>
+          <div>
+            <button type="button" class="btn btn-info" id="acceptPaiban">接受建议</button>
+            <button type="button" class="btn btn-info" id="confirmPaiban">确认排班</button>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script src="/WSFrontends/assets/plugin/node_modules/bootstrap/dist/js/bootstrap.bundle.js"></script>
   <script src="/WSFrontends/assets/plugin/node_modules/@popperjs/core/dist/umd/popper.min.js"></script>
   <script src="/WSFrontends/assets/plugin/node_modules/@eonasdan/tempus-dominus/dist/js/tempus-dominus.min.js"></script>
@@ -811,10 +959,11 @@
   <script src="/WSFrontends/assets/4_js/getWeekGroups.js"></script>
   <script src="/WSFrontends/assets/4_js/index.js"></script>
 
-   <script src="/WSFrontends/assets/4_js/initUserInfo.js"></script>
+  <script src="/WSFrontends/assets/4_js/initUserInfo.js"></script>
   <script src="/WSFrontends/assets/4_js/initWorkAllTables.js"></script>
   <script src="/WSFrontends/assets/4_js/initWorkMineCards.js"></script>
   <script src="/WSFrontends/assets/4_js/initVacationTable.js"></script>
+  <script src="/WSFrontends/assets/4_js/initPaiBanTables.js"></script>
 
   <!-- <script src="/WSFrontends/assets/4_js/verify.js"></script> -->
 </body>

@@ -21,7 +21,7 @@ class InitTables {
     }
 
     lookElement() {
-        this.paibanTable = document.querySelector('.paiban-table');
+        this.paibanTable = document.querySelector('#work-content-all .paiban-table');
         this.dateLabel = document.querySelector('#work-content-all .mounianmouyue');
         this.preMonth = document.querySelector('#work-content-all .pre-month');
         this.nextMonth = document.querySelector('#work-content-all .next-month');
@@ -96,18 +96,6 @@ class InitTables {
         // 监听日期显示事件
         this.datetimepicker1.addEventListener('show.td', () => {
             adjustDatePickerPosition(this.dateLabel);
-        });
-
-        // 监听日期隐藏事件
-        this.datetimepicker1.addEventListener('hide.td', () => {
-            //let tempusDominusWidgets = document.querySelectorAll('.tempus-dominus-widget');
-
-            // 已有的日期选择控件删了
-            //if (tempusDominusWidgets.length !== 0) {
-            //    tempusDominusWidgets.forEach((widget) => {
-            //        widget.remove();
-            //    })
-            //}
         });
     }
 

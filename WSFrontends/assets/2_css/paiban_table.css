@@ -1,0 +1,58 @@
+#paiban-content-all .nav-link {
+  color: var(--bs-body-color);
+}
+#paiban-content-all .nav-link.active {
+  color: var(--bs-primary);
+}
+#paiban-content-all .table-container {
+  width: 90%;
+  height: 70vh;
+  overflow: auto;
+  z-index: 0;
+}
+#paiban-content-all .table-container .paiban-table {
+  table-layout: fixed;
+  border-collapse: separate;
+  border-spacing: 2px;
+}
+#paiban-content-all .table-container .paiban-table thead tr th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background-color: var(--bs-primary-bg-subtle);
+  text-align: center;
+  width: 66px;
+  height: 62px;
+  border-bottom: 1px solid #ddd;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+#paiban-content-all .table-container .paiban-table thead tr th:first-child {
+  line-height: 48px;
+  left: 0;
+  z-index: 3;
+  background-color: var(--bs-success);
+  border-right: 1px solid #ddd;
+  border-bottom: 1px solid #ddd;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+}
+#paiban-content-all .table-container .paiban-table tbody tr td {
+  text-align: center;
+  width: 66px;
+  height: 48px;
+  vertical-align: middle;
+}
+#paiban-content-all .table-container .paiban-table tbody tr td:first-child {
+  position: sticky;
+  left: 0;
+  z-index: 2;
+  background-color: var(--bs-primary-bg-subtle);
+  border-right: 1px solid #ddd;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+}
+#paiban-content-all .table-container .paiban-table .clickable-paiban-cell {
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+#paiban-content-all .table-container .paiban-table .clickable-paiban-cell:hover {
+  background-color: var(--bs-warning);
+}

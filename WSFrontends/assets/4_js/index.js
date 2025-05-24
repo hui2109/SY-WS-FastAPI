@@ -7,6 +7,7 @@ class initIndex {
         this.lookElement();
         this.bindEvent();
         this.changeTheme();
+        this.navLinks[5].click();
     }
 
     _updateThemeIcons(mode) {
@@ -47,7 +48,7 @@ class initIndex {
 
     lookElement() {
         this.navLinks = document.querySelectorAll('.top-nav .nav-link, .bottom-nav .nav-link');
-        this.tabPanes = document.querySelectorAll('#navContent .tab-pane');
+        this.tabPanes = document.querySelectorAll('#navContent>.tab-pane');
         this.themeOptions = document.querySelectorAll('.theme-toggle-wrapper .theme-option');
         this.mobileTopBar = document.querySelector('.mobile-top-bar');
 

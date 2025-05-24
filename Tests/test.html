@@ -1,311 +1,298 @@
 <!DOCTYPE html>
-<html lang="zh" data-bs-theme="auto">
-
+<html lang="zh-CN">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>省院电离排版站</title>
-  <link rel="icon" type="image/png" href="/WSFrontends/assets/img/radiation.png">
-
-  <link rel="stylesheet" href="/WSFrontends/assets/plugin/node_modules/bootstrap/dist/css/bootstrap.min.css">
-  <link rel="stylesheet" href="/WSFrontends/assets/plugin/node_modules/bootstrap-icons/font/bootstrap-icons.min.css">
-
-  <!-- 我的CSS样式 -->
-  <link rel="stylesheet" href="/WSFrontends/assets/2_css/Ttest1.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bootstrap 5 标签组件示例</title>
+    <!-- 引入 Bootstrap 5 CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <!-- 引入 Bootstrap 图标 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.5/font/bootstrap-icons.min.css">
+    <style>
+        .demo-section {
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            background-color: #f8f9fa;
+        }
+        
+        .tag {
+            display: inline-block;
+            padding: 0.35em 0.65em;
+            font-size: 0.85em;
+            font-weight: 500;
+            line-height: 1;
+            text-align: center;
+            white-space: nowrap;
+            vertical-align: baseline;
+            border-radius: 0.25rem;
+            margin-right: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .tag-basic {
+            background-color: #e9ecef;
+            color: #212529;
+        }
+        
+        .tag-rounded {
+            border-radius: 50rem;
+        }
+        
+        .tag-outline {
+            background-color: transparent;
+            border: 1px solid;
+        }
+        
+        .tag-removable {
+            padding-right: 0.5rem;
+        }
+        
+        .tag-removable .close {
+            margin-left: 0.5rem;
+            font-size: 0.85em;
+            cursor: pointer;
+        }
+        
+        .tag-icon {
+            display: inline-flex;
+            align-items: center;
+        }
+        
+        .tag-icon i {
+            margin-right: 0.35rem;
+        }
+        
+        .tag-group {
+            display: flex;
+            flex-wrap: wrap;
+        }
+        
+        .tag-lg {
+            font-size: 1rem;
+            padding: 0.5em 0.75em;
+        }
+        
+        .tag-sm {
+            font-size: 0.75em;
+            padding: 0.25em 0.5em;
+        }
+        
+        .tag-pill {
+            border-radius: 50rem;
+            padding-right: 0.8em;
+            padding-left: 0.8em;
+        }
+        
+        .animated-tag {
+            transition: all 0.3s ease;
+        }
+        
+        .animated-tag:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .input-tag-container {
+            display: flex;
+            flex-wrap: wrap;
+            min-height: 38px;
+            padding: 0.35rem;
+            background-color: #fff;
+            border: 1px solid #ced4da;
+            border-radius: 0.25rem;
+        }
+        
+        .input-tag-container input {
+            flex: 1;
+            border: none;
+            outline: none;
+            padding: 0.25rem;
+            min-width: 100px;
+        }
+        
+        .input-tag-container .badge {
+            margin: 0.15rem;
+            display: inline-flex;
+            align-items: center;
+        }
+        
+        .input-tag-container .badge i {
+            margin-left: 0.35rem;
+            cursor: pointer;
+        }
+    </style>
 </head>
-
 <body>
-  <!-- 桌面端-顶部导航栏 -->
-  <nav class="navbar navbar-expand-lg fixed-top top-nav">
-    <div class="container">
-      <div class="d-flex align-items-center">
-        <!-- 标题logo -->
-        <a class="navbar-brand" href="#" style="font-weight: 600;">
-          <img src="/WSFrontends/assets/img/radiation.png" alt="Logo" width="25"
-            class="d-inline-block align-text-top me-2">
-          省医电离排班站
-        </a>
-        <!-- 菜单项 -->
-        <div class="d-flex align-items-center">
-          <ul class="navbar-nav">
-            <li class="nav-item">
-              <a class="nav-link active" href="#work-mine">
-                <i class="bi bi-person-circle nav-icon"></i>我的排班
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#work-all">
-                <i class="bi bi-people-fill nav-icon"></i>全科排班
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#reservation-relax">
-                <i class="bi bi-calendar-heart-fill nav-icon"></i>预约休假
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#change-ban">
-                <i class="bi bi-arrow-left-right nav-icon"></i>换班
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#statistics-all">
-                <i class="bi bi-calculator-fill nav-icon"></i>统计
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#paiban-all">
-                <i class="bi bi-slack nav-icon"></i>排班
-              </a>
-            </li>
-          </ul>
+    <div class="container py-5">
+        <h1 class="mb-4 text-center">Bootstrap 5 标签组件示例</h1>
+        
+        <!-- 基础标签 -->
+        <div class="demo-section">
+            <h3>基础标签</h3>
+            <div class="mb-3">
+                <span class="badge bg-primary">主要标签</span>
+                <span class="badge bg-secondary">次要标签</span>
+                <span class="badge bg-success">成功标签</span>
+                <span class="badge bg-danger">危险标签</span>
+                <span class="badge bg-warning text-dark">警告标签</span>
+                <span class="badge bg-info text-dark">信息标签</span>
+                <span class="badge bg-light text-dark">浅色标签</span>
+                <span class="badge bg-dark">深色标签</span>
+            </div>
+            <div>
+                <span class="badge rounded-pill bg-primary">主要圆形</span>
+                <span class="badge rounded-pill bg-secondary">次要圆形</span>
+                <span class="badge rounded-pill bg-success">成功圆形</span>
+                <span class="badge rounded-pill bg-danger">危险圆形</span>
+                <span class="badge rounded-pill bg-warning text-dark">警告圆形</span>
+                <span class="badge rounded-pill bg-info text-dark">信息圆形</span>
+                <span class="badge rounded-pill bg-light text-dark">浅色圆形</span>
+                <span class="badge rounded-pill bg-dark">深色圆形</span>
+            </div>
         </div>
-      </div>
-
-      <div class="d-flex align-items-center">
-        <!-- 主题颜色切换 -->
-        <div class="theme-toggle-wrapper me-2">
-          <button class="theme-toggle" id="desktopThemeDropdownToggle">
-            <i class="bi bi-sun"></i>
-          </button>
-          <div class="dropdown-menu" id="desktopThemeDropdown">
-            <a class="dropdown-item theme-option" data-theme="light" href="#">
-              <i class="bi bi-sun"></i>浅色模式
-            </a>
-            <a class="dropdown-item theme-option" data-theme="dark" href="#">
-              <i class="bi bi-moon"></i>深色模式
-            </a>
-            <a class="dropdown-item theme-option" data-theme="auto" href="#">
-              <i class="bi bi-circle-half"></i>自动模式
-            </a>
-          </div>
+        
+        <!-- 轮廓标签 -->
+        <div class="demo-section">
+            <h3>轮廓标签</h3>
+            <div>
+                <span class="badge border border-primary text-primary">主要轮廓</span>
+                <span class="badge border border-secondary text-secondary">次要轮廓</span>
+                <span class="badge border border-success text-success">成功轮廓</span>
+                <span class="badge border border-danger text-danger">危险轮廓</span>
+                <span class="badge border border-warning text-warning">警告轮廓</span>
+                <span class="badge border border-info text-info">信息轮廓</span>
+                <span class="badge border border-dark text-dark">深色轮廓</span>
+            </div>
         </div>
-
-        <!-- 用户名及头像 -->
-        <div class="user-wrapper" id="desktopUserDropdownToggle">
-          <div class="user-avatar">
-            <i class="bi bi-person-fill"></i>
-          </div>
-          <span class="user-name">用户名</span>
-          <div class="dropdown-menu" id="desktopUserDropdown">
-            <a class="dropdown-item" href="#">
-              <i class="bi bi-person-bounding-box"></i>修改头像
-            </a>
-            <div class="dropdown-divider"></div>
-            <a class="dropdown-item" href="#" style="color: #dc3545;">
-              <i class="bi bi-box-arrow-right"></i>退出登录
-            </a>
-          </div>
+        
+        <!-- 可删除标签 -->
+        <div class="demo-section">
+            <h3>可删除标签</h3>
+            <div id="removable-tags">
+                <span class="badge bg-primary">
+                    前端开发
+                    <i class="bi bi-x-circle ms-1" onclick="this.parentElement.remove()"></i>
+                </span>
+                <span class="badge bg-success">
+                    Bootstrap
+                    <i class="bi bi-x-circle ms-1" onclick="this.parentElement.remove()"></i>
+                </span>
+                <span class="badge bg-info text-dark">
+                    CSS
+                    <i class="bi bi-x-circle ms-1" onclick="this.parentElement.remove()"></i>
+                </span>
+                <span class="badge bg-warning text-dark">
+                    JavaScript
+                    <i class="bi bi-x-circle ms-1" onclick="this.parentElement.remove()"></i>
+                </span>
+                <span class="badge bg-danger">
+                    HTML
+                    <i class="bi bi-x-circle ms-1" onclick="this.parentElement.remove()"></i>
+                </span>
+            </div>
         </div>
-      </div>
+        
+        <!-- 带图标标签 -->
+        <div class="demo-section">
+            <h3>带图标标签</h3>
+            <div>
+                <span class="badge bg-primary"><i class="bi bi-tag-fill me-1"></i>产品</span>
+                <span class="badge bg-success"><i class="bi bi-check-circle-fill me-1"></i>已完成</span>
+                <span class="badge bg-danger"><i class="bi bi-exclamation-triangle-fill me-1"></i>重要</span>
+                <span class="badge bg-info text-dark"><i class="bi bi-info-circle-fill me-1"></i>信息</span>
+                <span class="badge bg-warning text-dark"><i class="bi bi-clock-fill me-1"></i>等待中</span>
+                <span class="badge bg-secondary"><i class="bi bi-person-fill me-1"></i>用户</span>
+                <span class="badge bg-dark"><i class="bi bi-gear-fill me-1"></i>设置</span>
+            </div>
+        </div>
+        
+        <!-- 大小标签 -->
+        <div class="demo-section">
+            <h3>不同大小标签</h3>
+            <div>
+                <span class="badge bg-primary" style="font-size: 0.75rem;">小标签</span>
+                <span class="badge bg-primary">默认标签</span>
+                <span class="badge bg-primary" style="font-size: 1.1rem;">大标签</span>
+                <span class="badge bg-primary" style="font-size: 1.25rem;">更大标签</span>
+            </div>
+        </div>
+        
+        <!-- 动画标签 -->
+        <div class="demo-section">
+            <h3>动画效果标签（悬停试试）</h3>
+            <div>
+                <span class="badge bg-primary animated-tag">悬停动画</span>
+                <span class="badge bg-success animated-tag">悬停动画</span>
+                <span class="badge bg-danger animated-tag">悬停动画</span>
+                <span class="badge bg-warning text-dark animated-tag">悬停动画</span>
+                <span class="badge bg-info text-dark animated-tag">悬停动画</span>
+            </div>
+        </div>
+        
+        <!-- 标签输入框 -->
+        <div class="demo-section">
+            <h3>标签输入框</h3>
+            <div class="input-tag-container mb-3" id="tagInput">
+                <span class="badge bg-primary">HTML<i class="bi bi-x" onclick="this.parentElement.remove()"></i></span>
+                <span class="badge bg-primary">CSS<i class="bi bi-x" onclick="this.parentElement.remove()"></i></span>
+                <span class="badge bg-primary">JavaScript<i class="bi bi-x" onclick="this.parentElement.remove()"></i></span>
+                <input type="text" placeholder="添加标签..." id="tagInputField">
+            </div>
+            <button class="btn btn-sm btn-outline-secondary" id="addTagBtn">添加标签</button>
+        </div>
+        
+        <!-- 分组标签 -->
+        <div class="demo-section">
+            <h3>分组标签</h3>
+            <div class="mb-3">
+                <h5>前端技术:</h5>
+                <div>
+                    <span class="badge bg-primary">HTML</span>
+                    <span class="badge bg-primary">CSS</span>
+                    <span class="badge bg-primary">JavaScript</span>
+                    <span class="badge bg-primary">React</span>
+                    <span class="badge bg-primary">Vue</span>
+                </div>
+            </div>
+            <div>
+                <h5>后端技术:</h5>
+                <div>
+                    <span class="badge bg-success">Node.js</span>
+                    <span class="badge bg-success">Python</span>
+                    <span class="badge bg-success">Java</span>
+                    <span class="badge bg-success">PHP</span>
+                    <span class="badge bg-success">Ruby</span>
+                </div>
+            </div>
+        </div>
     </div>
-  </nav>
 
-  <!-- 移动端-顶部栏 -->
-  <div class="mobile-top-bar">
-    <div class="container">
-      <div class="d-flex justify-content-between align-items-center">
-        <!-- 左侧用户头像和名称 -->
-        <div class="user-wrapper" id="mobileUserDropdownToggle">
-          <div class="user-avatar">
-            <i class="bi bi-person-fill"></i>
-          </div>
-          <span class="user-name">用户名</span>
-          <div class="dropdown-menu" id="mobileUserDropdown">
-            <a class="dropdown-item" href="#">
-              <i class="bi bi-person-bounding-box"></i>修改头像
-            </a>
-            <div class="dropdown-divider"></div>
-            <a class="dropdown-item" href="#" style="color: #dc3545;">
-              <i class="bi bi-box-arrow-right"></i>退出登录
-            </a>
-          </div>
-        </div>
+    <!-- 引入 Bootstrap 5 JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // 标签输入框功能
+        document.getElementById('addTagBtn').addEventListener('click', addTag);
+        document.getElementById('tagInputField').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                addTag();
+            }
+        });
 
-        <!-- 中间 Logo -->
-        <a class="d-flex navbar-brand" href="#" style="font-weight: 600;">
-          <img src="/WSFrontends/assets/img/radiation.png" alt="Logo" width="25"
-            class="d-inline-block align-text-top me-2">
-          省医电离排班站
-        </a>
-
-        <!-- 右侧主题切换按钮 -->
-        <div class="theme-toggle-wrapper">
-          <button class="theme-toggle" id="mobileThemeDropdownToggle">
-            <i class="bi bi-sun"></i>
-          </button>
-          <div class="dropdown-menu" id="mobileThemeDropdown">
-            <a class="dropdown-item theme-option" data-theme="light" href="#">
-              <i class="bi bi-sun"></i>浅色模式
-            </a>
-            <a class="dropdown-item theme-option" data-theme="dark" href="#">
-              <i class="bi bi-moon"></i>深色模式
-            </a>
-            <a class="dropdown-item theme-option" data-theme="auto" href="#">
-              <i class="bi bi-circle-half"></i>自动模式
-            </a>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- 移动端-底部导航栏 -->
-  <nav class="bottom-nav">
-    <div class="container">
-      <div class="row justify-content-around">
-        <div class="col-2 text-center">
-          <a class="nav-link active" href="#work-mine">
-            <i class="bi bi-person-circle nav-icon"></i>
-          </a>
-        </div>
-        <div class="col-2 text-center">
-          <a class="nav-link" href="#work-all">
-            <i class="bi bi-people-fill nav-icon"></i>
-          </a>
-        </div>
-        <div class="col-2 text-center">
-          <a class="nav-link" href="#reservation-relax">
-            <i class="bi bi-calendar-heart-fill nav-icon"></i>
-          </a>
-        </div>
-        <div class="col-2 text-center">
-          <a class="nav-link" href="#change-ban">
-            <i class="bi bi-arrow-left-right nav-icon"></i>
-          </a>
-        </div>
-        <div class="col-2 text-center">
-          <a class="nav-link" href="#statistics-all">
-            <i class="bi bi-calculator-fill nav-icon"></i>
-          </a>
-        </div>
-        <div class="col-2 text-center">
-          <a class="nav-link" href="#paiban-all">
-            <i class="bi bi-slack nav-icon"></i>
-          </a>
-        </div>
-      </div>
-    </div>
-  </nav>
-
-  <!-- 主要内容区域 -->
-  <main class="container">
-    <div class="main-content">
-      <div class="tab-content" id="navContent">
-        <div class="tab-pane fade show active" id="work-mine">
-          <div class="fade-in">
-            <h2>首页</h2>
-            <p>这是首页内容区域。您可以在这里展示重要信息或者网站介绍。</p>
-            <p>这是首页内容区域。您可以在这里展示重要信息或者网站介绍。</p>
-            <p>这是首页内容区域。您可以在这里展示重要信息或者网站介绍。</p>
-            <p>这是首页内容区域。您可以在这里展示重要信息或者网站介绍。</p>
-            <p>这是首页内容区域。您可以在这里展示重要信息或者网站介绍。</p>
-            <p>这是首页内容区域。您可以在这里展示重要信息或者网站介绍。</p>
-            <p>这是首页内容区域。您可以在这里展示重要信息或者网站介绍。</p>
-            <p>这是首页内容区域。您可以在这里展示重要信息或者网站介绍。</p>
-            <p>这是首页内容区域。您可以在这里展示重要信息或者网站介绍。</p>
-            <p>这是首页内容区域。您可以在这里展示重要信息或者网站介绍。</p>
-            <p>这是首页内容区域。您可以在这里展示重要信息或者网站介绍。</p>
-            <p>这是首页内容区域。您可以在这里展示重要信息或者网站介绍。</p>
-            <p>这是首页内容区域。您可以在这里展示重要信息或者网站介绍。</p>
-            <p>这是首页内容区域。您可以在这里展示重要信息或者网站介绍。</p>
-            <p>这是首页内容区域。您可以在这里展示重要信息或者网站介绍。</p>
-            <p>这是首页内容区域。您可以在这里展示重要信息或者网站介绍。</p>
-            <p>这是首页内容区域。您可以在这里展示重要信息或者网站介绍。</p>
-            <p>这是首页内容区域。您可以在这里展示重要信息或者网站介绍。</p>
-            <p>这是首页内容区域。您可以在这里展示重要信息或者网站介绍。</p>
-            <p>这是首页内容区域。您可以在这里展示重要信息或者网站介绍。</p>
-            <p>这是首页内容区域。您可以在这里展示重要信息或者网站介绍。</p>
-            <p>这是首页内容区域。您可以在这里展示重要信息或者网站介绍。</p>
-            <p>这是首页内容区域。您可以在这里展示重要信息或者网站介绍。</p>
-            <p>这是首页内容区域。您可以在这里展示重要信息或者网站介绍。</p>
-            <p>这是首页内容区域。您可以在这里展示重要信息或者网站介绍。</p>
-            <p>这是首页内容区域。您可以在这里展示重要信息或者网站介绍。</p>
-            <p>这是首页内容区域。您可以在这里展示重要信息或者网站介绍。</p>
-            <p>这是首页内容区域。您可以在这里展示重要信息或者网站介绍。</p>
-            <p>这是首页内容区域。您可以在这里展示重要信息或者网站介绍。</p>
-            <p>这是首页内容区域。您可以在这里展示重要信息或者网站介绍。</p>
-            <p>这是首页内容区域。您可以在这里展示重要信息或者网站介绍。</p>
-            <p>这是首页内容区域。您可以在这里展示重要信息或者网站介绍。</p>
-            <p>这是首页内容区域。您可以在这里展示重要信息或者网站介绍。</p>
-            <p>这是首页内容区域。您可以在这里展示重要信息或者网站介绍。</p>
-            <p>这是首页内容区域。您可以在这里展示重要信息或者网站介绍。</p>
-            <p>这是首页内容区域。您可以在这里展示重要信息或者网站介绍。</p>
-            <p>这是首页内容区域。您可以在这里展示重要信息或者网站介绍。</p>
-            <p>这是首页内容区域。您可以在这里展示重要信息或者网站介绍。</p>
-            <p>这是首页内容区域。您可以在这里展示重要信息或者网站介绍。</p>
-            <p>这是首页内容区域。您可以在这里展示重要信息或者网站介绍。</p>
-            <p>这是首页内容区域。您可以在这里展示重要信息或者网站介绍。</p>
-            <p>这是首页内容区域。您可以在这里展示重要信息或者网站介绍。</p>
-            <p>这是首页内容区域。您可以在这里展示重要信息或者网站介绍。</p>
-            <p>这是首页内容区域。您可以在这里展示重要信息或者网站介绍。</p>
-            <p>这是首页内容区域。您可以在这里展示重要信息或者网站介绍。</p>
-            <p>这是首页内容区域。您可以在这里展示重要信息或者网站介绍。</p>
-            <p>这是首页内容区域。您可以在这里展示重要信息或者网站介绍。</p>
-            <p>这是首页内容区域。您可以在这里展示重要信息或者网站介绍。</p>
-            <p>这是首页内容区域。您可以在这里展示重要信息或者网站介绍。</p>
-            <p>这是首页内容区域。您可以在这里展示重要信息或者网站介绍。</p>
-            <p>这是首页内容区域。您可以在这里展示重要信息或者网站介绍。</p>
-            <p>这是首页内容区域。您可以在这里展示重要信息或者网站介绍。</p>
-            <p>这是首页内容区域。您可以在这里展示重要信息或者网站介绍。</p>
-            <p>这是首页内容区域。您可以在这里展示重要信息或者网站介绍。</p>
-            <p>这是首页内容区域。您可以在这里展示重要信息或者网站介绍。</p>
-            <p>这是首页内容区域。您可以在这里展示重要信息或者网站介绍。</p>
-            <p>这是首页内容区域。您可以在这里展示重要信息或者网站介绍。</p>
-            <p>这是首页内容区域。您可以在这里展示重要信息或者网站介绍。</p>
-            <p>这是首页内容区域。您可以在这里展示重要信息或者网站介绍。</p>
-            <p>这是首页内容区域。您可以在这里展示重要信息或者网站介绍。</p>
-            <p>这是首页内容区域。您可以在这里展示重要信息或者网站介绍。</p>
-            <p>这是首页内容区域。您可以在这里展示重要信息或者网站介绍。</p>
-            <p>这是首页内容区域。您可以在这里展示重要信息或者网站介绍。</p>
-            <p>这是首页内容区域。您可以在这里展示重要信息或者网站介绍。</p>
-            <p>这是首页内容区域。您可以在这里展示重要信息或者网站介绍。</p>
-            <p>这是首页内容区域。您可以在这里展示重要信息或者网站介绍。</p>
-            <p>这是首页内容区域。您可以在这里展示重要信息或者网站介绍。</p>
-            <p>这是首页内容区域。您可以在这里展示重要信息或者网站介绍。</p>
-            <p>这是首页内容区域。您可以在这里展示重要信息或者网站介绍。</p>
-            <p>这是首页内容区域。您可以在这里展示重要信息或者网站介绍。</p>
-            <p>这是首页内容区域。您可以在这里展示重要信息或者网站介绍。</p>
-          </div>
-        </div>
-        <div class="tab-pane fade" id="work-all">
-          <div class="fade-in">
-            <h2>服务</h2>
-            <p>这是服务内容区域。您可以在这里展示您提供的服务项目。</p>
-          </div>
-        </div>
-        <div class="tab-pane fade" id="reservation-relax">
-          <div class="fade-in">
-            <h2>产品</h2>
-            <p>这是产品内容区域。您可以在这里展示您的产品信息。</p>
-          </div>
-        </div>
-        <div class="tab-pane fade" id="change-ban">
-          <div class="fade-in">
-            <h2>消息</h2>
-            <p>这是消息内容区域。您可以在这里查看和管理您的消息。</p>
-          </div>
-        </div>
-        <div class="tab-pane fade" id="statistics-all">
-          <div class="fade-in">
-            <h2>通知</h2>
-            <p>这是通知内容区域。您可以在这里查看您的通知信息。</p>
-          </div>
-        </div>
-        <div class="tab-pane fade" id="paiban-all">
-          <div class="fade-in">
-            <h2>个人中心</h2>
-            <p>这是个人中心内容区域。您可以在这里管理您的个人信息。</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </main>
-
-  <script src="/WSFrontends/assets/plugin/node_modules/bootstrap/dist/js/bootstrap.bundle.js"></script>
-
-  <script src="/WSFrontends/assets/4_js/index.js"></script>
-
+        function addTag() {
+            const tagInput = document.getElementById('tagInputField');
+            const tagValue = tagInput.value.trim();
+            if (tagValue) {
+                const tagElement = document.createElement('span');
+                tagElement.className = 'badge bg-primary';
+                tagElement.innerHTML = `${tagValue}<i class="bi bi-x" onclick="this.parentElement.remove()"></i>`;
+                
+                const inputContainer = document.getElementById('tagInput');
+                inputContainer.insertBefore(tagElement, tagInput);
+                tagInput.value = '';
+            }
+        }
+    </script>
 </body>
-
 </html>

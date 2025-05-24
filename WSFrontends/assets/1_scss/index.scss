@@ -8,16 +8,16 @@ body {
 
 .main-content {
   min-height: calc(100vh - 140px);
-  padding: 20px;
+  padding: 10px;
   background-color: #fff;
   border-radius: 12px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
   transition: background-color 0.3s, color 0.3s;
 
   /* 内容显示区域 */
-  .tab-content {
-    padding: 20px;
-  }
+  //.tab-content {
+  //  padding: 20px;
+  //}
 }
 
 /* 桌面端-顶部导航栏 */
@@ -65,6 +65,7 @@ body {
   transform: translateY(0);
   transition: transform 0.3s ease, background-color 0.3s;
   will-change: transform;
+  background-color: #fff;
 
   .navbar-brand {
     color: #f021c5 !important;
