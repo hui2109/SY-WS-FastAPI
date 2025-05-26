@@ -30,7 +30,7 @@
         <!-- 标题logo -->
         <a class="navbar-brand" href="#" style="font-weight: 600;">
           <img src="/WSFrontends/assets/img/radiation.png" alt="Logo" width="25"
-            class="d-inline-block align-text-top me-2">
+            class="d-inline-block align-text-top me-3">
           省医电离排班站
         </a>
         <!-- 菜单项 -->
@@ -72,7 +72,7 @@
 
       <div class="d-flex align-items-center">
         <!-- 主题颜色切换 -->
-        <div class="theme-toggle-wrapper me-2">
+        <div class="theme-toggle-wrapper me-3">
           <button class="theme-toggle" id="desktopThemeDropdownToggle">
             <i class="bi bi-sun"></i>
           </button>
@@ -135,7 +135,7 @@
         <!-- 中间 Logo -->
         <a class="d-flex navbar-brand" href="#" style="font-weight: 600;">
           <img src="/WSFrontends/assets/img/radiation.png" alt="Logo" width="25"
-            class="d-inline-block align-text-top me-2">
+            class="d-inline-block align-text-top me-3">
           省医电离排班站
         </a>
 
@@ -896,8 +896,19 @@
           </div>
 
           <p class="mt-4 mb-2 ps-2">建议排班：</p>
-          <div class='d-flex'>
-            <span class="badge bg-primary" style="font-size: 1.1rem;" id="suggestedPaiban"></span>
+          <div id="suggestedPaiban">
+            <div class="d-flex align-items-center mb-2" style="gap: 12px;">
+              <span class="badge border border-primary text-primary">70%</span>
+              <span class="badge bg-primary">1B</span>
+              <span class="badge border border-secondary text-secondary">2B</span>
+              <span class="badge border border-secondary text-secondary">3B</span>
+            </div>
+            <div class="d-flex align-items-center" style="gap: 12px;">
+              <span class="badge border border-primary text-primary">30%</span>
+              <span class="badge border border-secondary text-secondary">2A</span>
+              <span class="badge border border-secondary text-secondary">S1</span>
+              <span class="badge border border-secondary text-secondary">3C</span>
+            </div>
           </div>
 
           <p class="mt-4 mb-2 ps-2">实际排班：</p>
@@ -937,6 +948,99 @@
           <div>
             <button type="button" class="btn btn-info" id="acceptPaiban">接受建议</button>
             <button type="button" class="btn btn-info" id="confirmPaiban">确认排班</button>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 日期属性设置对话框 -->
+  <div class="modal fade" id="configureDateModal" tabindex="-1" aria-labelledby="configureDateLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="configureDateLabel">设置日期属性</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+
+        <div id="configureDateContent" class="modal-body">
+          <!-- 日期信息 -->
+          <div class="d-flex align-items-center mb-3">
+            <span class="badge border border-primary text-primary" style="font-size: 0.9rem;">配置日期：</span>
+            <span class="badge bg-primary ms-2" style="font-size: 0.9rem;" value=""
+              id="configureDateInfo">2025年5月21日（周三）</span>
+          </div>
+
+          <!-- 是否为第一天 -->
+          <div class="form-check form-switch mb-3">
+            <input class=" form-check-input" type="checkbox" role="switch" id="switchCheckFirstDay" checked>
+            <label class="form-check-label badge border border-secondary text-secondary" for="switchCheckFirstDay"
+              style="font-size: 0.9rem;">今天是否是本周的第一天？</label>
+          </div>
+
+          <!-- 今天必须安排的班种 -->
+          <h3 class="badge border border-success text-success mb-3" style="font-size: 1.0rem;">今天必须安排的班种：</h3>
+          <div class="d-flex flex-wrap mb-3 justify-content-start align-items-center" id="mustBans">
+            <div class="form-check me-3">
+              <input class="form-check-input" type="checkbox" value="S1" id="mustBanS1">
+              <label class="form-check-label" for="mustBanS1">S1</label>
+            </div>
+            <div class="form-check me-3">
+              <input class="form-check-input" type="checkbox" value="S2" id="mustBanS2">
+              <label class="form-check-label" for="mustBan1">S2</label>
+            </div>
+            <div class="form-check me-3">
+              <input class="form-check-input" type="checkbox" value="1A" id="mustBan1A">
+              <label class="form-check-label" for="mustBan1">1A</label>
+            </div>
+            <div class="form-check me-3">
+              <input class="form-check-input" type="checkbox" value="1B" id="mustBan1B">
+              <label class="form-check-label" for="mustBan1">1B</label>
+            </div>
+            <div class="form-check me-3">
+              <input class="form-check-input" type="checkbox" value="1C" id="mustBan1C">
+              <label class="form-check-label" for="mustBan1">1C</label>
+            </div>
+            <div class="form-check me-3">
+              <input class="form-check-input" type="checkbox" value="2A" id="mustBan2A">
+              <label class="form-check-label" for="mustBan1">2A</label>
+            </div>
+            <div class="form-check me-3">
+              <input class="form-check-input" type="checkbox" value="2B" id="mustBan2B">
+              <label class="form-check-label" for="mustBan1">2B</label>
+            </div>
+            <div class="form-check me-3">
+              <input class="form-check-input" type="checkbox" value="2C" id="mustBan2C">
+              <label class="form-check-label" for="mustBan1">2C</label>
+            </div>
+            <div class="form-check me-3">
+              <input class="form-check-input" type="checkbox" value="3A" id="mustBan3A">
+              <label class="form-check-label" for="mustBan1">3A</label>
+            </div>
+            <div class="form-check me-3">
+              <input class="form-check-input" type="checkbox" value="3B" id="mustBan3B">
+              <label class="form-check-label" for="mustBan1">3B</label>
+            </div>
+            <div class="form-check me-3">
+              <input class="form-check-input" type="checkbox" value="3C" id="mustBan3C">
+              <label class="form-check-label" for="mustBan1">3C</label>
+            </div>
+            <div class="form-check me-3">
+              <input class="form-check-input" type="checkbox" value="N1" id="mustBanN1">
+              <label class="form-check-label" for="mustBan1">N1</label>
+            </div>
+            <div class="form-check me-3">
+              <input class="form-check-input" type="checkbox" value="N2" id="mustBanN2">
+              <label class="form-check-label" for="mustBan1">N2</label>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer justify-content-between">
+          <button type="button" class="btn btn-danger" id="resetConfigureDate">重置选择</button>
+          <div>
+            <button type="button" class="btn btn-info" id="confirmConfigureDate">保存</button>
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
           </div>
         </div>

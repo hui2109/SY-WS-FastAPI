@@ -8,8 +8,11 @@ from pypinyin import pinyin, load_phrases_dict, lazy_pinyin
 from .utils import convert_UTC_Chinese, CURRENT_PERSONNEL
 from ..database.models import Workschedule, Account, WorkschedulePersonnelLink, ReserveVacation, Personnel
 from ..dependencies import get_current_user, SessionDep
+from ..autoSchedule import Worker, InitWorkers, AutoOneSchedule
+from collections import Counter
 
 router = APIRouter(tags=["selects"], dependencies=[Depends(get_current_user)])
+InitWorkers.init_workers()
 
 
 class QueryMonth(BaseModel):
@@ -19,6 +22,20 @@ class QueryMonth(BaseModel):
 
 class QueryMyMonth(QueryMonth):
     name: str
+
+
+class QuerySchedule(BaseModel):
+    name: str
+    schedule_date: datetime
+
+    is_first_day: bool
+    today_mandatory_schedule: list[str]
+    today_planed_schedule: dict[str, str] = {}
+
+
+class QuerySuggestedSchedule(QuerySchedule):
+    last_week_work_schedule: str
+    last_work_schedule: str
 
 
 # 查询单个月的排班情况
@@ -159,3 +176,115 @@ async def select_my_reservation(queryMyMonth: QueryMyMonth, session: SessionDep)
 @router.post("/get_current_personnel_list")
 async def get_current_personnel_list():
     return CURRENT_PERSONNEL
+
+
+@router.post("/get_suggested_schedule")
+async def get_suggested_schedule(querySchedule: QuerySchedule, session: SessionDep):
+    if len(Worker.instances) == 0:
+        InitWorkers.init_workers()
+
+    # UTC时区 转 中国时区
+    querySchedule.schedule_date = convert_UTC_Chinese(querySchedule.schedule_date).replace(hour=10)
+    print(f'{querySchedule.schedule_date=}')
+
+    current_worker = Worker.get_by_name(querySchedule.name)
+    last_week_work_schedule, last_work_schedule = get_last_week_work_schedule_and_last_work_schedule(session, querySchedule.name, querySchedule.schedule_date)
+
+    querySuggestedSchedule = QuerySuggestedSchedule(last_week_work_schedule=last_week_work_schedule, last_work_schedule=last_work_schedule, **querySchedule.model_dump())
+
+    querySuggestedScheduleResponse = {}
+
+    aos = AutoOneSchedule(worker=current_worker, **querySuggestedSchedule.model_dump())
+    aos.get_possible_schedule()
+    possible_schedule_dict: dict[float, list[str]] = aos.possible_schedule
+
+    if len(possible_schedule_dict) == 0:
+        return querySuggestedScheduleResponse
+    else:
+        for possibility, possible_schedules in possible_schedule_dict.items():
+            if len(possible_schedules) != 0:
+                new_possibility = f'{possibility * 100:.2f}%'
+                querySuggestedScheduleResponse[new_possibility] = possible_schedules
+
+    return querySuggestedScheduleResponse
+
+
+def get_last_week_work_schedule_and_last_work_schedule(session: SessionDep, name: str, schedule_date: datetime) -> [str, str]:
+    last_week_work_schedule_set = []
+    last_work_schedule_set = []
+    last_week_work_schedule = ''
+    last_work_schedule = ''
+
+    weekday = schedule_date.weekday()
+    this_monday = schedule_date - timedelta(days=weekday)
+    this_sunday = this_monday + timedelta(days=6)
+    last_monday = this_monday - timedelta(days=7)
+    last_sunday = this_monday - timedelta(days=1)
+
+    personnel = session.exec(select(Personnel).where(Personnel.name == name)).first()
+    if not personnel:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=f'没有这个人! {queryMyMonth.name}')
+
+    # 查找上一周上的 频次最多的 班
+    statement = select(Workschedule).where(
+        Workschedule.work_date >= last_monday,
+        Workschedule.work_date <= last_sunday,
+    )
+    results = session.exec(statement).all()
+    result: Workschedule
+    personnel_link: WorkschedulePersonnelLink
+
+    if len(results) == 0:
+        # 上一周没有任何班的数据
+        last_week_work_schedule = 'ZZ'
+    else:
+        for result in results:
+            for personnel_link in result.personnel_links:
+                if personnel_link.personnel == personnel:
+                    last_week_work_schedule_set.append(result.bantype.ban.value)
+
+    # 查找本周上的 频次最多的 班
+    statement = select(Workschedule).where(
+        Workschedule.work_date >= this_monday,
+        Workschedule.work_date <= this_sunday,
+    )
+    results = session.exec(statement).all()
+    result: Workschedule
+    personnel_link: WorkschedulePersonnelLink
+
+    if len(results) == 0:
+        # 本周没有任何班的数据
+        last_work_schedule = 'ZZ'
+    else:
+        for result in results:
+            for personnel_link in result.personnel_links:
+                if personnel_link.personnel == personnel:
+                    last_work_schedule_set.append(result.bantype.ban.value)
+
+    # 处理last_week_work_schedule_set
+    if len(last_week_work_schedule_set) != 0:
+        c = Counter(last_week_work_schedule_set)
+        max_nums = max(c.values())
+        for schedule, nums in c.items():
+            if nums == max_nums:
+                if schedule != '休息':
+                    last_week_work_schedule = schedule
+                    break
+    else:
+        last_week_work_schedule = 'ZZ'
+
+    # 处理last_work_schedule_set
+    if len(last_work_schedule_set) != 0:
+        c = Counter(last_work_schedule_set)
+        max_nums = max(c.values())
+        for schedule, nums in c.items():
+            if nums == max_nums:
+                if schedule != '休息':
+                    last_work_schedule = schedule
+                    break
+    else:
+        last_work_schedule = 'ZZ'
+
+    print(f'{last_week_work_schedule=}', f'{last_work_schedule=}')
+
+    return last_week_work_schedule, last_work_schedule

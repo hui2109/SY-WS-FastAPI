@@ -19,7 +19,6 @@ class Bans(Enum):
 
     N1 = 'N1'
     N2 = 'N2'
-    N3 = 'N3'
 
     ENGAGE = '进修'
     TRAIN = '培训'

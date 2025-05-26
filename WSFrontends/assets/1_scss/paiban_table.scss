@@ -62,7 +62,7 @@
         vertical-align: middle;
       }
 
-      .clickable-paiban-cell{
+      .clickable-paiban-cell {
         cursor: pointer;
         transition: background-color 0.3s ease;
 
@@ -70,6 +70,22 @@
           background-color: var(--bs-warning);
         }
       }
+
+      .configure-days-cell {
+        position: absolute;
+        top: 2px;
+        left: 0;
+        font-size: 11px;
+
+        cursor: pointer;
+        color: var(--bs-emphasis-color);
+
+        &.configured {
+          color: var(--bs-danger);
+        }
+      }
     }
   }
+
+
 }

@@ -56,3 +56,14 @@
 #paiban-content-all .table-container .paiban-table .clickable-paiban-cell:hover {
   background-color: var(--bs-warning);
 }
+#paiban-content-all .table-container .paiban-table .configure-days-cell {
+  position: absolute;
+  top: 2px;
+  left: 0;
+  font-size: 11px;
+  cursor: pointer;
+  color: var(--bs-emphasis-color);
+}
+#paiban-content-all .table-container .paiban-table .configure-days-cell.configured {
+  color: var(--bs-danger);
+}
