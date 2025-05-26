@@ -4,6 +4,7 @@ from fastapi import Depends, APIRouter, HTTPException, status
 from pydantic import BaseModel
 from sqlmodel import select
 
+from .utils import convert_UTC_Chinese, CURRENT_PERSONNEL
 from ..database.models import Account, Personnel, Bantype, Workschedule, WorkschedulePersonnelLink, ReserveVacation
 from ..database.utils import Bans
 from ..dependencies import get_current_user, SessionDep
@@ -48,6 +49,9 @@ async def create_ban(one_ban: OneBan, session: SessionDep):
 
 @router.post('/create-schedule')
 async def create_schedule(one_schedule: OneSchedule, session: SessionDep):
+    # UTC时区 转 中国时区, 固定到早上10点
+    one_schedule.work_date = convert_UTC_Chinese(one_schedule.work_date).replace(hour=10)
+
     personnel = session.exec(select(Personnel).where(Personnel.name == one_schedule.name)).first()
     if not personnel:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=f'没有这个人! {one_schedule.name}')
@@ -63,7 +67,12 @@ async def create_schedule(one_schedule: OneSchedule, session: SessionDep):
     if not workschedule:
         workschedule = Workschedule(**one_schedule.model_dump(), bantype=bantype)  # bantype: 注意大小写!
 
-    wpLink = WorkschedulePersonnelLink(personnel=personnel, workschedule=workschedule)
+    wpLink = session.exec(select(WorkschedulePersonnelLink).where(
+        WorkschedulePersonnelLink.workschedule == workschedule,
+        WorkschedulePersonnelLink.personnel == personnel
+    )).first()
+    if not wpLink:
+        wpLink = WorkschedulePersonnelLink(personnel=personnel, workschedule=workschedule)
 
     session.add(wpLink)
     session.commit()

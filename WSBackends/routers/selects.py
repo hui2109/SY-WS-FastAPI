@@ -183,9 +183,8 @@ async def get_suggested_schedule(querySchedule: QuerySchedule, session: SessionD
     if len(Worker.instances) == 0:
         InitWorkers.init_workers()
 
-    # UTC时区 转 中国时区
+    # UTC时区 转 中国时区, 固定到早上10点
     querySchedule.schedule_date = convert_UTC_Chinese(querySchedule.schedule_date).replace(hour=10)
-    print(f'{querySchedule.schedule_date=}')
 
     current_worker = Worker.get_by_name(querySchedule.name)
     last_week_work_schedule, last_work_schedule = get_last_week_work_schedule_and_last_work_schedule(session, querySchedule.name, querySchedule.schedule_date)
