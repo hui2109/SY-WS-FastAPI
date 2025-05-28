@@ -7,7 +7,8 @@ class initIndex {
         this.lookElement();
         this.bindEvent();
         this.changeTheme();
-        this.navLinks[5].click();
+        //this.navLinks[5].click();
+        this.paibanDropdownItems[1].click();
     }
 
     _updateThemeIcons(mode) {
@@ -63,6 +64,9 @@ class initIndex {
 
         this.mobileThemeDropdownToggle = document.getElementById('mobileThemeDropdownToggle');
         this.mobileThemeDropdown = document.getElementById('mobileThemeDropdown');
+
+        this.paibanDesktopTools = document.getElementById('paibanDesktopTools');
+        this.paibanDropdownItems = this.paibanDesktopTools.parentNode.querySelectorAll('.dropdown-item');
     }
 
     bindEvent() {
@@ -71,6 +75,11 @@ class initIndex {
             link.addEventListener('click', (event) => {
                 let elementThis = event.currentTarget;
                 event.preventDefault();
+
+                // 如果nav-link里面包含了dropdown-toggle，则排除
+                if (elementThis.classList.contains('dropdown-toggle')) {
+                    return;
+                }
 
                 // 移除所有链接的active类
                 this.navLinks.forEach(navLink => navLink.classList.remove('active'));
@@ -86,7 +95,6 @@ class initIndex {
 
                 // 显示对应的内容区域
                 const targetId = href.substring(1);
-
                 this.tabPanes.forEach(pane => {
                     pane.classList.remove('show', 'active');
                 });
@@ -95,6 +103,31 @@ class initIndex {
                 if (targetPane) {
                     targetPane.classList.add('show', 'active');
                 }
+            });
+        });
+
+        // 点击导航栏下拉项，改变颜色及显示内容
+        this.paibanDropdownItems.forEach(item => {
+            item.addEventListener('click', (event) => {
+                let elementThis = event.currentTarget;
+
+                // 移除所有链接的active类
+                this.navLinks.forEach(navLink => navLink.classList.remove('active'));
+
+                // 为当前点击的链接添加active类
+                this.paibanDesktopTools.classList.add('active');
+
+                // 显示对应的内容区域
+                const href = elementThis.getAttribute('href');
+                const targetId = href.substring(1);
+
+                this.tabPanes.forEach(pane => {
+                    pane.classList.remove('show', 'active');
+                });
+
+                const targetPane = document.getElementById(targetId);
+                if (targetPane)
+                    targetPane.classList.add('show', 'active');
             });
         });
 
@@ -185,7 +218,6 @@ class initIndex {
         let lastScrollTop = 0;
         const scrollDistance = 60; // 完全隐藏所需的滚动距离
         const topThreshold = 100; // 只有滚动到这个阈值内才开始显示导航栏
-
         window.addEventListener('scroll', () => {
             // 仅在移动端激活此功能
             if (window.innerWidth >= 992) return;

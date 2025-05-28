@@ -67,3 +67,16 @@
 #paiban-content-all .table-container .paiban-table .configure-days-cell.configured {
   color: var(--bs-danger);
 }
+#paiban-content-all .table-container .paiban-table .special-days {
+  position: absolute;
+  top: 2px;
+  left: 52px;
+  font-size: 11px;
+  color: mediumvioletred;
+  background-color: #f9c428;
+}
+
+#paibanModal .dropdown-menu-scrollable {
+  max-height: 400px;
+  overflow-y: auto;
+}

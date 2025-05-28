@@ -1,11 +1,12 @@
 class InitPaiBanTables {
     constructor(today) {
-        this.today = today
+        this.today = dayjs(today)
         this.lookElement();
         this._updateDateLabel(this.today);
         this.initDatePicker();
         this.bindCellClick();
         this.bindHeadClick();
+        this.bindToolsBtnClick();
     }
 
     init() {
@@ -15,7 +16,7 @@ class InitPaiBanTables {
 
     _updateDateLabel(date) {
         // 写入日期: XX年XX月
-        this.dateLabel.textContent = `${date.getFullYear()}年${date.getMonth() + 1}月`;
+        this.dateLabel.textContent = `${date.year()}年${date.month() + 1}月`;
     }
 
     _setExpectedRelax(data) {
@@ -43,15 +44,6 @@ class InitPaiBanTables {
         this.repeatPaiban5.checked = false;
         this.repeatPaiban2.checked = false;
         this.dropdownToggle.textContent = this.dropdownToggle.dataset.default;
-
-        // 针对禁用的按钮
-        this.dropdownToggle.disabled = false;
-        this.repeatPaiban5.disabled = false;
-        this.repeatPaiban2.disabled = false;
-
-        this.acceptPaiban.classList.remove('d-none');
-        this.confirmPaiban.classList.remove('d-none');
-        this.deletePaiban.classList.add('d-none');
     }
 
     _resetConfigureDate() {
@@ -68,38 +60,55 @@ class InitPaiBanTables {
             "mustBans": []
         };
 
-        // 如果是周一至周五，默认选中；如果是周六或者周天，默认不选中
-        if (dateObj.day() >= 1 && dateObj.day() <= 5) {
+        // 如果localStorage已有有了今天的配置，则不再自动填充
+        if (!localStorage[date]) {
+            // 默认 星期一是第一天
             if (dateObj.day() === 1) {
                 data['isFirstDay'] = true;
             }
-            data.mustBans = this.mustBans.map(item => "mustBan" + item);
+            data.mustBans = this.mustBansList.map(item => "mustBan" + item);
             localStorage[date] = JSON.stringify(data);
         }
     }
 
     _autoFillConfigureDates() {
-        for (let configureDaysGear of this.paibanTable.querySelectorAll('.configure-days-cell')) {
+        let configureDaysCells = this.paibanTable.querySelectorAll('.configure-days-cell')
+
+        for (let configureDaysGear of configureDaysCells) {
             this._autoFillConfigureDate(configureDaysGear.dataset.date);
+
+            // 渲染已经有配置的齿轮样式
+            let configureData = localStorage.getItem(configureDaysGear.dataset.date);
+            if (configureData) {
+                configureDaysGear.classList.add('configured');
+            }
         }
     }
 
-    _get_today_planed_schedule(date) {
+    _get_today_planed_schedule(date, today_mandatory_schedule) {
         let clickablePaibanCells = this.paibanTable.querySelectorAll(`.clickable-paiban-cell[data-date="${date}"]`);
         let today_planed_schedule = {};
 
+
         for (let clickablePaibanCell of clickablePaibanCells) {
-            if (clickablePaibanCell.textContent !== 'null') {
-                today_planed_schedule[clickablePaibanCell.dataset.name] = clickablePaibanCell.textContent;
+            for (let divElement of clickablePaibanCell.children) {
+                // 如果是上个月的排班，则不计入今天的计划排班; 如果不在必备的排表列表里, 也排除
+                if (!divElement.classList.contains('fake') && today_mandatory_schedule.includes(divElement.textContent)) {
+                    today_planed_schedule[clickablePaibanCell.dataset.name] = divElement.textContent;
+                    break; // 每个单元格只取第一个有效的排班
+                }
             }
         }
-
         return today_planed_schedule;
     }
 
     _renderSuggestedSchedule(data) {
         this.suggestedPaiban.innerHTML = '';
         let _keys = Object.keys(data);
+
+        if (_keys.length === 0) {
+            this.suggestedPaiban.innerHTML = '<span class="badge bg-success" style="font-size: 0.9rem;">暂无</span>';
+        }
 
         for (let i = 0; i < _keys.length; i++) {
             let div = document.createElement('div');
@@ -135,9 +144,175 @@ class InitPaiBanTables {
         }
     }
 
+    _deleteOnePaiban(event, name, work_date, ban) {
+        let elementThis = event.currentTarget;
+        elementThis.parentElement.remove();
+
+        let data = {name, ban, work_date};
+        // 获取token
+        const token = getToken();
+        if (!token) {
+            return;
+        }
+
+        fetch('/delete_work_schedule', {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify(data)
+        }).then(response => {
+            response.json().then(data => {
+                if (response.ok) {
+                    showAlert({
+                        type: 'success',
+                        title: '删除排班成功！',
+                        message: `已为 ${name} 在 ${work_date.format('YYYY-MM-DD')} 删除排班 ${ban}`
+                    });
+
+                    // 重新渲染表格
+                    this.getRecordsFromServer();
+
+                    // 如果删除后没有排班了，则显示暂无
+                    if (this.existingPaiban.children.length === 0) {
+                        this.existingPaiban.innerHTML = '';
+
+                        let span = document.createElement('span');
+                        span.classList.add('badge', 'bg-success');
+                        span.style.fontSize = '0.9rem';
+                        span.textContent = '暂无';
+
+                        this.existingPaiban.appendChild(span);
+                    }
+
+                    // 如果之前展示了上个月的排班，也展示
+                    if (this.showLastSchedule.classList.contains('active')) {
+                        this.showLastSchedule.classList.remove('active');
+                        this.showLastSchedule.click();
+                    }
+                } else {
+                    showAlert({
+                        type: 'danger',
+                        title: '删除排班失败！',
+                        message: data.detail,
+                    });
+                }
+            })
+        }).catch(error => {
+            alert('未知错误！');
+            console.error('error!!!', error);
+        });
+    }
+
+    _show_last_month_schedule(data) {
+        for (let i = 0; i < this.personnel_list.length; i++) {
+            let this_month_start_date = this.startDate;
+            let this_month_end_date = this.endDate;
+            let this_month_current_date = dayjs(this_month_start_date);
+
+            while (this_month_current_date <= this_month_end_date) {
+                let td = this.paibanTable.querySelector(`td[data-date="${this_month_current_date.format('YYYY-MM-DD')}"][data-name="${this.personnel_list[i]}"]`);
+                if (td && td.textContent === 'null') {
+                    td.innerHTML = ''; // 清空当前单元格内容
+
+                    let last_month_current_date = this_month_current_date.subtract(1, 'month');
+                    let _key = `${this.personnel_list[i]}_${last_month_current_date.year()}_${last_month_current_date.month() + 1}_${last_month_current_date.date()}`;
+                    let _value_list = data[_key];
+
+                    if (_value_list === undefined) {
+                        let div = document.createElement('div')
+                        div.textContent = 'null'
+                        div.classList.add('fake', "fst-italic", "text-muted", `${last_month_current_date.format('YYYY-MM-DD')}`);
+                        td.appendChild(div)
+                    } else {
+                        for (let _value of _value_list) {
+                            let div = document.createElement('div')
+                            div.textContent = _value
+                            div.classList.add('fake', "fst-italic", "text-muted", `${last_month_current_date.format('YYYY-MM-DD')}`);
+                            td.appendChild(div)
+                        }
+                    }
+                }
+                this_month_current_date = this_month_current_date.add(1, 'day');
+            }
+        }
+    }
+
+    async _renderTableCell(ban, name, work_date, td, token) {
+        td.innerHTML = ''; // 清空当前单元格内容
+
+        // <div class="badge" style="background-color: rgb(55, 86, 35);">2C</div>
+        let div = document.createElement('div');
+        div.textContent = ban;
+        div.classList.add('badge');
+        if (this.banTypeColor[ban]) {
+            div.style.backgroundColor = this.banTypeColor[ban];
+        }
+
+        td.appendChild(div);
+
+        // 向服务器写入数据
+        let schedule_data = {name, ban, work_date};
+        try {
+            let response = await fetch('/create-schedule', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify(schedule_data)
+            })
+
+            let data = await response.json();
+
+            if (!response.ok) {
+                showAlert({
+                    type: 'danger',
+                    title: '排班失败！',
+                    message: data.detail,
+                });
+            }
+        } catch (error) {
+            debugger;
+            alert('未知错误！');
+            console.error('error!!!', error);
+        }
+    }
+
+    _prepareDataForSuggestedSchedule(name, dateObj) {
+        let date = dateObj.format('YYYY-MM-DD');
+        let data = {
+            name: name,
+            schedule_date: dateObj,
+
+            is_first_day: true,
+            today_mandatory_schedule: [],
+            today_planed_schedule: {}
+        }
+
+        let todayConfig = localStorage.getItem(date);
+        if (todayConfig) {
+            todayConfig = JSON.parse(todayConfig);
+            data['is_first_day'] = todayConfig['isFirstDay'];
+            data['today_mandatory_schedule'] = todayConfig['mustBans'].map(item => item.replace('mustBan', ''));
+            data['today_planed_schedule'] = this._get_today_planed_schedule(date, data['today_mandatory_schedule']);
+
+            return data;
+        } else {
+            this.suggestedPaiban.innerHTML = '<span class="badge bg-success" style="font-size: 0.9rem;">暂无</span>';
+            return null;
+        }
+    }
+
     lookElement() {
         this.paibanTable = document.querySelector('#paiban-content-all .paiban-table');
         this.dateLabel = document.querySelector('#paiban-content-all .mounianmouyue');
+        this.clearAllSchedule = document.getElementById('clearAllSchedule');
+        this.showLastSchedule = document.getElementById('showLastSchedule');
+        this.autoScheduleAll = document.getElementById('autoScheduleAll');
 
         this.datetimepicker3 = document.getElementById('datetimepicker3');
         this.paibanModal = document.getElementById('paibanModal');
@@ -156,6 +331,7 @@ class InitPaiBanTables {
         this.confirmPaiban = document.getElementById('confirmPaiban');
         this.suggestedPaiban = document.getElementById('suggestedPaiban');
         this.acceptPaiban = document.getElementById('acceptPaiban');
+        this.existingPaiban = document.getElementById('existingPaiban');
 
         this.configureDateModal = document.getElementById('configureDateModal');
         this.switchCheckFirstDay = document.getElementById('switchCheckFirstDay');
@@ -165,9 +341,13 @@ class InitPaiBanTables {
         this.confirmConfigureDate = document.getElementById('confirmConfigureDate');
         this.configureDateInfo = document.getElementById('configureDateInfo');
 
+        this.clearAllScheduleModal = document.getElementById('clearAllScheduleModal');
+        this.clearAllInfo = document.getElementById('clearAllInfo');
+        this.confirmClearAll = document.getElementById('confirmClearAll');
+
         this.weekMap = getWeekMap();
         this.banTypeColor = getBanTypeColor();
-        this.mustBans = ["1A", "1B", "2A", "2B", "2C", "3A", "3B", "S1", "S2", "N1", "N2"]
+        this.mustBansList = ["1A", "1B", "2A", "2B", "2C", "3A", "3B", "S1", "S2", "N1", "N2"]
     }
 
     initDatePicker() {
@@ -217,19 +397,23 @@ class InitPaiBanTables {
         // 监听日期改变事件
         this.datetimepicker3.addEventListener('change.td', (event) => {
             this.today = event.detail.date;
-            this._updateDateLabel(this.today);
+            this._updateDateLabel(dayjs(this.today));
             this.init();
         });
 
         // 监听日期显示事件
         this.datetimepicker3.addEventListener('show.td', () => {
             adjustDatePickerPosition(this.dateLabel);
+
+            // 取消预览上个月的排版状态
+            this.showLastSchedule.classList.add('active');
+            this.showLastSchedule.click();
         });
     }
 
     getStartEndDate() {
-        this.startDate = new Date(this.today.getFullYear(), this.today.getMonth(), 1, 10, 0, 0, 0);
-        this.endDate = new Date(this.today.getFullYear(), this.today.getMonth() + 1, 0, 10, 0, 0, 0);
+        this.startDate = dayjs(this.today).startOf('month').hour(10).minute(0).second(0).millisecond(0);
+        this.endDate = dayjs(this.today).endOf('month').hour(10).minute(0).second(0).millisecond(0);
 
         this.dateList = goThroughDate(this.startDate, this.endDate);
         this.dayMaps = {
@@ -266,9 +450,8 @@ class InitPaiBanTables {
             response.json().then(data => {
                 if (response.ok) {
                     this.records = data;
-                    this.generateThead();  // 先渲染一次表格，让他有configure-days-cell元素
-                    this._autoFillConfigureDates();  // 然后把配置日期的checkbox选中
-                    this.generateThead();  // 再渲染一次表格，更新齿轮的样式
+                    this.generateThead();
+                    this._autoFillConfigureDates();  // 自动填充配置日期, 并渲染样式
                     this.generateTbody();
                 } else {
                     loginExpiredAlert();
@@ -316,15 +499,18 @@ class InitPaiBanTables {
                 this.handleHeadClick(et);
             })
 
-            // 渲染已经有配置的齿轮样式
-            let configureData = localStorage.getItem(div3.dataset.date);
-            if (configureData) {
-                div3.classList.add('configured');
-            }
-
             th.appendChild(div1);
             th.appendChild(div2);
             th.appendChild(div3);
+
+            // 新增特殊的休息日和节假日
+            if (this.records['isHolidays'][div3.dataset.date]) {
+                let div4 = document.createElement('div');  // 写特殊日
+                div4.textContent = this.records['isHolidays'][div3.dataset.date];
+                div4.classList.add('special-days');
+                th.appendChild(div4);
+            }
+
             tr.appendChild(th);
         }
         thead.appendChild(tr);
@@ -335,25 +521,24 @@ class InitPaiBanTables {
         tbody.innerHTML = '';
 
         let daysNum = this.dateList.length;
-        let personnel_list = this.records['personnels']
+        this.personnel_list = this.records['personnels']
 
         let currentPersonnelList = sessionStorage.getItem('currentPersonnelList');
         if (currentPersonnelList) {
             currentPersonnelList = JSON.parse(currentPersonnelList);
 
             // 如果当前人员列表小于等于原始人员列表，则使用原始人员列表
-            if (personnel_list.length <= currentPersonnelList.length) {
-                personnel_list = currentPersonnelList;
+            if (this.personnel_list.length <= currentPersonnelList.length) {
+                this.personnel_list = currentPersonnelList;
             }
         }
 
-        for (let i = 0; i < personnel_list.length; i++) {
+        for (let i = 0; i < this.personnel_list.length; i++) {
             let tr = document.createElement('tr');
             let td = document.createElement('td');
-            let name = personnel_list[i];
+            let name = this.personnel_list[i];
             td.textContent = name;
 
-            // td.classList.add('clickable-paiban-cell');
             td.dataset.name = name;
             td.addEventListener('click', (et) => {
                 this.handleHeadClick(et);
@@ -376,11 +561,21 @@ class InitPaiBanTables {
                 });
 
                 if (_value_list === undefined) {
-                    td.textContent = 'null'
+                    let div = document.createElement('div')
+                    div.textContent = 'null'
+                    div.classList.add('fake', "fst-italic", "text-muted");
+                    td.appendChild(div)
                 } else {
                     for (let _value of _value_list) {
                         let div = document.createElement('div')
                         div.textContent = _value
+
+                        // 加点颜色，更好看
+                        if (this.banTypeColor[_value]) {
+                            div.style.backgroundColor = this.banTypeColor[_value];
+                            div.classList.add('badge')
+                        }
+
                         td.appendChild(div)
                     }
                 }
@@ -428,7 +623,7 @@ class InitPaiBanTables {
         let srcCell = et.currentTarget;
         let name = srcCell.dataset.name;
         let date = srcCell.dataset.date;
-        let dateObj = dayjs(date);
+        let dateObj = dayjs(date).hour(10).minute(0).second(0).millisecond(0);
 
         this.paibanSelectHD.dataset.name = name;
         this.paibanSelectHD.dataset.date = date;
@@ -438,16 +633,41 @@ class InitPaiBanTables {
         this.getExpectedRelax(name, dateObj.format('YYYY-MM-DD'));
         this.getSuggestedSchedule(name, dateObj);
 
-        if (srcCell.textContent !== 'null') {
-            // 证明已有排班
-            this.dropdownToggle.disabled = true;
-            this.repeatPaiban5.disabled = true;
-            this.repeatPaiban2.disabled = true;
+        // 加载已有排班
+        // <span class="badge bg-success" style="font-size: 0.9rem;">暂无</span>
+        // <span class="badge bg-success" style="font-size: 0.9rem;">暂无<i class="bi bi-x" onclick="this.parentElement.remove()"></i></span>
+        this.existingPaiban.innerHTML = '';
+        let cellChildren = srcCell.children;
+        let span = document.createElement('span');
+        span.classList.add('badge', 'bg-success');
+        span.style.fontSize = '0.9rem';
+        span.textContent = '暂无';
 
-            this.acceptPaiban.classList.add('d-none');
-            this.confirmPaiban.classList.add('d-none');
-            this.deletePaiban.classList.remove('d-none');
+        // 检测是否是上个月的排班 fake班
+        if (cellChildren.length === 0) {
+            this.existingPaiban.appendChild(span);
+        } else {
+            if (cellChildren[0].classList.contains('fake')) {
+                this.existingPaiban.appendChild(span);
+            } else {
+                for (let child of srcCell.children) {
+                    let span1 = span.cloneNode();
+                    let i = document.createElement('i');
+                    i.classList.add('bi', 'bi-x');
+                    i.style.marginLeft = '0.35rem';
+                    i.style.cursor = 'pointer';
+                    i.addEventListener('click', (event) => {
+                        this._deleteOnePaiban(event, name, dateObj, child.textContent);
+                    });
+
+                    span1.textContent = child.textContent;
+                    span1.appendChild(i);
+
+                    this.existingPaiban.appendChild(span1);
+                }
+            }
         }
+
 
         const modalInstance = new bootstrap.Modal(this.paibanModal);
         modalInstance.show();
@@ -487,8 +707,8 @@ class InitPaiBanTables {
     }
 
     bindCellClick() {
+        // 绑定 下拉项 点击事件
         let dropDownItems = this.paibanSelectDropdown.querySelectorAll('.dropdown-item');
-
         dropDownItems.forEach((item) => {
             item.addEventListener('click', (event) => {
                 let elementThis = event.currentTarget;
@@ -499,6 +719,7 @@ class InitPaiBanTables {
             });
         });
 
+        // 绑定 重复5次 复选框事件
         this.repeatPaiban5.addEventListener('click', (event) => {
             let elementThis = event.currentTarget;
 
@@ -507,6 +728,7 @@ class InitPaiBanTables {
             }
         });
 
+        // 绑定 重复2次 复选框事件
         this.repeatPaiban2.addEventListener('click', (event) => {
             let elementThis = event.currentTarget;
 
@@ -515,11 +737,13 @@ class InitPaiBanTables {
             }
         });
 
+        // 绑定 接受建议 按钮事件
         this.acceptPaiban.addEventListener('click', () => {
             let suggestedPaiban = this.suggestedPaiban.querySelector('span[class="badge bg-primary"]');
             if (suggestedPaiban) {
                 this.paibanSelectHD.dataset.bantype = suggestedPaiban.textContent;
-                this.sendSchedule();
+
+                this.sendSchedules();
 
                 // 隐藏对话框
                 const modalInstance = bootstrap.Modal.getInstance(this.paibanModal);
@@ -534,9 +758,10 @@ class InitPaiBanTables {
             }
         });
 
+        // 绑定 确认排班 按钮事件
         this.confirmPaiban.addEventListener('click', () => {
             if (this.paibanSelectHD.dataset.bantype !== 'wu') {
-                this.sendSchedule();
+                this.sendSchedules();
 
                 // 隐藏对话框
                 const modalInstance = bootstrap.Modal.getInstance(this.paibanModal);
@@ -551,7 +776,190 @@ class InitPaiBanTables {
             }
         });
 
+        // 绑定 删除排班 按钮事件
+        this.deletePaiban.addEventListener('click', () => {
 
+        });
+    }
+
+    bindToolsBtnClick() {
+        this.clearAllSchedule.addEventListener('click', () => {
+            let date1 = this.startDate.format('YYYY-MM-DD');
+            let date2 = this.endDate.format('YYYY-MM-DD');
+
+            this.clearAllInfo.textContent = `确定要删除 ${date1} 至 ${date2} 之间的所有排班吗？`;
+
+            const modalInstance = new bootstrap.Modal(this.clearAllScheduleModal);
+            modalInstance.show();
+        });
+
+        this.confirmClearAll.addEventListener('click', () => {
+            let data = {
+                start_date: this.startDate,
+                end_date: this.endDate
+            }
+            // 获取token
+            const token = getToken();
+            if (!token) {
+                return;
+            }
+
+            fetch('/delete_all_work_schedule', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify(data)
+            }).then(response => {
+                response.json().then(data => {
+                    if (response.ok) {
+                        showAlert({
+                            type: 'success',
+                            title: '删除本月排班成功！',
+                            message: `共删除 ${data.detail} 条排程记录`,
+                        });
+
+                        // 重新渲染表格
+                        this.getRecordsFromServer();
+
+                        // 隐藏对话框
+                        const modalInstance = bootstrap.Modal.getInstance(this.clearAllScheduleModal);
+                        modalInstance.hide();
+                    } else {
+                        showAlert({
+                            type: 'danger',
+                            title: '删除本月排班失败！',
+                            message: data.detail,
+                            parentNode: this.clearAllScheduleModal
+                        });
+                    }
+                })
+            }).catch(error => {
+                alert('未知错误！');
+                console.error('error!!!', error);
+            });
+        });
+
+        this.showLastSchedule.addEventListener('click', () => {
+            if (this.showLastSchedule.classList.contains('active')) {
+                // 证明已经是激活状态
+                // 取消激活状态
+                this.showLastSchedule.className = "btn btn-sm border border-warning";
+                this.getRecordsFromServer();
+            } else {
+                // 证明是非激活状态
+                // 激活状态
+                this.showLastSchedule.className = "btn btn-sm btn-warning active";
+
+                // 获取token
+                const token = getToken();
+                if (!token) {
+                    return;
+                }
+
+                let last_month_start = this.startDate.subtract(1, 'month').startOf('month');
+                let last_month_end = this.startDate.subtract(1, 'month').endOf('month');
+                let data = {
+                    month_start: last_month_start,
+                    month_end: last_month_end
+                }
+                fetch('/select-month-schedule', {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                }).then(response => {
+                    response.json().then(data => {
+                        if (response.ok) {
+                            this._show_last_month_schedule(data);
+                        } else {
+                            loginExpiredAlert();
+                            window.location.href = '/login';
+                        }
+                    })
+                }).catch(error => {
+                    alert('未知错误！');
+                    console.error(error);
+                })
+            }
+        });
+
+        this.autoScheduleAll.addEventListener('click', async () => {
+            // 获取token
+            const token = getToken();
+            if (!token) {
+                return;
+            }
+
+            let date1 = this.startDate;
+            let date2 = this.endDate;
+            let currentDate = dayjs(date1);
+            let random_personnel_list = [...this.personnel_list];  // 拷贝一份
+
+            while (currentDate <= date2) {
+                // random_personnel_list.sort(() => Math.random() - 0.5);
+                for (let random_person of random_personnel_list) {
+                    let res = this._prepareDataForSuggestedSchedule(random_person, currentDate);
+                    if (!res) {
+                        continue;  // 如果没有配置，则不进行后续操作
+                    }
+
+                    let td = this.paibanTable.querySelector(`td[data-date="${currentDate.format('YYYY-MM-DD')}"][data-name="${random_person}"]`);
+                    if (!td) {
+                        continue;
+                    }
+
+                    // 如果已经有排班了，也不要自动排了
+                    let flag = false;
+                    for (let child of td.children) {
+                        if (!child.classList.contains('fake')) {
+                            flag = true;
+                            break;
+                        }
+                    }
+                    if (flag) {
+                        continue;
+                    }
+
+                    // 等待异步请求结果
+                    try {
+                        let response = await fetch('/get_suggested_schedule', {
+                            method: 'POST',
+                            headers: {
+                                'Authorization': `Bearer ${token}`,
+                                'Content-Type': 'application/json',
+                                'Accept': 'application/json'
+                            },
+                            body: JSON.stringify(res)
+                        })
+
+                        if (!response.ok) {
+                            showAlert({
+                                type: 'danger',
+                                title: '数据获取失败！',
+                                message: data.detail
+                            });
+                        }
+
+                        let data = await response.json();
+                        if (Object.keys(data).length !== 0) {
+                            let suggested_ban = data[Object.keys(data)[0]][0];
+                            await this._renderTableCell(suggested_ban, random_person, currentDate, td, token);
+                        }
+                    } catch (error) {
+                        debugger;
+                        alert('未知错误！');
+                        console.error('error!!!', error);
+                    }
+                }
+                currentDate = currentDate.add(1, 'day');
+            }
+        });
     }
 
     getExpectedRelax(name, date) {
@@ -595,23 +1003,9 @@ class InitPaiBanTables {
     }
 
     getSuggestedSchedule(name, dateObj) {
-        let date = dateObj.format('YYYY-MM-DD');
-        let data = {
-            name: name,
-            schedule_date: date,
-
-            is_first_day: true,
-            today_mandatory_schedule: [],
-            today_planed_schedule: this._get_today_planed_schedule(date)
-        }
-
-        let todayConfig = localStorage.getItem(date);
-        if (todayConfig) {
-            todayConfig = JSON.parse(todayConfig);
-            data['is_first_day'] = todayConfig['isFirstDay'];
-            data['today_mandatory_schedule'] = todayConfig['mustBans'].map(item => item.replace('mustBan', ''));
-        } else {
-            return;
+        let res = this._prepareDataForSuggestedSchedule(name, dateObj);
+        if (!res) {
+            return;  // 如果没有配置，则不进行后续操作
         }
 
         // 获取token
@@ -627,7 +1021,7 @@ class InitPaiBanTables {
                 'Content-Type': 'application/json',
                 'Accept': 'application/json'
             },
-            body: JSON.stringify(data)
+            body: JSON.stringify(res)
         }).then(response => {
             response.json().then(data => {
                 if (response.ok) {
@@ -646,11 +1040,8 @@ class InitPaiBanTables {
         });
     }
 
-    sendSchedule() {
-        let name = this.paibanSelectHD.dataset.name;
-        let work_date = this.paibanSelectHD.dataset.date;
-        let ban = this.paibanSelectHD.dataset.bantype;
-        let data = {name, ban, work_date};
+    sendSchedule(data) {
+        let schedule_data = data;
 
         // 获取token
         const token = getToken();
@@ -665,15 +1056,24 @@ class InitPaiBanTables {
                 'Content-Type': 'application/json',
                 'Accept': 'application/json'
             },
-            body: JSON.stringify(data)
+            body: JSON.stringify(schedule_data)
         }).then(response => {
             response.json().then(data => {
                 if (response.ok) {
                     showAlert({
                         type: 'success',
                         title: '排班成功！',
-                        message: `已为 ${name} 在 ${work_date} 排班 ${ban}`
+                        message: `已为 ${schedule_data.name} 在 ${schedule_data.work_date} 排班 ${schedule_data.ban}`
                     });
+
+                    // 重新渲染表格
+                    this.getRecordsFromServer();
+
+                    // 如果之前展示了上个月的排班，也展示
+                    if (this.showLastSchedule.classList.contains('active')) {
+                        this.showLastSchedule.classList.remove('active');
+                        this.showLastSchedule.click();
+                    }
                 } else {
                     showAlert({
                         type: 'danger',
@@ -687,6 +1087,33 @@ class InitPaiBanTables {
             console.error('error!!!', error);
         });
 
+
+    }
+
+    sendSchedules() {
+        let name = this.paibanSelectHD.dataset.name;
+        let work_date = this.paibanSelectHD.dataset.date;
+        let work_date_obj = dayjs(work_date);
+        let ban = this.paibanSelectHD.dataset.bantype;
+        let data = {name, ban, work_date};
+
+        if (this.repeatPaiban5.checked) {
+            for (let i = 0; i < 5; i++) {
+                data['work_date'] = work_date_obj.add(i, 'day').format('YYYY-MM-DD');
+                this.sendSchedule(data);
+            }
+        }
+
+        if (this.repeatPaiban2.checked) {
+            for (let i = 0; i < 2; i++) {
+                data['work_date'] = work_date_obj.add(i, 'day').format('YYYY-MM-DD');
+                this.sendSchedule(data);
+            }
+        }
+
+        if (!this.repeatPaiban5.checked && !this.repeatPaiban2.checked) {
+            this.sendSchedule(data);
+        }
 
     }
 }

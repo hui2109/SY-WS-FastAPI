@@ -61,10 +61,24 @@
                 <i class="bi bi-calculator-fill nav-icon"></i>统计
               </a>
             </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#paiban-all">
+            <li class="nav-item dropdown">
+              <!-- a标签里面不能套a标签了!!! -->
+              <a class="nav-link dropdown-toggle" href="#" id="paibanDesktopTools" data-bs-toggle="dropdown"
+                aria-expanded="false">
                 <i class="bi bi-slack nav-icon"></i>排班
               </a>
+              <ul class="dropdown-menu">
+                <li>
+                  <a class="dropdown-item" href="#paiban-all">
+                    开始排班
+                  </a>
+                </li>
+                <li>
+                  <a class="dropdown-item" href="#vacation-all">
+                    假期设置
+                  </a>
+                </li>
+              </ul>
             </li>
           </ul>
         </div>
@@ -402,58 +416,47 @@
           <div class="fade-in">
             <div id="paiban-content-all" class="content-section">
               <div class="container">
-                <nav>
-                  <div class="nav nav-tabs" id="paiban-tab" role="tablist">
-                    <button class="nav-link active" id="paiban-start-tab" data-bs-toggle="tab"
-                      data-bs-target="#paiban-start" type="button" role="tab" aria-controls="paiban-start"
-                      aria-selected="true">开始排班</button>
-                    <button class="nav-link" id="vacation-setting-tab" data-bs-toggle="tab"
-                      data-bs-target="#vacation-setting" type="button" role="tab" aria-controls="vacation-setting"
-                      aria-selected="false">假期设置</button>
-                  </div>
-                </nav>
-                <div class="tab-content" id="paiban-tabContent">
-                  <div class="tab-pane fade show active" id="paiban-start" role="tabpanel"
-                    aria-labelledby="paiban-start-tab" tabindex="0">
-                    <div class="p-3 border border-secondary border-opacity-75 border-2 rounded-3">
-                      <div class="d-flex justify-content-between align-items-center">
-                        <!-- 日期切换组件 -->
-                        <div id="datetimepicker3" data-td-target-input="nearest" data-td-target-toggle="nearest">
-                          <span data-td-target="#datetimepicker3" data-td-toggle="datetimepicker">
-                            <button type="button" class="btn btn-success btn-sm mounianmouyue">某年某月</button>
-                          </span>
-                        </div>
-
-                        <!-- 自动排班组件 -->
-                        <button type="button" class="btn btn-success btn-sm">自动排班</button>
-
-                        <!-- 加载排班组合 -->
-                        <button type="button" class="btn btn-success btn-sm">清空排班</button>
-
-                        <!-- 显示上周期排班 -->
-                        <button type="button" class="btn btn-success btn-sm">显示上周期排班</button>
-
-                        <!-- 成员设置 -->
-                        <button type="button" class="btn btn-success btn-sm">成员设置</button>
-
-                        <!-- 排班检查 -->
-                        <button type="button" class="btn btn-success btn-sm">排班检查</button>
-                      </div>
-
-                      <!-- 表格本体 -->
-                      <div class="table-container m-auto mt-3 table-responsive">
-                        <table class="paiban-table m-auto table table-bordered">
-                          <thead>
-                          </thead>
-                          <tbody>
-                          </tbody>
-                        </table>
-                      </div>
+                <div class="p-3 border border-secondary border-opacity-75 border-2 rounded-3">
+                  <div class="d-flex align-items-center justify-content-center gap-3">
+                    <!-- 日期切换组件 -->
+                    <div id="datetimepicker3" data-td-target-input="nearest" data-td-target-toggle="nearest">
+                      <span data-td-target="#datetimepicker3" data-td-toggle="datetimepicker">
+                        <button type="button" class="btn btn-primary btn-sm mounianmouyue">某年某月</button>
+                      </span>
                     </div>
+
+                    <!-- 自动排班组件 -->
+                    <button type="button" class="btn btn-success btn-sm" id="autoScheduleAll">自动排班</button>
+
+                    <!-- 显示上周期排班 -->
+                    <button type="button" class="btn btn-sm border border-warning"
+                      id="showLastSchedule">显示上周期排班</button>
+
+                    <!-- 清空排班 -->
+                    <button type="button" class="btn btn-danger btn-sm" id="clearAllSchedule">清空排班</button>
                   </div>
-                  <div class="tab-pane fade" id="vacation-setting" role="tabpanel"
-                    aria-labelledby="vacation-setting-tab" tabindex="0">...</div>
+
+                  <!-- 表格本体 -->
+                  <div class="table-container m-auto mt-3 table-responsive">
+                    <table class="paiban-table m-auto table table-bordered">
+                      <thead>
+                      </thead>
+                      <tbody>
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 假期设置 -->
+        <div class="tab-pane fade" id="vacation-all">
+          <div class="fade-in">
+            <div id="vacation-content-all" class="content-section">
+              <div class="container">
+
               </div>
             </div>
           </div>
@@ -911,6 +914,11 @@
             </div>
           </div>
 
+          <p class="mt-4 mb-2 ps-2">已有排班：</p>
+          <div class="d-flex align-items-center" style="gap: 12px;" id="existingPaiban">
+            <span class="badge bg-success" style="font-size: 0.9rem;">暂无</span>
+          </div>
+
           <p class="mt-4 mb-2 ps-2">实际排班：</p>
           <div class='d-flex align-items-center'>
             <div class="dropdown" id="paibanSelectDropdown">
@@ -918,7 +926,45 @@
                 aria-expanded="false" data-default="请选择">
                 请选择
               </button>
-              <ul class="dropdown-menu">
+              <ul class="dropdown-menu dropdown-menu-scrollable">
+                <li><span class="dropdown-item">1A</span></li>
+                <li><span class="dropdown-item">1B</span></li>
+                <li><span class="dropdown-item">1C</span></li>
+                <li>
+                  <hr class="dropdown-divider">
+                </li>
+                <li><span class="dropdown-item">2A</span></li>
+                <li><span class="dropdown-item">2B</span></li>
+                <li><span class="dropdown-item">2C</span></li>
+                <li>
+                  <hr class="dropdown-divider">
+                </li>
+                <li><span class="dropdown-item">3A</span></li>
+                <li><span class="dropdown-item">3B</span></li>
+                <li><span class="dropdown-item">3C</span></li>
+                <li>
+                  <hr class="dropdown-divider">
+                </li>
+                <li><span class="dropdown-item">S1</span></li>
+                <li><span class="dropdown-item">S2</span></li>
+                <li>
+                  <hr class="dropdown-divider">
+                </li>
+                <li><span class="dropdown-item">N1</span></li>
+                <li><span class="dropdown-item">N2</span></li>
+                <li>
+                  <hr class="dropdown-divider">
+                </li>
+                <li><span class="dropdown-item">进修</span></li>
+                <li><span class="dropdown-item">培训</span></li>
+                <li><span class="dropdown-item">机动</span></li>
+                <li>
+                  <hr class="dropdown-divider">
+                </li>
+                <li><span class="dropdown-item">休息</span></li>
+                <li>
+                  <hr class="dropdown-divider">
+                </li>
                 <li><span class="dropdown-item">放射假</span></li>
                 <li><span class="dropdown-item">年假</span></li>
                 <li><span class="dropdown-item">病假</span></li>
@@ -929,6 +975,27 @@
                 <li><span class="dropdown-item">育儿假</span></li>
                 <li><span class="dropdown-item">丧假</span></li>
                 <li><span class="dropdown-item">其他假</span></li>
+                <li>
+                  <hr class="dropdown-divider">
+                </li>
+                <li><span class="dropdown-item">补假</span></li>
+                <li>
+                  <hr class="dropdown-divider">
+                </li>
+                <li><span class="dropdown-item">OAE</span></li>
+                <li><span class="dropdown-item">OBE</span></li>
+                <li><span class="dropdown-item">OCE</span></li>
+                <li><span class="dropdown-item">OAF</span></li>
+                <li><span class="dropdown-item">OBF</span></li>
+                <li><span class="dropdown-item">OCF</span></li>
+                <li><span class="dropdown-item">Phy</span></li>
+                <li>
+                  <hr class="dropdown-divider">
+                </li>
+                <li><span class="dropdown-item">OTR</span></li>
+                <li><span class="dropdown-item">OTB</span></li>
+                <li><span class="dropdown-item">OVB</span></li>
+
               </ul>
               <input type="hidden" id="paibanSelectHD" data-bantype="wu" data-date="wu" data-name="wu" required>
             </div>
@@ -943,11 +1010,11 @@
           </div>
         </div>
 
-        <div class="modal-footer justify-content-between">
-          <button type="button" class="btn btn-danger" id="deletePaiban">删除排班</button>
+        <div class="modal-footer justify-content-end">
+          <button type="button" class="btn btn-danger d-none" id="deletePaiban">删除所有排班</button>
           <div>
             <button type="button" class="btn btn-info" id="acceptPaiban">接受建议</button>
-            <button type="button" class="btn btn-info" id="confirmPaiban">确认排班</button>
+            <button type="button" class="btn btn-primary" id="confirmPaiban">确认排班</button>
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
           </div>
         </div>
@@ -1042,6 +1109,30 @@
           <div>
             <button type="button" class="btn btn-info" id="confirmConfigureDate">保存</button>
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 删除所有排班 确认 对话框 -->
+  <div class="modal fade" id="clearAllScheduleModal" tabindex="-1" aria-labelledby="deleteAllScheduleLabel"
+    aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="deleteAllScheduleLabel">是否删除本月所有排班？</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+
+        <div id="deleteAllScheduleContent" class="modal-body">
+          <p class="mb-0" id="clearAllInfo">是否删除本月所有排班？</p>
+        </div>
+
+        <div class="modal-footer justify-content-between">
+          <button type="button" class="btn btn-danger" id="confirmClearAll">确认删除所有</button>
+          <div>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">点错了，关闭</button>
           </div>
         </div>
       </div>

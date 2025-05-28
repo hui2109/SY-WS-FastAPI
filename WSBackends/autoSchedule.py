@@ -2,8 +2,10 @@ import copy
 from collections import Counter, defaultdict
 from enum import Enum
 from typing import Optional
+from datetime import datetime
 
 from .database.utils import Bans
+from chinese_calendar import is_holiday, is_workday
 
 
 class Probability(Enum):
@@ -152,7 +154,7 @@ class InitWorkers:
 
 
 class AutoOneSchedule:
-    def __init__(self, worker: Worker, last_week_work_schedule: str, last_work_schedule: str, is_first_day: bool, today_mandatory_schedule: list[str], today_planed_schedule: dict[str, str], **kwargs):
+    def __init__(self, worker: Worker, last_week_work_schedule: str, last_work_schedule: str, is_first_day: bool, today_mandatory_schedule: list[str], today_planed_schedule: dict[str, str], schedule_date: datetime, **kwargs):
         self.worker = worker
         self.last_week_work_schedule = last_week_work_schedule
         self.last_work_schedule = last_work_schedule
@@ -160,12 +162,13 @@ class AutoOneSchedule:
         self.today_planed_schedule = today_planed_schedule
         self.today_mandatory_schedule = today_mandatory_schedule
         self.possible_schedule = defaultdict(list)
+        self.schedule_date = schedule_date
 
         # 按这个顺序迭代排班
         self.turn_shift = {"B": "A", "A": "C", "C": "B"}
 
         # 这些排班最少只需要1个人
-        self.one_person_schedule_list = [Bans.S2.value, Bans.N1.value]
+        self.one_person_schedule_list = [Bans.N1.value]
 
         # 这些班没有参考意义, 不能作为连上的根据, 例如: 一个人上周上了OTB, 那么这一周任何班都可以排; 或者一个人上一周上了2B, 这一周OTB也可以排
         self.nonsense_schedule_list = [Bans.ENGAGE.value, Bans.TRAIN.value, Bans.JD.value, Bans.OAE.value, Bans.OBE.value, Bans.OCE.value,
@@ -279,6 +282,11 @@ class AutoOneSchedule:
         else:
             return False
 
+    def __judge_holiday_schedule(self):
+        if is_holiday(self.schedule_date):
+            # 如果是节假日，最大的概率是 休息
+            self.possible_schedule[1.2].append(Bans.RELAX.value)
+
     def get_possible_schedule(self):
         # 按概率计算当前日期的可能排班
         if self.worker.accelerator_prob != 0:
@@ -308,6 +316,8 @@ class AutoOneSchedule:
                 self.possible_schedule[self.worker.counter2_prob].append("N2")
 
         self.possible_schedule[1.1] = []  # 单独设置一个重点班种
+        self.possible_schedule[1.2] = []  # 单独设置一个休息班种
         self.__sorted_schedule()
         self.__exclude_schedule()
+        self.__judge_holiday_schedule()
         self.__sorted_schedule()

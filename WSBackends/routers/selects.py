@@ -4,12 +4,14 @@ from fastapi import APIRouter, Depends
 from pydantic import BaseModel
 from sqlmodel import select
 from pypinyin import pinyin, load_phrases_dict, lazy_pinyin
+import random
 
 from .utils import convert_UTC_Chinese, CURRENT_PERSONNEL
 from ..database.models import Workschedule, Account, WorkschedulePersonnelLink, ReserveVacation, Personnel
 from ..dependencies import get_current_user, SessionDep
 from ..autoSchedule import Worker, InitWorkers, AutoOneSchedule
 from collections import Counter
+import chinese_calendar
 
 router = APIRouter(tags=["selects"], dependencies=[Depends(get_current_user)])
 InitWorkers.init_workers()
@@ -74,6 +76,23 @@ async def select_month_schedule(queryMonth: QueryMonth, session: SessionDep):
 
             personnel_set.add(personnel_name)
     queryMonthResponse['personnels'] = personnel_set
+
+    # 增加内容：判断奇怪的休假日和休息日
+    isHolidays = dict()
+    current_date = queryMonth.month_start
+    while current_date <= queryMonth.month_end:  # Monday == 0 ... Sunday == 6
+        date_str = current_date.strftime('%Y-%m-%d')
+
+        on_holiday, holiday_name = chinese_calendar.get_holiday_detail(current_date)
+        if holiday_name is not None:  # 如果有节日名，说明是节假日
+            if on_holiday:
+                isHolidays[date_str] = '休'
+            else:
+                isHolidays[date_str] = '班'
+
+        current_date += timedelta(days=1)
+
+    queryMonthResponse['isHolidays'] = isHolidays
 
     return queryMonthResponse
 
@@ -183,8 +202,8 @@ async def get_suggested_schedule(querySchedule: QuerySchedule, session: SessionD
     if len(Worker.instances) == 0:
         InitWorkers.init_workers()
 
-    # UTC时区 转 中国时区, 固定到早上10点
-    querySchedule.schedule_date = convert_UTC_Chinese(querySchedule.schedule_date).replace(hour=10)
+    # UTC时区 转 中国时区
+    querySchedule.schedule_date = convert_UTC_Chinese(querySchedule.schedule_date)
 
     current_worker = Worker.get_by_name(querySchedule.name)
     last_week_work_schedule, last_work_schedule = get_last_week_work_schedule_and_last_work_schedule(session, querySchedule.name, querySchedule.schedule_date)
@@ -205,12 +224,16 @@ async def get_suggested_schedule(querySchedule: QuerySchedule, session: SessionD
                 new_possibility = f'{possibility * 100:.2f}%'
                 querySuggestedScheduleResponse[new_possibility] = possible_schedules
 
+    # 打乱一下
+    for key in querySuggestedScheduleResponse:
+        random.shuffle(querySuggestedScheduleResponse[key])
+
     return querySuggestedScheduleResponse
 
 
 def get_last_week_work_schedule_and_last_work_schedule(session: SessionDep, name: str, schedule_date: datetime) -> [str, str]:
-    last_week_work_schedule_set = []
-    last_work_schedule_set = []
+    last_week_work_schedule_list = []
+    last_work_schedule_list = []
     last_week_work_schedule = ''
     last_work_schedule = ''
 
@@ -240,7 +263,7 @@ def get_last_week_work_schedule_and_last_work_schedule(session: SessionDep, name
         for result in results:
             for personnel_link in result.personnel_links:
                 if personnel_link.personnel == personnel:
-                    last_week_work_schedule_set.append(result.bantype.ban.value)
+                    last_week_work_schedule_list.append(result.bantype.ban.value)
 
     # 查找本周上的 频次最多的 班
     statement = select(Workschedule).where(
@@ -258,32 +281,31 @@ def get_last_week_work_schedule_and_last_work_schedule(session: SessionDep, name
         for result in results:
             for personnel_link in result.personnel_links:
                 if personnel_link.personnel == personnel:
-                    last_work_schedule_set.append(result.bantype.ban.value)
+                    last_work_schedule_list.append(result.bantype.ban.value)
 
-    # 处理last_week_work_schedule_set
-    if len(last_week_work_schedule_set) != 0:
-        c = Counter(last_week_work_schedule_set)
+    # 处理last_week_work_schedule_list
+    last_week_work_schedule_list = [i for i in last_week_work_schedule_list if i != "休息"]
+    if len(last_week_work_schedule_list) != 0:
+        c = Counter(last_week_work_schedule_list)
         max_nums = max(c.values())
+
         for schedule, nums in c.items():
             if nums == max_nums:
-                if schedule != '休息':
-                    last_week_work_schedule = schedule
-                    break
+                last_week_work_schedule = schedule
+                break
     else:
         last_week_work_schedule = 'ZZ'
 
-    # 处理last_work_schedule_set
-    if len(last_work_schedule_set) != 0:
-        c = Counter(last_work_schedule_set)
+    # 处理last_work_schedule_list
+    last_work_schedule_list = [i for i in last_work_schedule_list if i != "休息"]
+    if len(last_work_schedule_list) != 0:
+        c = Counter(last_work_schedule_list)
         max_nums = max(c.values())
         for schedule, nums in c.items():
             if nums == max_nums:
-                if schedule != '休息':
-                    last_work_schedule = schedule
-                    break
+                last_work_schedule = schedule
+                break
     else:
         last_work_schedule = 'ZZ'
-
-    print(f'{last_week_work_schedule=}', f'{last_work_schedule=}')
 
     return last_week_work_schedule, last_work_schedule

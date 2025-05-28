@@ -21,7 +21,7 @@ def add_middleware():
     origins = [
         "http://localhost",
         "http://localhost:5500",
-        "http://127.0.0.1:5500"
+        "http://127.0.0.1:5500",
     ]
 
     app.add_middleware(
@@ -54,6 +54,11 @@ def main():
     add_static_files()
 
     uvicorn.run(app)
+    # uvicorn.run(
+    #     app,
+    #     host="::",  # 使用 :: 来监听所有 IPv6 和 IPv4 地址
+    #     port=8000,
+    # )
 
 
 if __name__ == '__main__':

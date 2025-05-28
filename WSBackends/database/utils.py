@@ -34,6 +34,7 @@ class Bans(Enum):
     PL = '陪产假'  # paternity leave
     CL = '育儿假'  # childcare leave
     FL = '丧假'  # funeral leave
+    DL = '补假'  # deferred leave
     OTHERS = '其他假'
 
     OAE = 'OAE'  # Overtime
