@@ -66,7 +66,10 @@ class initIndex {
         this.mobileThemeDropdown = document.getElementById('mobileThemeDropdown');
 
         this.paibanDesktopTools = document.getElementById('paibanDesktopTools');
-        this.paibanDropdownItems = this.paibanDesktopTools.parentNode.querySelectorAll('.dropdown-item');
+        this.paibanDesktopDropdownItems = this.paibanDesktopTools.parentNode.querySelectorAll('.dropdown-item');
+
+        this.paibanMobileTools = document.getElementById('paibanMobileTools');
+        this.paibanMobileDropdownItems = this.paibanMobileTools.parentNode.querySelectorAll('.dropdown-item');
     }
 
     bindEvent() {
@@ -106,8 +109,8 @@ class initIndex {
             });
         });
 
-        // 点击导航栏下拉项，改变颜色及显示内容
-        this.paibanDropdownItems.forEach(item => {
+        // 点击导航栏下拉项，改变颜色及显示内容（桌面端）
+        this.paibanDesktopDropdownItems.forEach(item => {
             item.addEventListener('click', (event) => {
                 let elementThis = event.currentTarget;
 
@@ -116,6 +119,43 @@ class initIndex {
 
                 // 为当前点击的链接添加active类
                 this.paibanDesktopTools.classList.add('active');
+                this.paibanMobileTools.classList.add('active');
+
+                // 显示对应的内容区域
+                const href = elementThis.getAttribute('href');
+                const targetId = href.substring(1);
+
+                this.tabPanes.forEach(pane => {
+                    pane.classList.remove('show', 'active');
+                });
+
+                const targetPane = document.getElementById(targetId);
+                if (targetPane) {
+                    targetPane.classList.add('show', 'active');
+
+                    // 页面加载外部添加一个滚动控制
+                    setTimeout(function () {
+                        window.scrollTo({
+                            top: 0,
+                            left: 0,
+                            behavior: 'auto'
+                        });
+                    }, 10);
+                }
+            });
+        });
+
+        // 点击导航栏下拉项，改变颜色及显示内容（移动端）
+        this.paibanMobileDropdownItems.forEach(item => {
+            item.addEventListener('click', (event) => {
+                let elementThis = event.currentTarget;
+
+                // 移除所有链接的active类
+                this.navLinks.forEach(navLink => navLink.classList.remove('active'));
+
+                // 为当前点击的链接添加active类
+                this.paibanDesktopTools.classList.add('active');
+                this.paibanMobileTools.classList.add('active');
 
                 // 显示对应的内容区域
                 const href = elementThis.getAttribute('href');

@@ -195,7 +195,7 @@
             <i class="bi bi-calendar-heart-fill nav-icon"></i>
           </a>
         </div>
-        <div class="col-2 text-center">
+        <div class="col-2 text-center d-none">
           <a class="nav-link" href="#change-ban">
             <i class="bi bi-arrow-left-right nav-icon"></i>
           </a>
@@ -205,10 +205,25 @@
             <i class="bi bi-calculator-fill nav-icon"></i>
           </a>
         </div>
-        <div class="col-2 text-center">
-          <a class="nav-link" href="#paiban-all">
+        <div class="col-2 text-center btn-group dropup">
+          <!-- a标签里面不能套a标签了!!! -->
+          <a class="nav-link dropdown-toggle" href="#" id="paibanMobileTools" data-bs-toggle="dropdown"
+            aria-expanded="false">
             <i class="bi bi-slack nav-icon"></i>
           </a>
+          <ul class="dropdown-menu">
+            <li>
+              <a class="dropdown-item" href="#paiban-all">
+                开始排班
+              </a>
+            </li>
+            <li>
+              <a class="dropdown-item" href="#vacation-all">
+                假期设置
+              </a>
+            </li>
+          </ul>
+
         </div>
       </div>
     </div>
