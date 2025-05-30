@@ -1,5 +1,5 @@
 import pickle
-from datetime import datetime
+from datetime import date
 from pathlib import Path
 from pprint import pp
 
@@ -11,17 +11,13 @@ def convert_to_date(df_year: str, df_date: str):
     month = str(df_date).split('-')[0]
     day = str(df_date).split('-')[-1].split('\n')[0]
 
-    date = datetime(
+    _date = date(
         year=int(df_year),
         month=int(month),
         day=int(day),
-        hour=10,
-        minute=0,
-        second=0,
-        microsecond=0,
     )
 
-    return date
+    return _date
 
 
 def pure_bantype(bantype: str):
@@ -31,10 +27,8 @@ def pure_bantype(bantype: str):
         return bantype_list[0]
     else:
         true_bantype, appends = bantype_list[0], bantype_list[-1]
-        if appends != '补':
-            true_bantype = true_bantype + '_' + appends
-            return true_bantype
-        return bantype_list[0]
+        true_bantype = true_bantype + '_' + appends
+        return true_bantype
 
 
 def convert_df_to_list(excel_file: Path):
@@ -86,5 +80,5 @@ def read_data(path: Path):
 
 if __name__ == '__main__':
     pure_data()
-    df_list = read_data(Path('./XiaohuData/放疗中心排班表（2024-10-01至2024-10-31）.pkl'))
-    pp(df_list)
+    # df_list = read_data(Path('./XiaohuData/放疗中心排班表（2025-04-01至2025-04-30）.pkl'))
+    # pp(df_list)

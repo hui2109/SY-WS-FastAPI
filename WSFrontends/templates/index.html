@@ -20,6 +20,8 @@
   <link rel="stylesheet" href="/WSFrontends/assets/2_css/work_mine.css">
   <link rel="stylesheet" href="/WSFrontends/assets/2_css/reserve_all.css">
   <link rel="stylesheet" href="/WSFrontends/assets/2_css/paiban_table.css">
+  <link rel="stylesheet" href="/WSFrontends/assets/2_css/vacation_card.css">
+  <link rel="stylesheet" href="/WSFrontends/assets/2_css/statistics_card.css">
 </head>
 
 <body>
@@ -51,7 +53,7 @@
                 <i class="bi bi-calendar-heart-fill nav-icon"></i>预约休假
               </a>
             </li>
-            <li class="nav-item">
+            <li class="nav-item d-none">
               <a class="nav-link" href="#change-ban">
                 <i class="bi bi-arrow-left-right nav-icon"></i>换班
               </a>
@@ -406,8 +408,30 @@
         <!-- 统计 -->
         <div class="tab-pane fade" id="statistics-all">
           <div class="fade-in">
-            <h2>统计</h2>
-            <p>这是统计内容区域。您可以在这里查看您的统计信息。</p>
+            <div id="statistics-content-all" class="content-section">
+              <!-- 搜索区域 -->
+              <div class="search-container">
+                <div class="container">
+                  <div class="row justify-content-center">
+                    <div class="col-md-6">
+                      <div class="input-group">
+                        <span class="input-group-text bg-white border-0">
+                          <i class="bi bi-search"></i>
+                        </span>
+                        <input type="text" class="form-control border-0" id="searchInput2" placeholder="搜索员工姓名...">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 卡片容器 -->
+              <div class="container">
+                <div id="cardsContainer2" class="row">
+                  <!-- 卡片将通过JavaScript动态生成 -->
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -454,9 +478,28 @@
         <!-- 假期设置 -->
         <div class="tab-pane fade" id="vacation-all">
           <div class="fade-in">
-            <div id="vacation-content-all" class="content-section">
-              <div class="container">
+            <div id="vacation-content-all" class="content-section" style="max-width: 1500px;">
+              <!-- 搜索区域 -->
+              <div class="search-container">
+                <div class="container">
+                  <div class="row justify-content-center">
+                    <div class="col-md-6">
+                      <div class="input-group">
+                        <span class="input-group-text bg-white border-0">
+                          <i class="bi bi-search"></i>
+                        </span>
+                        <input type="text" class="form-control border-0" id="searchInput" placeholder="搜索员工姓名...">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
 
+              <!-- 卡片容器 -->
+              <div class="container">
+                <div id="cardsContainer" class="row">
+                  <!-- 卡片将通过JavaScript动态生成 -->
+                </div>
               </div>
             </div>
           </div>
@@ -1055,51 +1098,51 @@
             </div>
             <div class="form-check me-3">
               <input class="form-check-input" type="checkbox" value="S2" id="mustBanS2">
-              <label class="form-check-label" for="mustBan1">S2</label>
+              <label class="form-check-label" for="mustBanS2">S2</label>
             </div>
             <div class="form-check me-3">
               <input class="form-check-input" type="checkbox" value="1A" id="mustBan1A">
-              <label class="form-check-label" for="mustBan1">1A</label>
+              <label class="form-check-label" for="mustBan1A">1A</label>
             </div>
             <div class="form-check me-3">
               <input class="form-check-input" type="checkbox" value="1B" id="mustBan1B">
-              <label class="form-check-label" for="mustBan1">1B</label>
+              <label class="form-check-label" for="mustBan1B">1B</label>
             </div>
             <div class="form-check me-3">
               <input class="form-check-input" type="checkbox" value="1C" id="mustBan1C">
-              <label class="form-check-label" for="mustBan1">1C</label>
+              <label class="form-check-label" for="mustBan1C">1C</label>
             </div>
             <div class="form-check me-3">
               <input class="form-check-input" type="checkbox" value="2A" id="mustBan2A">
-              <label class="form-check-label" for="mustBan1">2A</label>
+              <label class="form-check-label" for="mustBan2A">2A</label>
             </div>
             <div class="form-check me-3">
               <input class="form-check-input" type="checkbox" value="2B" id="mustBan2B">
-              <label class="form-check-label" for="mustBan1">2B</label>
+              <label class="form-check-label" for="mustBan2B">2B</label>
             </div>
             <div class="form-check me-3">
               <input class="form-check-input" type="checkbox" value="2C" id="mustBan2C">
-              <label class="form-check-label" for="mustBan1">2C</label>
+              <label class="form-check-label" for="mustBan2C">2C</label>
             </div>
             <div class="form-check me-3">
               <input class="form-check-input" type="checkbox" value="3A" id="mustBan3A">
-              <label class="form-check-label" for="mustBan1">3A</label>
+              <label class="form-check-label" for="mustBan3A">3A</label>
             </div>
             <div class="form-check me-3">
               <input class="form-check-input" type="checkbox" value="3B" id="mustBan3B">
-              <label class="form-check-label" for="mustBan1">3B</label>
+              <label class="form-check-label" for="mustBan3B">3B</label>
             </div>
             <div class="form-check me-3">
               <input class="form-check-input" type="checkbox" value="3C" id="mustBan3C">
-              <label class="form-check-label" for="mustBan1">3C</label>
+              <label class="form-check-label" for="mustBan3C">3C</label>
             </div>
             <div class="form-check me-3">
               <input class="form-check-input" type="checkbox" value="N1" id="mustBanN1">
-              <label class="form-check-label" for="mustBan1">N1</label>
+              <label class="form-check-label" for="mustBanN1">N1</label>
             </div>
             <div class="form-check me-3">
               <input class="form-check-input" type="checkbox" value="N2" id="mustBanN2">
-              <label class="form-check-label" for="mustBan1">N2</label>
+              <label class="form-check-label" for="mustBanN2">N2</label>
             </div>
           </div>
         </div>
@@ -1159,6 +1202,8 @@
   <script src="/WSFrontends/assets/4_js/initWorkMineCards.js"></script>
   <script src="/WSFrontends/assets/4_js/initVacationTable.js"></script>
   <script src="/WSFrontends/assets/4_js/initPaiBanTables.js"></script>
+  <script src="/WSFrontends/assets/4_js/initVacationSettingCards.js"></script>
+  <script src="/WSFrontends/assets/4_js/initStatisticsCards.js"></script>
 
   <!-- <script src="/WSFrontends/assets/4_js/verify.js"></script> -->
 </body>

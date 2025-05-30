@@ -1,21 +1,21 @@
-from datetime import datetime
+from datetime import date
 
 from fastapi import APIRouter, HTTPException, status
 from pydantic import BaseModel
 from sqlmodel import select
 
-from ..database.models import Personnel, Bantype, ReserveVacation, Workschedule, WorkschedulePersonnelLink
+from ..database.models import Personnel, Bantype, ReserveVacation, Workschedule, WorkschedulePersonnelLink, RestInfo
 from ..database.utils import Bans
 from ..dependencies import SessionDep
 from .inserts import OneSchedule, OneReserve
-from .utils import convert_UTC_Chinese
+from .inserts import HolidayRule
 
 router = APIRouter(tags=["deletes"])
 
 
 class DateRange(BaseModel):
-    start_date: datetime
-    end_date: datetime
+    start_date: date
+    end_date: date
 
 
 @router.post('/delete-reserve')
@@ -44,9 +44,6 @@ async def create_reserve(reserves: list[OneReserve], session: SessionDep):
 
 @router.post('/delete_work_schedule')
 async def delete_work_schedule(one_schedule: OneSchedule, session: SessionDep):
-    # UTC时区 转 中国时区
-    one_schedule.work_date = convert_UTC_Chinese(one_schedule.work_date)
-
     personnel = session.exec(select(Personnel).where(Personnel.name == one_schedule.name)).first()
     if not personnel:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=f'没有这个人! {one_schedule.name}')
@@ -78,9 +75,6 @@ async def delete_work_schedule(one_schedule: OneSchedule, session: SessionDep):
 
 @router.post('/delete_all_work_schedule')
 async def delete_all_work_schedule(date_range: DateRange, session: SessionDep):
-    # UTC时区 转 中国时区
-    date_range.start_date = convert_UTC_Chinese(date_range.start_date)
-    date_range.end_date = convert_UTC_Chinese(date_range.end_date)
     count = 0
 
     results = session.exec(select(Workschedule).where(
@@ -99,3 +93,23 @@ async def delete_all_work_schedule(date_range: DateRange, session: SessionDep):
     session.commit()
 
     return {'detail': f'{count}'}
+
+
+@router.post('/delete_relax_rule')
+async def delete_relax_rule(holiday_rule: HolidayRule, session: SessionDep):
+    personnel = session.exec(select(Personnel).where(Personnel.name == holiday_rule.name)).first()
+    if not personnel:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=f'没有这个人! {one_schedule.name}')
+
+    bantype = session.exec(select(Bantype).where(Bantype.ban == holiday_rule.relax)).first()
+    if not bantype:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail='没有班种信息! 请先创建班种!')
+
+    result = session.get(RestInfo, holiday_rule.rule_id)
+    result: RestInfo
+    if result:
+        session.delete(result)
+
+    session.commit()
+
+    return {'detail': '删除休假规则成功！'}

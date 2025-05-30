@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import date
 
 from fastapi import APIRouter, Depends
 from pydantic import BaseModel
@@ -13,17 +13,17 @@ router = APIRouter(tags=["updates"])
 
 # 更新用户头像的请求模型
 class AvatarUpdate(BaseModel):
-    avatar: str | None
+    avatar: str | None = None
 
 
 # 更新整个用户信息
 class UserUpdate(AvatarUpdate):
-    username: str | None
-    name: str | None
-    hiredate: datetime | None
-    worknumber: str | None
-    phonenumber: str | None
-    password: str | None
+    username: str | None = None
+    name: str | None = None
+    hiredate: date | None = None
+    worknumber: str | None = None
+    phonenumber: str | None = None
+    password: str | None = None
 
 
 # 更新头像API

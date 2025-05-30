@@ -1,11 +1,11 @@
-from datetime import datetime, time
+from datetime import date, time
 
 from fastapi import Depends, APIRouter, HTTPException, status
 from pydantic import BaseModel
 from sqlmodel import select
 
-from .utils import convert_UTC_Chinese, CURRENT_PERSONNEL
-from ..database.models import Account, Personnel, Bantype, Workschedule, WorkschedulePersonnelLink, ReserveVacation
+from .utils import CURRENT_PERSONNEL
+from ..database.models import Account, Personnel, Bantype, Workschedule, WorkschedulePersonnelLink, ReserveVacation, RestInfo
 from ..database.utils import Bans
 from ..dependencies import get_current_user, SessionDep
 
@@ -23,14 +23,23 @@ class OneBan(BaseModel):
 class OneSchedule(BaseModel):
     name: str
     ban: Bans
-    work_date: datetime
+    work_date: date
 
 
 class OneReserve(BaseModel):
     sequence: int
     name: str
     relax: Bans
-    date: datetime
+    date: date
+
+
+class HolidayRule(BaseModel):
+    name: str | None = None
+    relax: Bans | None = None
+    start_date: date | None = None
+    end_date: date | None = None
+    available_days: int | None = None
+    rule_id: int | None = None
 
 
 @router.post('/create-ban')
@@ -49,9 +58,6 @@ async def create_ban(one_ban: OneBan, session: SessionDep):
 
 @router.post('/create-schedule')
 async def create_schedule(one_schedule: OneSchedule, session: SessionDep):
-    # UTC时区 转 中国时区, 固定到早上10点
-    one_schedule.work_date = convert_UTC_Chinese(one_schedule.work_date).replace(hour=10)
-
     personnel = session.exec(select(Personnel).where(Personnel.name == one_schedule.name)).first()
     if not personnel:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=f'没有这个人! {one_schedule.name}')
@@ -119,3 +125,37 @@ async def create_reserve(reserves: list[OneReserve], session: SessionDep):
 
     session.commit()
     return {'detail': '预约休假成功!'}
+
+
+@router.post('/create-holiday-rule')
+async def create_holiday_rule(holiday_rules: list[HolidayRule], session: SessionDep):
+    for holiday_rule in holiday_rules:
+        personnel = session.exec(select(Personnel).where(Personnel.name == holiday_rule.name)).first()
+        if not personnel:
+            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=f'没有这个人! {holiday_rule.name}')
+
+        bantype = session.exec(select(Bantype).where(Bantype.ban == holiday_rule.relax)).first()
+        if not bantype:
+            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail='没有班种信息! 请先创建班种!')
+
+        result = session.get(RestInfo, holiday_rule.rule_id)
+        result: RestInfo
+        if not result:
+            restinfo = RestInfo(personnel=personnel, bantype=bantype, **holiday_rule.model_dump())
+            session.add(restinfo)
+        else:
+            # 更新现有记录
+            result.bantype = bantype
+            result.personnel = personnel
+            if holiday_rule.start_date:
+                result.start_date = holiday_rule.start_date
+            if holiday_rule.end_date:
+                result.end_date = holiday_rule.end_date
+            if holiday_rule.available_days:
+                result.available_days = holiday_rule.available_days
+
+            session.add(result)
+
+    session.commit()
+
+    return {'detail': '休假规则创建成功！'}

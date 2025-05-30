@@ -123,8 +123,8 @@ class InitTables {
         }
 
         let data = {
-            month_start: this.startDate,
-            month_end: this.endDate
+            month_start: dayjs(this.startDate).format('YYYY-MM-DD'),
+            month_end: dayjs(this.endDate).format('YYYY-MM-DD')
         }
         fetch('/select-month-schedule', {
             method: 'POST',
@@ -142,7 +142,6 @@ class InitTables {
                     this.generateTbody();
                 } else {
                     loginExpiredAlert();
-                    window.location.href = '/login';
                 }
             })
         }).catch(error => {

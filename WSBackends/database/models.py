@@ -1,4 +1,4 @@
-from datetime import datetime, time
+from datetime import date, time
 
 from sqlmodel import SQLModel, Field, Relationship
 
@@ -47,7 +47,7 @@ class Personnel(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
     name: str = Field(index=True)
     weight: int = Field(default=1.0, index=True)
-    hiredate: datetime
+    hiredate: date
     worknumber: str
     phonenumber: str
     account_id: int | None = Field(default=None, foreign_key="account.id", unique=True)
@@ -63,7 +63,7 @@ class Personnel(SQLModel, table=True):
 # 排班表对班种: 多对一
 class Workschedule(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
-    work_date: datetime = Field(index=True)
+    work_date: date = Field(index=True)
     bantype_id: int | None = Field(default=None, foreign_key="bantype.id")
     status: ScheduleStatus = Field(default=ScheduleStatus.DRAFT, index=True)
 
@@ -75,8 +75,8 @@ class Workschedule(SQLModel, table=True):
 # 休息日对人: 多对一
 class RestInfo(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
-    start_date: datetime = Field(index=True)
-    end_date: datetime = Field(index=True)
+    start_date: date = Field(index=True)
+    end_date: date = Field(index=True)
     available_days: int
     personnel_id: int | None = Field(default=None, foreign_key="personnel.id")
     bantype_id: int | None = Field(default=None, foreign_key="bantype.id")
@@ -98,7 +98,7 @@ class RestInfo(SQLModel, table=True):
 class ReserveVacation(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
     sequence: int = Field(index=True)
-    reserve_date: datetime = Field(index=True)
+    reserve_date: date = Field(index=True)
     bantype_id: int | None = Field(default=None, foreign_key="bantype.id")
     personnel_id: int | None = Field(default=None, foreign_key="personnel.id")
 

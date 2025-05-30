@@ -7,8 +7,8 @@ class initIndex {
         this.lookElement();
         this.bindEvent();
         this.changeTheme();
-        //this.navLinks[5].click();
-        this.paibanDropdownItems[1].click();
+        this.navLinks[4].click();
+        //this.paibanDropdownItems[1].click();
     }
 
     _updateThemeIcons(mode) {
@@ -126,8 +126,18 @@ class initIndex {
                 });
 
                 const targetPane = document.getElementById(targetId);
-                if (targetPane)
+                if (targetPane) {
                     targetPane.classList.add('show', 'active');
+
+                    // 页面加载外部添加一个滚动控制
+                    setTimeout(function () {
+                        window.scrollTo({
+                            top: 0,
+                            left: 0,
+                            behavior: 'auto'
+                        });
+                    }, 10);
+                }
             });
         });
 
@@ -273,13 +283,3 @@ class initIndex {
 
 let iI = new initIndex();
 iI.init();
-// 页面加载外部添加一个滚动控制
-window.addEventListener('load', function () {
-    setTimeout(function () {
-        window.scrollTo({
-            top: 0,
-            left: 0,
-            behavior: 'auto'
-        });
-    }, 10);
-});

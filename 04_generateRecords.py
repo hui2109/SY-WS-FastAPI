@@ -1,6 +1,7 @@
 import pickle
 from datetime import time
 from pathlib import Path
+from pprint import pprint
 
 from WSBackends.database.utils import Bans
 
@@ -17,7 +18,7 @@ ban_template = {
 schedule_template = {
     "name": "张旭辉",
     "ban": "3A",
-    "work_date": "2025-04-21T06:11:39.937Z"
+    "work_date": "2025-04-21"
 }
 
 
@@ -26,10 +27,10 @@ def remove_duplicates(dict_list):
 
 
 def generate_bantype(bantype: str):
-    bantype_list = bantype.split('_')  # ['3A']  or  ['3A', 'F']  or ['休息']
+    bantype_list = bantype.split('_')  # ['3A']  or  ['3A', 'F']  or ['休息']  or  ['3A', '补']
     pure_ban_list = []
 
-    for ban in bantype_list:  # '3A'  or  'F'
+    for ban in bantype_list:  # '3A' or 'F' or '补'
         if ban in Bans._value2member_map_:
             ban_template = {}
             ban_enum = Bans._value2member_map_[ban]
@@ -39,6 +40,7 @@ def generate_bantype(bantype: str):
             if 'A' in name and '_' in name:
                 start_time = time(hour=7, minute=0, second=0, microsecond=0)
                 end_time = time(hour=12, minute=30, second=0, microsecond=0)
+
             elif 'B' in name and '_' in name:
                 start_time = time(hour=13, minute=0, second=0, microsecond=0)
                 end_time = time(hour=18, minute=30, second=0, microsecond=0)
@@ -84,10 +86,13 @@ def generate_bantype(bantype: str):
             ban_template["ban"] = value
             ban_template["start_time"] = start_time.isoformat()
             ban_template["end_time"] = end_time.isoformat()
-            ban_template["description"] = ''
+            ban_template["description"] = value
             pure_ban_list.append(ban_template)
         else:
-            if 'F' in ban and ('A' in bantype or 'S1' in bantype or 'S2' in bantype or 'TR' in bantype):
+            if '补' in ban:
+                ban = Bans.DL.value
+                pure_ban_list += generate_bantype(ban)
+            elif 'F' in ban and ('A' in bantype or 'S1' in bantype or 'S2' in bantype or 'TR' in bantype):
                 ban = Bans.OAF.value
                 pure_ban_list += generate_bantype(ban)
             elif 'F' in ban and 'B' in bantype:
@@ -174,3 +179,7 @@ def process_pkls():
 
 if __name__ == '__main__':
     process_pkls()
+
+    # with open('./XiaohuData/oldRecords/total_schedule_records.pkl', 'rb') as f:
+    #     total_ban_records = pickle.load(f)
+    #     pprint(total_ban_records)

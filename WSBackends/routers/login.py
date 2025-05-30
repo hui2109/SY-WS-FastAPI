@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta, timezone
+from datetime import date, timedelta, timezone, datetime
 from typing import Annotated
 
 import bcrypt
@@ -29,7 +29,7 @@ router = APIRouter(tags=["login"])
 class UserBase(BaseModel):
     username: str
     name: str
-    hiredate: datetime
+    hiredate: date
     avatar: str
     worknumber: str
     phonenumber: str

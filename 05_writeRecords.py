@@ -56,11 +56,11 @@ def create_ban():
 def create_schedule():
     headers = get_header()
     total_schedule_records = read_schedule()
-    print(len(total_schedule_records))  # 5570
+    print(len(total_schedule_records))  # 7121
     for schedule_dict in total_schedule_records:
         response = requests.post(url=create_schedule_url, headers=headers, json=schedule_dict)
 
 
 if __name__ == '__main__':
-    create_ban()
+    # create_ban()
     create_schedule()

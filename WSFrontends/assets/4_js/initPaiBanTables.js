@@ -148,12 +148,18 @@ class InitPaiBanTables {
         let elementThis = event.currentTarget;
         elementThis.parentElement.remove();
 
-        let data = {name, ban, work_date};
+        let data = {
+            "name": name,
+            "work_date": work_date.format('YYYY-MM-DD'),
+            "ban": ban
+        };
         // 获取token
         const token = getToken();
         if (!token) {
             return;
         }
+
+        debugger;
 
         fetch('/delete_work_schedule', {
             method: 'POST',
@@ -254,7 +260,11 @@ class InitPaiBanTables {
         td.appendChild(div);
 
         // 向服务器写入数据
-        let schedule_data = {name, ban, work_date};
+        let schedule_data = {
+            name: name,
+            ban: ban,
+            work_date: work_date.format('YYYY-MM-DD')
+        };
         try {
             let response = await fetch('/create-schedule', {
                 method: 'POST',
@@ -286,7 +296,7 @@ class InitPaiBanTables {
         let date = dateObj.format('YYYY-MM-DD');
         let data = {
             name: name,
-            schedule_date: dateObj,
+            schedule_date: dayjs(dateObj).format('YYYY-MM-DD'),
 
             is_first_day: true,
             today_mandatory_schedule: [],
@@ -435,8 +445,8 @@ class InitPaiBanTables {
         }
 
         let data = {
-            month_start: this.startDate,
-            month_end: this.endDate
+            month_start: dayjs(this.startDate).format('YYYY-MM-DD'),
+            month_end: dayjs(this.endDate).format('YYYY-MM-DD'),
         }
         fetch('/select-month-schedule', {
             method: 'POST',
@@ -455,7 +465,6 @@ class InitPaiBanTables {
                     this.generateTbody();
                 } else {
                     loginExpiredAlert();
-                    window.location.href = '/login';
                 }
             })
         }).catch(error => {
@@ -795,8 +804,8 @@ class InitPaiBanTables {
 
         this.confirmClearAll.addEventListener('click', () => {
             let data = {
-                start_date: this.startDate,
-                end_date: this.endDate
+                start_date: dayjs(this.startDate).format('YYYY-MM-DD'),
+                end_date: dayjs(this.endDate).format('YYYY-MM-DD')
             }
             // 获取token
             const token = getToken();
@@ -862,8 +871,8 @@ class InitPaiBanTables {
                 let last_month_start = this.startDate.subtract(1, 'month').startOf('month');
                 let last_month_end = this.startDate.subtract(1, 'month').endOf('month');
                 let data = {
-                    month_start: last_month_start,
-                    month_end: last_month_end
+                    month_start: dayjs(last_month_start).format('YYYY-MM-DD'),
+                    month_end: dayjs(last_month_end).format('YYYY-MM-DD'),
                 }
                 fetch('/select-month-schedule', {
                     method: 'POST',
@@ -879,7 +888,6 @@ class InitPaiBanTables {
                             this._show_last_month_schedule(data);
                         } else {
                             loginExpiredAlert();
-                            window.location.href = '/login';
                         }
                     })
                 }).catch(error => {
@@ -993,7 +1001,6 @@ class InitPaiBanTables {
                         title: '数据获取失败！',
                         message: data.detail
                     });
-                    window.location.href = '/login';
                 }
             })
         }).catch(error => {

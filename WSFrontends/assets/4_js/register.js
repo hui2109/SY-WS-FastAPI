@@ -9,9 +9,15 @@ const confirmPassword = document.getElementById('floatingConfirmPassword');
 const username = document.getElementById('floatingUsername');
 const fullname = document.getElementById('floatingFullname');
 const enrollDate = document.getElementById('floatingEnrollDate');
-const selectedAvatar = document.getElementById('selectedAvatar');
 const workNumber = document.getElementById('floatingWorkNumber');
 const phoneNumber = document.getElementById('floatingPhoneNumber');
+
+const tooltipTriggerList = document.querySelectorAll('#avatarModal [data-bs-toggle="tooltip"]');
+const avatarGrid = document.querySelector('#avatarModal .avatar-grid');
+const avatarModal = document.getElementById('avatarModal');
+const avatarOptions = document.querySelectorAll('#avatarModal .avatar-option');
+const selectedAvatar = document.getElementById('selectedAvatar');
+const avatarPreview = document.getElementById('avatarPreview');
 
 function _updateIcon(theme) {
     if (theme === 'dark') {
@@ -110,7 +116,7 @@ function formValidation() {
             username: username.value.trim(),
             name: fullname.value.trim(),
             // 转换日期格式为ISO字符串
-            hiredate: new Date(enrollDate.value + 'T00:00:00').toISOString(),
+            hiredate: enrollDate.value,
             password: password.value,
             // 添加头像数据
             avatar: selectedAvatar.value,
@@ -163,6 +169,52 @@ function formValidation() {
     });
 }
 
+function initAvatarModal() {
+    // 初始化所有工具提示
+    let tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl, {
+        placement: 'top',
+        delay: {show: 500, hide: 50},
+        container: '.avatar-grid'
+    }));
+
+    // 监听头像网格滚动事件，滚动时隐藏所有tooltip
+    avatarGrid.addEventListener('scroll', () => {
+        tooltipList.forEach(tooltip => tooltip.hide());
+    });
+
+    // 头像模态框打开时，确保正确显示当前选中的头像
+    avatarModal.addEventListener('show.bs.modal', () => {
+        // 移除所有头像的选中状态
+        avatarOptions.forEach(option => option.classList.remove('selected'));
+
+        // 找到并选中当前已选择的头像
+        const currentAvatarFile = selectedAvatar.value;
+        const currentAvatarOption = document.querySelector(`#avatarModal .avatar-option[data-avatar="${currentAvatarFile}"]`);
+        if (currentAvatarOption) {
+            currentAvatarOption.classList.add('selected');
+        }
+    });
+
+    // 头像点击的选择逻辑
+    avatarOptions.forEach(option => {
+        option.addEventListener('click', (event) => {
+            let elementThis = event.currentTarget;
+
+            // 移除所有头像的选中状态
+            avatarOptions.forEach(option => option.classList.remove('selected'));
+
+            // 添加当前选中状态
+            elementThis.classList.add('selected');
+
+            // 更新预览图和隐藏输入值
+            const avatarFile = elementThis.getAttribute('data-avatar');
+
+            selectedAvatar.value = avatarFile;
+            avatarPreview.src = `/WSFrontends/assets/img/avatars/${avatarFile}`;
+        });
+    });
+}
+
 
 document.addEventListener('DOMContentLoaded', function () {
     smoothTransition()
@@ -170,4 +222,5 @@ document.addEventListener('DOMContentLoaded', function () {
     restoreTheme()
     switchTheme()
     formValidation()
+    initAvatarModal()
 });

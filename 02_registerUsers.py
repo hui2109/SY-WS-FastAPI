@@ -1,5 +1,4 @@
 import requests
-from datetime import datetime
 from pypinyin import pinyin, Style
 from Constant import InternalPersonnelList
 
@@ -9,7 +8,7 @@ suffix = '_21094235'
 data_template = {
     "username": "str",
     "name": "str",
-    "hiredate": datetime.now().isoformat(),
+    "hiredate": "2025-05-29",
     "avatar": '001-pirate.svg',
     "worknumber": "str",
     "phonenumber": "str",

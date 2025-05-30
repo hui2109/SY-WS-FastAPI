@@ -2,7 +2,7 @@ import copy
 from collections import Counter, defaultdict
 from enum import Enum
 from typing import Optional
-from datetime import datetime
+from datetime import date
 
 from .database.utils import Bans
 from chinese_calendar import is_holiday, is_workday
@@ -154,7 +154,7 @@ class InitWorkers:
 
 
 class AutoOneSchedule:
-    def __init__(self, worker: Worker, last_week_work_schedule: str, last_work_schedule: str, is_first_day: bool, today_mandatory_schedule: list[str], today_planed_schedule: dict[str, str], schedule_date: datetime, **kwargs):
+    def __init__(self, worker: Worker, last_week_work_schedule: str, last_work_schedule: str, is_first_day: bool, today_mandatory_schedule: list[str], today_planed_schedule: dict[str, str], schedule_date: date, **kwargs):
         self.worker = worker
         self.last_week_work_schedule = last_week_work_schedule
         self.last_work_schedule = last_work_schedule

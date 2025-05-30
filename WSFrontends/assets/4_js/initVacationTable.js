@@ -205,7 +205,6 @@ class InitVacationTable {
                         this._renderPinJiaList();
                     } else {
                         loginExpiredAlert();
-                        window.location.href = '/login';
                     }
                 })
             }).catch(error => {
@@ -588,8 +587,8 @@ class InitVacationTable {
     getData() {
         this._renderWholeTable();  // 先清空整个表格
         let data = {
-            month_start: this.true_day_start,
-            month_end: this.true_day_end,
+            month_start: dayjs(this.true_day_start).format('YYYY-MM-DD'),
+            month_end: dayjs(this.true_day_end).format('YYYY-MM-DD'),
         }
         // 获取token
         const token = getToken();
@@ -612,7 +611,6 @@ class InitVacationTable {
                     this.renderTableCells();
                 } else {
                     loginExpiredAlert();
-                    window.location.href = '/login';
                 }
             })
         }).catch(error => {

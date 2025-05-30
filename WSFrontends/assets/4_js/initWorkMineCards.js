@@ -184,8 +184,8 @@ class InitMineCards {
         }
 
         let data = {
-            month_start: this.startDate,
-            month_end: this.endDate
+            month_start: dayjs(this.startDate).format('YYYY-MM-DD'),
+            month_end: dayjs(this.endDate).format('YYYY-MM-DD')
         }
         fetch('/select-my-month-schedule', {
             method: 'POST',
@@ -203,7 +203,6 @@ class InitMineCards {
                     //this.initSwiper();
                 } else {
                     loginExpiredAlert();
-                    window.location.href = '/login';
                 }
             })
         }).catch(error => {
