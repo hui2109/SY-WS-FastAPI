@@ -9,7 +9,7 @@ from fastapi import APIRouter, Depends
 from pydantic import BaseModel
 from sqlmodel import select
 
-from .utils import CURRENT_PERSONNEL
+from .utils import CURRENT_PERSONNEL, MANDATORY_SCHEDULE
 from ..autoSchedule import Worker, InitWorkers, AutoOneSchedule
 from ..database.models import Workschedule, Account, WorkschedulePersonnelLink, ReserveVacation, Personnel, RestInfo, Bantype
 from ..dependencies import get_current_user, SessionDep
@@ -130,6 +130,17 @@ async def select_my_month_schedule(queryMonth: QueryMonth, session: SessionDep, 
                 queryMyMonthResponse[_key] = [_value]
             else:
                 queryMyMonthResponse[_key].append(_value)
+
+    # 更改班名的顺序
+    for _key, _value in queryMyMonthResponse.items():
+        if len(_value) > 1:
+            new_value_list = []
+            for _value_item in _value:
+                if _value_item['ban'] in MANDATORY_SCHEDULE:
+                    new_value_list.insert(0, _value_item)
+                else:
+                    new_value_list.append(_value_item)
+            queryMyMonthResponse[_key] = new_value_list
 
     return queryMyMonthResponse
 

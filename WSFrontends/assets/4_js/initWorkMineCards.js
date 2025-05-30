@@ -28,6 +28,8 @@ class InitMineCards {
         this.nextMonth = document.querySelector('#work-content-mine .next-month');
         this.datetimepicker2 = document.getElementById('datetimepicker2');
         this.dateLabel = document.querySelector('#work-content-mine .mounianmouyue');
+
+        this.banTypeColor = getBanTypeColor();
     }
 
     initSwiper() {
@@ -65,7 +67,7 @@ class InitMineCards {
                     type: 'icons' // 使用图标而不是SVG
                 },
                 viewMode: 'months',
-                theme: 'auto',
+                theme: localStorage.getItem('theme'),
                 components: {
                     calendar: true,
                     decades: true,
@@ -85,10 +87,19 @@ class InitMineCards {
                 locale: 'zh-CN'
             },
         });
+        // 先设置一个初始日期, 免的swiper乱动
+        this.picker.dates.setValue(new tempusDominus.DateTime(this.today));
+
+        // 先把已有的日期选择控件删了
+        let tempusDominusWidget = document.querySelector('.tempus-dominus-widget');
+        if (tempusDominusWidget) {
+            tempusDominusWidget.remove();
+        }
 
         // 监听日期改变事件
         this.datetimepicker2.addEventListener('change.td', (event) => {
             this.today = event.detail.date;
+            this.today.setDate(1);
             this._updateDateLabel(this.today);
 
             this.init();
@@ -97,6 +108,10 @@ class InitMineCards {
         // 监听日期显示事件
         this.datetimepicker2.addEventListener('show.td', () => {
             adjustDatePickerPosition(this.dateLabel);
+            let datePicker = document.querySelector('.tempus-dominus-widget.show');
+            datePicker.classList.remove('light');
+            datePicker.classList.remove('dark');
+            datePicker.classList.add(localStorage.getItem('theme'));
         });
     }
 
@@ -156,21 +171,8 @@ class InitMineCards {
     }
 
     getStartEndDate() {
-        const firstDay = new Date(this.today.getFullYear(), this.today.getMonth(), 1, 10, 0, 0, 0);
-        const firstDayOfWeek = firstDay.getDay();
-        const daysToSubtract = firstDayOfWeek === 0 ? 6 : firstDayOfWeek - 1;
-        this.startDate = new Date(firstDay);
-        this.startDate.setDate(firstDay.getDate() - daysToSubtract);
-
-        const lastDay = new Date(this.today.getFullYear(), this.today.getMonth() + 1, 0, 10, 0, 0, 0);
-        const lastDayOfWeek = lastDay.getDay();
-        const daysToAdd = lastDayOfWeek === 0 ? 0 : 7 - lastDayOfWeek;
-        this.endDate = new Date(lastDay);
-        this.endDate.setDate(lastDay.getDate() + daysToAdd);
-
-        // 测试代码
-        //this.startDate = new Date(2024, 8, 30, 10, 0, 0, 0);
-        //this.endDate = new Date(2024, 10, 3, 10, 0, 0, 0);
+        this.startDate = dayjs(this.today).startOf('month').startOf('isoWeek');
+        this.endDate = dayjs(this.today).endOf('month').endOf('isoWeek');
 
         this.dateList = goThroughDate(this.startDate, this.endDate);
     }
@@ -200,7 +202,6 @@ class InitMineCards {
                 if (response.ok) {
                     this.records = data;
                     this.generateCards();
-                    //this.initSwiper();
                 } else {
                     loginExpiredAlert();
                 }
@@ -232,7 +233,15 @@ class InitMineCards {
             for (let j = 0; j < 7; j++) {
                 let div_date_item = document.createElement('div');
                 div_date_item.classList.add('date-item');
-                div_date_item.textContent = this.dateList[i + j].getDate();
+
+                // 非本月, 加上那个月的日期
+                if (this.dateList[i + j].getMonth() !== this.today.getMonth()) {
+                    div_date_item.textContent = `${this.dateList[i + j].getDate()}/${this.dateList[i + j].getMonth() + 1}`;
+                } else {
+                    div_date_item.textContent = this.dateList[i + j].getDate();
+                }
+                div_date_item.dataset.date = dayjs(this.dateList[i + j]).format('YYYY-MM-DD');
+
                 let div_info_item = this.getInfoItem(this.dateList[i + j], 0);
 
                 div_date_row.appendChild(div_date_item);
@@ -263,6 +272,7 @@ class InitMineCards {
         // 在添加完所有 slide 后更新 Swiper
         setTimeout(() => {
             this.swiper.update();
+            this.gotoTodayCard();
 
             // 如果需要更彻底的更新，可以加上这些
             //this.swiper.updateSize();
@@ -311,6 +321,16 @@ class InitMineCards {
             let div_info = document.createElement('div');
             if (i === -1) {
                 div_info.textContent = ban
+                div_info.classList.add('badge')
+                div_info.classList.add('mb-2')
+
+                let color = this.banTypeColor[ban];
+                if (color) {
+                    div_info.style.backgroundColor = color;
+                } else {
+                    div_info.style.backgroundColor = 'red';
+                }
+
             } else {
                 div_info.textContent = coworkers[i]
             }
@@ -321,10 +341,42 @@ class InitMineCards {
     }
 
     generateCommonInfoItem(div_info_item, text) {
-        let div_info = document.createElement('div');
-        div_info.textContent = text;
-        div_info_item.appendChild(div_info);
+        if (text === 'null') {
+            let div_info = document.createElement('div');
+            div_info.textContent = '';
+            div_info_item.style.backgroundColor = 'transparent';
+            div_info_item.appendChild(div_info);
+        } else {
+            let div_info = document.createElement('div');
+            div_info.textContent = text;
+            div_info.classList.add('badge')
+            div_info.classList.add('mb-2')
+
+            let color = this.banTypeColor[text];
+            if (color) {
+                div_info.style.backgroundColor = color;
+            } else {
+                div_info.style.backgroundColor = 'red';
+            }
+
+            div_info_item.appendChild(div_info);
+        }
         return div_info_item
+    }
+
+    gotoTodayCard() {
+        let swiperSlides = document.querySelectorAll('.swiper-wrapper .swiper-slide');
+        let today_str = dayjs(this.today).format('YYYY-MM-DD');
+
+        for (let i = 0; i < swiperSlides.length; i++) {
+            let dateItems = swiperSlides[i].querySelectorAll('.date-item[data-date]');
+            for (let j = 0; j < dateItems.length; j++) {
+                if (dateItems[j].getAttribute('data-date') === today_str) {
+                    this.swiper.slideTo(i);
+                    return;
+                }
+            }
+        }
     }
 }
 

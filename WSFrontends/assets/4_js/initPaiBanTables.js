@@ -422,8 +422,8 @@ class InitPaiBanTables {
     }
 
     getStartEndDate() {
-        this.startDate = dayjs(this.today).startOf('month').hour(10).minute(0).second(0).millisecond(0);
-        this.endDate = dayjs(this.today).endOf('month').hour(10).minute(0).second(0).millisecond(0);
+        this.startDate = dayjs(this.today).startOf('month');
+        this.endDate = dayjs(this.today).endOf('month');
 
         this.dateList = goThroughDate(this.startDate, this.endDate);
         this.dayMaps = {

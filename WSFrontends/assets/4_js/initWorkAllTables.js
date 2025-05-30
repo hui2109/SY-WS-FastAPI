@@ -100,8 +100,8 @@ class InitTables {
     }
 
     getStartEndDate() {
-        this.startDate = new Date(this.today.getFullYear(), this.today.getMonth(), 1, 10, 0, 0, 0);
-        this.endDate = new Date(this.today.getFullYear(), this.today.getMonth() + 1, 0, 10, 0, 0, 0);
+        this.startDate = dayjs(this.today).startOf('month');
+        this.endDate = dayjs(this.today).endOf('month');
 
         this.dateList = goThroughDate(this.startDate, this.endDate);
         this.dayMaps = {
