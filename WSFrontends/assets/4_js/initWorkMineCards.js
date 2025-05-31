@@ -1,5 +1,3 @@
-"use strict";
-
 class InitMineCards {
     constructor(today) {
         this.today = today
@@ -8,6 +6,7 @@ class InitMineCards {
         this.initDatePicker();
         this.initSwiper();
         this.bindClick();
+        this._getBanTypeInfo().then(r => console.log(r));
     }
 
     init() {
@@ -20,6 +19,71 @@ class InitMineCards {
         this.dateLabel.textContent = `${date.getFullYear()}年${date.getMonth() + 1}月`;
     }
 
+    _renderBantypeInfoCard(divBan) {
+        let ban = divBan.dataset.ban;
+        let bantype_info = JSON.parse(sessionStorage.getItem('bantype_info'));
+        let start_time = bantype_info[ban]['start_time'];
+        let end_time = bantype_info[ban]['end_time'];
+        let description = bantype_info[ban]['description'];
+
+        return `
+            <div class="card border-primary">
+                  <div class="card-header bg-primary text-white py-2" style="padding-left: 8px;">
+                    班种名称：<span class="badge bg-light text-primary">${ban}</span>
+                  </div>
+                  <div class="card-body p-1">
+                    <ul class="list-group list-group-flush">
+                      <li class="list-group-item p-1">开始时间：<span class="fw-semibold">${start_time}</span>
+                      </li>
+                      <li class="list-group-item p-1">结束时间：<span class="fw-semibold">${end_time}</span></li>
+                      <li class="list-group-item p-1">班种描述：<span
+                          class="fw-normal">${description}</span>
+                      </li>
+                    </ul>
+                  </div>
+            </div>
+        `;
+    }
+
+    async _getBanTypeInfo() {
+        // 获取token
+        const token = getToken();
+        if (!token) {
+            return;
+        }
+
+        if (sessionStorage.getItem('bantype_info')) {
+            return;
+        }
+
+        try {
+            let response = await fetch('/get_bantype_info', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+            })
+
+            let data = await response.json();
+
+            if (!response.ok) {
+                showAlert({
+                    type: 'danger',
+                    title: '获取班种信息失败！',
+                    message: data.detail,
+                });
+            } else {
+                sessionStorage.setItem('bantype_info', JSON.stringify(data));
+            }
+        } catch (error) {
+            debugger;
+            alert('未知错误！');
+            console.error('error!!!', error);
+        }
+    }
+
     lookElement() {
         this.swiper_wrapper = document.querySelector('#work-content-mine .swiper-wrapper');
         this.componentWrapper = document.querySelector('#work-content-mine .component-wrapper');
@@ -29,6 +93,12 @@ class InitMineCards {
         this.datetimepicker2 = document.getElementById('datetimepicker2');
         this.dateLabel = document.querySelector('#work-content-mine .mounianmouyue');
 
+        this.bantypeInfoModal = document.getElementById('bantypeInfoModal');
+        this.bantypeInfoName = document.getElementById('bantypeInfoName');
+        this.bantypeInfoDate = document.getElementById('bantypeInfoDate');
+        this.bantypeInfoCards = document.getElementById('bantypeInfoCards');
+
+        this.weekMap = getWeekMap();
         this.banTypeColor = getBanTypeColor();
     }
 
@@ -113,6 +183,23 @@ class InitMineCards {
             datePicker.classList.remove('dark');
             datePicker.classList.add(localStorage.getItem('theme'));
         });
+    }
+
+    handleCellClick(et) {
+        let srcCell = et.currentTarget;
+        let name = srcCell.dataset.name;
+        let date = srcCell.dataset.date;
+        let dateObj = dayjs(date);
+
+        this.bantypeInfoName.textContent = name;
+        this.bantypeInfoDate.textContent = `${dateObj.format('YYYY年M月D日')}（${this.weekMap[dateObj.day()]}）`;
+        this.bantypeInfoCards.innerHTML = '';
+
+        let bantypeInfoCard = this._renderBantypeInfoCard(srcCell);
+        this.bantypeInfoCards.innerHTML += bantypeInfoCard;
+
+        const modalInstance = new bootstrap.Modal(this.bantypeInfoModal);
+        modalInstance.show();
     }
 
     bindClick() {
@@ -216,7 +303,7 @@ class InitMineCards {
         this.swiper_wrapper.innerHTML = '';
         for (let i = 0; i < this.dateList.length; i = i + 7) {
             this.max_info_list_length = 0;
-            this.currentWeekNormalRestDateList = [];
+            //this.currentWeekNormalRestDateList = [];
 
             let div_slide = document.createElement('div');
             div_slide.classList.add('swiper-slide');
@@ -303,9 +390,9 @@ class InitMineCards {
 
         let info_dict = info_list[k];
         if (!info_dict) {
-            if (this.currentWeekNormalRestDateList.includes(date)) {
-                return this.generateCommonInfoItem(div_info_item, '休息');
-            }
+            //if (this.currentWeekNormalRestDateList.includes(date)) {
+            //    return this.generateCommonInfoItem(div_info_item, '休息', name, date);
+            //}
             return this.generateCommonInfoItem(div_info_item, 'null');
         }
 
@@ -313,8 +400,8 @@ class InitMineCards {
         let ban = info_dict['ban']
 
         if (ban === '休息') {
-            this.currentWeekNormalRestDateList.push(date);
-            return this.generateCommonInfoItem(div_info_item, '休息');
+            //this.currentWeekNormalRestDateList.push(date);
+            return this.generateCommonInfoItem(div_info_item, '休息', name, date);
         }
 
         for (let i = -1; i < coworkers.length; i++) {
@@ -349,7 +436,7 @@ class InitMineCards {
         return div_info_item
     }
 
-    generateCommonInfoItem(div_info_item, text) {
+    generateCommonInfoItem(div_info_item, text, ...rest) {
         if (text === 'null') {
             let div_info = document.createElement('div');
             div_info.textContent = '';
@@ -358,8 +445,17 @@ class InitMineCards {
         } else {
             let div_info = document.createElement('div');
             div_info.textContent = text;
-            div_info.classList.add('badge')
-            div_info.classList.add('mb-2')
+            div_info.classList.add('badge');
+            div_info.classList.add('mb-2');
+
+            // 添加点击事件
+            div_info.style.cursor = 'pointer';
+            div_info.dataset.date = dayjs(rest[1]).format('YYYY-MM-DD');
+            div_info.dataset.ban = text;
+            div_info.dataset.name = rest[0];
+            div_info.addEventListener('click', (et) => {
+                this.handleCellClick(et);
+            });
 
             let color = this.banTypeColor[text];
             if (color) {
@@ -386,26 +482,6 @@ class InitMineCards {
                 }
             }
         }
-    }
-
-    handleCellClick(et) {
-        let srcCell = et.currentTarget;
-        let name = srcCell.dataset.name;
-        let date = srcCell.dataset.date;
-        let dateObj = dayjs(date);
-
-        this.bantypeInfoName.textContent = name;
-        this.bantypeInfoDate.textContent = `${dateObj.format('YYYY年M月D日')}（${this.weekMap[dateObj.day()]}）`;
-
-        let div_bans = srcCell.querySelectorAll('div[data-ban]');
-        this.bantypeInfoCards.innerHTML = '';
-        for (let divBan of div_bans) {
-            let bantypeInfoCard = this._renderBantypeInfoCard(divBan);
-            this.bantypeInfoCards.innerHTML += bantypeInfoCard;
-        }
-
-        const modalInstance = new bootstrap.Modal(this.bantypeInfoModal);
-        modalInstance.show();
     }
 }
 
