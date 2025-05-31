@@ -7,7 +7,7 @@ class initIndex {
         this.lookElement();
         this.bindEvent();
         this.changeTheme();
-        this.navLinks[1].click();
+        this.navLinks[0].click();
         //this.paibanDropdownItems[1].click();
     }
 

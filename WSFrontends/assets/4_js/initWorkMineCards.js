@@ -321,8 +321,17 @@ class InitMineCards {
             let div_info = document.createElement('div');
             if (i === -1) {
                 div_info.textContent = ban
-                div_info.classList.add('badge')
-                div_info.classList.add('mb-2')
+                div_info.classList.add('badge');
+                div_info.classList.add('mb-2');
+
+                // 添加点击事件
+                div_info.style.cursor = 'pointer';
+                div_info.dataset.date = dayjs(date).format('YYYY-MM-DD');
+                div_info.dataset.ban = ban;
+                div_info.dataset.name = name;
+                div_info.addEventListener('click', (et) => {
+                    this.handleCellClick(et);
+                });
 
                 let color = this.banTypeColor[ban];
                 if (color) {
@@ -377,6 +386,26 @@ class InitMineCards {
                 }
             }
         }
+    }
+
+    handleCellClick(et) {
+        let srcCell = et.currentTarget;
+        let name = srcCell.dataset.name;
+        let date = srcCell.dataset.date;
+        let dateObj = dayjs(date);
+
+        this.bantypeInfoName.textContent = name;
+        this.bantypeInfoDate.textContent = `${dateObj.format('YYYY年M月D日')}（${this.weekMap[dateObj.day()]}）`;
+
+        let div_bans = srcCell.querySelectorAll('div[data-ban]');
+        this.bantypeInfoCards.innerHTML = '';
+        for (let divBan of div_bans) {
+            let bantypeInfoCard = this._renderBantypeInfoCard(divBan);
+            this.bantypeInfoCards.innerHTML += bantypeInfoCard;
+        }
+
+        const modalInstance = new bootstrap.Modal(this.bantypeInfoModal);
+        modalInstance.show();
     }
 }
 
