@@ -1,101 +1,251 @@
 #reserve-content-all {
   .table-container {
-    width: 90%;
-    height: 40vh;
+    width: 100%;
+    height: 50vh;
     overflow: auto;
-
     margin-bottom: 30px;
-    // max-width: 1300px;
-    border: 1px solid #dee2e6;
+    border-radius: 12px;
+    background: var(--bs-body-bg);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    border: 1px solid var(--bs-border-color);
+    position: relative;
     z-index: 0;
 
+    // 深色模式适配
+    [data-bs-theme="dark"] & {
+      background: var(--bs-dark);
+      border-color: var(--bs-border-color-translucent);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+    }
+
+    // 手机端样式
+    @media (max-width: 768px) {
+      height: 50vh;
+      border-radius: 8px;
+    }
+
+    // 简洁的滚动条
+    &::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: var(--bs-secondary-bg);
+      border-radius: 3px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: var(--bs-border-color);
+      border-radius: 3px;
+
+      &:hover {
+        background: var(--bs-secondary-color);
+      }
+    }
+
+    // 深色模式滚动条
+    [data-bs-theme="dark"] & {
+      &::-webkit-scrollbar-track {
+        background: var(--bs-dark);
+      }
+
+      &::-webkit-scrollbar-thumb {
+        background: var(--bs-secondary);
+
+        &:hover {
+          background: var(--bs-light);
+        }
+      }
+    }
+
     .vacation-table {
-      // min-width: 1200px;
-      width: 2800px;
-      // overflow: auto;
+      width: 2450px;
       table-layout: fixed;
-      border-collapse: separate; // 重要：使用 separate 而不是 collapse
-      border-spacing: 2px;
+      border-collapse: separate;
+      border-spacing: 0;
+      background: transparent;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+      @media (max-width: 768px) {
+        width: 2400px;
+        font-size: 13px;
+      }
+
+      @media (max-width: 480px) {
+        width: 2000px;
+        font-size: 12px;
+      }
 
       th,
       td {
         text-align: center;
         vertical-align: middle;
-        border: 1px solid #dee2e6;
-        //padding: 8px;
-        // min-width: 80px;
+        border: 1px solid var(--bs-border-color);
+        position: relative;
+        background: var(--bs-body-bg);
+        color: var(--bs-body-color);
+
+        @media (max-width: 768px) {
+          padding: 8px 4px;
+        }
       }
 
       thead tr {
+        height: 45px;
+
+        @media (max-width: 768px) {
+          height: 35px;
+        }
+
         &:first-child {
           th {
             &:first-child {
-              // 固定左上角单元格
               left: 0;
               z-index: 4;
-              background-color: var(--bs-success);
-              width: 105px;
+              background: var(--bs-body-bg);
+              width: 75px;
+              border-top-left-radius: 12px;
+              font-weight: 500;
+
+              @media (max-width: 768px) {
+                width: 80px;
+                font-size: 12px;
+                border-top-left-radius: 8px;
+              }
+
+              @media (max-width: 480px) {
+                width: 70px;
+                font-size: 11px;
+              }
 
               .dropdown {
                 .custom-select-menu {
                   width: 89px;
                   min-width: unset;
-
                   border-radius: 8px;
-                  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
-                  padding: 0;
+                  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+                  padding: 4px 0;
                   text-align-last: center;
+                  background: var(--bs-body-bg);
+                  border: 1px solid var(--bs-border-color);
+                  color: var(--bs-body-color);
+
+                  @media (max-width: 768px) {
+                    width: 65px;
+                    font-size: 11px;
+                    border-radius: 6px;
+                  }
+
+                  @media (max-width: 480px) {
+                    width: 55px;
+                    font-size: 10px;
+                  }
                 }
 
-                .custom-select-item:hover {
-                  background-color: var(--bs-success);
+                .custom-select-item {
+                  padding: 6px 12px;
+                  transition: background-color 0.2s ease;
+                  color: var(--bs-body-color);
+
+                  &:hover {
+                    background-color: var(--bs-secondary-bg);
+                  }
                 }
               }
             }
 
-            // position: sticky 只能在 父容器有 固定高度 和 滚动条 的情况下生效
-            // .table-container {
-            //   height: 400px;
-            //   overflow: auto;
-            // }
             position: sticky;
             top: 0;
             z-index: 2;
-            background-color: var(--bs-primary-bg-subtle);
-            // height: 44px;
+            background: var(--bs-secondary-bg);
+            color: var(--bs-body-color);
+            font-weight: 500;
+            padding: 12px 8px;
+            font-size: 14px;
+            border-bottom: 2px solid var(--bs-border-color);
+
+            @media (max-width: 768px) {
+              padding: 10px 6px;
+              font-size: 12px;
+            }
           }
         }
 
         &:last-child {
           th {
             position: sticky;
-            top: 44px;
+            top: 48px;
             z-index: 2;
-            background-color: var(--bs-primary-bg-subtle);
+            background: var(--bs-body-bg);
+            color: var(--bs-secondary-color);
+            font-weight: 500;
+            padding: 10px 8px;
+            border-bottom: 1px solid var(--bs-border-color);
+
+            @media (max-width: 768px) {
+              top: 40px;
+              padding: 8px 4px;
+            }
+
+            @media (max-width: 480px) {
+              top: 40px;
+            }
           }
         }
       }
 
-      tbody tr td {
-        &:first-child {
-          position: sticky;
-          left: 0;
-          z-index: 3;
-          background-color: var(--bs-primary-bg-subtle);
-
-          border-right: 1px solid #ddd; // 添加右边框
-          box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1); // 添加阴影效果
+      tbody tr {
+        &:nth-child(even) {
+          td:not(:first-child) {
+            background: var(--bs-secondary-bg);
+          }
         }
 
-        width: 90px;
-        height: 60px;
+        td {
+          &:first-child {
+            position: sticky;
+            left: 0;
+            z-index: 3;
+            background: var(--bs-body-bg);
+            color: var(--bs-body-color);
+            font-weight: 500;
+            padding: 12px 8px;
+            border-right: 2px solid var(--bs-border-color);
+
+            @media (max-width: 768px) {
+              width: 80px;
+              font-size: 12px;
+              padding: 10px 6px;
+            }
+
+            @media (max-width: 480px) {
+              width: 70px;
+              font-size: 11px;
+            }
+          }
+
+          width: 90px;
+          height: 60px;
+          background: var(--bs-body-bg);
+
+          @media (max-width: 768px) {
+            width: 70px;
+            height: 50px;
+          }
+
+          @media (max-width: 480px) {
+            width: 60px;
+            height: 45px;
+          }
+        }
       }
 
       .clickable-cell {
         cursor: pointer;
 
         &:hover {
-          background-color: #f1f1f1;
+          background-color: var(--bs-primary-bg-subtle) !important;
         }
 
         .label-bar {
@@ -109,6 +259,7 @@
               padding: 0;
               background-color: transparent;
               border: 1px solid transparent;
+              border-radius: 4px;
             }
           }
 
@@ -118,23 +269,68 @@
             left: 50%;
             transform: translate(-50%, -50%);
             font-size: 12px;
-            font-weight: bolder;
+            font-weight: 500;
             color: var(--bs-body-color);
+
+            @media (max-width: 768px) {
+              font-size: 10px;
+            }
           }
 
           &:not(:last-child) {
             margin-bottom: 2px;
+
+            @media (max-width: 768px) {
+              margin-bottom: 1px;
+            }
           }
         }
       }
     }
   }
+
+  // 简洁的滚动提示
+  @media (max-width: 768px) {
+    &::after {
+      content: "← 滑动查看更多 →";
+      display: block;
+      text-align: center;
+      font-size: 12px;
+      color: var(--bs-secondary-color);
+      margin-top: 15px;
+      opacity: 0.7;
+    }
+  }
 }
 
 #bookingModal {
+  .modal-content {
+    border-radius: 12px;
+    border: 1px solid var(--bs-border-color);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+    background: var(--bs-body-bg);
+
+    // 深色模式适配
+    [data-bs-theme="dark"] & {
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    }
+  }
+
+  .modal-header {
+    border-bottom: 1px solid var(--bs-border-color);
+    border-radius: 12px 12px 0 0;
+    background: var(--bs-secondary-bg);
+
+    .modal-title {
+      font-weight: 500;
+      color: var(--bs-body-color);
+    }
+  }
+
   .better-pinjia-btn {
     border-top-right-radius: 0;
     border-bottom-right-radius: 0;
+    font-weight: 500;
   }
 
   .better-pinjia-split {
@@ -144,6 +340,19 @@
 
   .bookingPerson .dropdown-menu {
     cursor: pointer !important;
+    border-radius: 8px;
+    border: 1px solid var(--bs-border-color);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    background: var(--bs-body-bg);
+
+    .dropdown-item {
+      color: var(--bs-body-color);
+
+      &:hover {
+        background-color: var(--bs-secondary-bg);
+        color: var(--bs-body-color);
+      }
+    }
   }
 
   .modal-overlay {
@@ -152,14 +361,52 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.01); /* 几乎透明 */
-    z-index: 1060; /* 确保高于模态框内容 */
+    background-color: rgba(0, 0, 0, 0.02);
+    z-index: 1060;
     cursor: not-allowed;
   }
 
   .dropdown-menu-scrollable {
     max-height: 400px;
     overflow-y: auto;
+
+    @media (max-width: 768px) {
+      max-height: 300px;
+      font-size: 14px;
+    }
+
+    // 简洁滚动条
+    &::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: var(--bs-secondary-bg);
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: var(--bs-border-color);
+      border-radius: 3px;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .modal-dialog {
+      margin: 15px;
+      max-width: calc(100% - 30px);
+    }
+
+    .modal-content {
+      border-radius: 8px;
+    }
+
+    .modal-header {
+      border-radius: 8px 8px 0 0;
+      padding: 16px 20px;
+    }
+
+    .modal-body {
+      padding: 20px;
+    }
   }
 }
-
