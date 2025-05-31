@@ -1129,8 +1129,6 @@ class InitPaiBanTables {
             return;  // 如果没有配置，则不进行后续操作
         }
 
-        debugger;
-
         // 获取token
         const token = getToken();
         if (!token) {

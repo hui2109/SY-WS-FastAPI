@@ -1,323 +1,379 @@
 <!DOCTYPE html>
-<html lang="zh-CN" data-bs-theme="light">
+<html lang="zh-CN">
 
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>排班检查系统</title>
-  <!-- Bootstrap 5 CSS -->
+
+  <!-- Bootstrap CSS -->
   <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
   <!-- Bootstrap Icons -->
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.0/font/bootstrap-icons.min.css"
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.5/font/bootstrap-icons.min.css"
     rel="stylesheet">
+  <!-- Swiper CSS -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/Swiper/10.0.4/swiper-bundle.min.css" rel="stylesheet">
 
   <style>
     :root {
-      --bs-border-radius: 1rem;
-      --schedule-primary: #6366f1;
-      --schedule-primary-light: #a5b4fc;
-      --schedule-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-      --schedule-shadow-lg: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+      --schedule-border-color: #dee2e6;
+      --schedule-bg: #ffffff;
+      --schedule-hover-bg: #f8f9fa;
+      --fixed-header-bg: #f8f9fa;
+      --fixed-cell-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      --schedule-radius: 12px;
     }
 
     [data-bs-theme="dark"] {
-      --schedule-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.2);
-      --schedule-shadow-lg: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+      --schedule-border-color: #495057;
+      --schedule-bg: #212529;
+      --schedule-hover-bg: #2c3034;
+      --fixed-header-bg: #343a40;
     }
 
-    /* 自定义滚动条 */
-    ::-webkit-scrollbar {
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bs-body-bg);
+      color: var(--bs-body-color);
+      transition: all 0.3s ease;
+    }
+
+    .checkScheduleContainer {
+      position: relative;
+      max-width: 100%;
+      margin: 2rem auto;
+      background: var(--schedule-bg);
+      border-radius: var(--schedule-radius);
+      box-shadow:
+        0 20px 60px rgba(0, 0, 0, 0.08),
+        0 8px 25px rgba(0, 0, 0, 0.06),
+        0 2px 10px rgba(0, 0, 0, 0.04);
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .checkScheduleContainer:hover {
+      transform: translateY(-4px);
+      box-shadow:
+        0 32px 80px rgba(0, 0, 0, 0.12),
+        0 16px 40px rgba(0, 0, 0, 0.08),
+        0 4px 16px rgba(0, 0, 0, 0.06);
+    }
+
+    .scheduleFloatingControls {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      display: flex;
+      gap: 10px;
+      z-index: 1000;
+    }
+
+    .scheduleControlBtn {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.9);
+      border: none;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      backdrop-filter: blur(12px);
+      color: var(--bs-dark);
+    }
+
+    [data-bs-theme="dark"] .scheduleControlBtn {
+      background: rgba(33, 37, 41, 0.9);
+      color: var(--bs-light);
+    }
+
+    .scheduleControlBtn:hover {
+      transform: translateY(-2px) scale(1.05);
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.16);
+      background: var(--bs-primary);
+      color: white;
+    }
+
+    .scheduleScrollWrapper {
+      position: relative;
+      overflow: auto;
+      max-height: 600px;
+      background: var(--schedule-bg);
+    }
+
+    .checkAllScheduleTable {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      background: var(--schedule-bg);
+      min-width: 800px;
+    }
+
+    .checkAllScheduleTable th,
+    .checkAllScheduleTable td {
+      padding: 1.2rem 1rem;
+      border: none;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+      text-align: left;
+      vertical-align: middle;
+      position: relative;
+      min-width: 120px;
+      font-weight: 400;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      background: var(--schedule-bg);
+    }
+
+    [data-bs-theme="dark"] .checkAllScheduleTable th,
+    [data-bs-theme="dark"] .checkAllScheduleTable td {
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .checkAllScheduleTable th {
+      background: var(--fixed-header-bg);
+      font-weight: 700;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--bs-body-color);
+      border-bottom: 2px solid var(--bs-primary);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+    }
+
+    .checkAllScheduleTable tbody tr {
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .checkAllScheduleTable tbody tr:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.06);
+      background: linear-gradient(135deg, var(--schedule-hover-bg), rgba(var(--bs-primary-rgb), 0.02));
+    }
+
+    .checkAllScheduleTable tbody tr:hover td:not(.scheduleFixedCell) {
+      background: transparent;
+      color: var(--bs-emphasis-color);
+    }
+
+    .checkAllScheduleTable tbody tr:hover .scheduleFixedCell {
+      background: linear-gradient(135deg, var(--fixed-header-bg), rgba(var(--bs-primary-rgb), 0.05));
+      box-shadow: 4px 0 16px rgba(0, 0, 0, 0.08);
+    }
+
+    /* 固定第一行 */
+    .checkAllScheduleTable thead th {
+      position: sticky;
+      top: 0;
+      z-index: 3;
+      box-shadow:
+        0 2px 8px rgba(0, 0, 0, 0.08),
+        0 4px 20px rgba(0, 0, 0, 0.04);
+      backdrop-filter: blur(12px);
+    }
+
+    /* 固定第一列 */
+    .checkAllScheduleTable td:first-child,
+    .checkAllScheduleTable th:first-child {
+      position: sticky;
+      left: 0;
+      z-index: 2;
+      background: var(--fixed-header-bg);
+      box-shadow:
+        4px 0 12px rgba(0, 0, 0, 0.06),
+        2px 0 6px rgba(0, 0, 0, 0.04);
+      backdrop-filter: blur(12px);
+    }
+
+    /* 固定左上角 */
+    .checkAllScheduleTable thead th:first-child {
+      z-index: 4;
+      background: var(--fixed-header-bg);
+      box-shadow:
+        4px 2px 16px rgba(0, 0, 0, 0.08),
+        2px 4px 12px rgba(0, 0, 0, 0.06);
+    }
+
+    .scheduleFixedCell {
+      background: var(--fixed-header-bg) !important;
+      font-weight: 600;
+      position: relative;
+    }
+
+    .scheduleFixedCell::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 4px;
+      background: linear-gradient(180deg, var(--bs-primary), var(--bs-info));
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .checkAllScheduleTable tbody tr:hover .scheduleFixedCell::before {
+      opacity: 1;
+    }
+
+    /* 数据单元格样式 */
+    .scheduleDataCell {
+      font-family: 'SF Mono', 'Monaco', 'Cascadia Code', 'Roboto Mono', monospace;
+      font-size: 0.9rem;
+      font-weight: 500;
+      position: relative;
+      overflow: hidden;
+    }
+
+
+
+    .scheduleDataCell.scheduleNormal {
+      color: #059669;
+      background: linear-gradient(135deg, rgba(5, 150, 105, 0.05), rgba(5, 150, 105, 0.02));
+    }
+
+    .scheduleDataCell.scheduleAlert {
+      color: #dc2626;
+      background: linear-gradient(135deg, rgba(220, 38, 38, 0.05), rgba(220, 38, 38, 0.02));
+    }
+
+    /* 状态徽章样式 */
+    .scheduleStatusBadge {
+      padding: 0.4rem 0.8rem;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .scheduleStatusBadge:hover {
+      transform: scale(1.05);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    /* 响应式设计 - 移动端优化 */
+    @media (max-width: 768px) {
+      .checkScheduleContainer {
+        margin: 0.5rem;
+        border-radius: 6px;
+      }
+
+      .checkAllScheduleTable {
+        min-width: 600px;
+      }
+
+      .checkAllScheduleTable th,
+      .checkAllScheduleTable td {
+        padding: 0.6rem 0.4rem;
+        min-width: 80px;
+        font-size: 0.75rem;
+      }
+
+      .checkAllScheduleTable th {
+        font-size: 0.7rem;
+        letter-spacing: 0.5px;
+      }
+
+      .scheduleDataCell {
+        font-size: 0.75rem;
+      }
+
+      .scheduleStatusBadge {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.65rem;
+      }
+
+      .scheduleScrollWrapper {
+        max-height: 350px;
+      }
+
+      .scheduleFloatingControls {
+        top: 10px;
+        right: 10px;
+        gap: 8px;
+      }
+
+      .scheduleControlBtn {
+        width: 40px;
+        height: 40px;
+      }
+    }
+
+    /* 滚动条样式 */
+    .scheduleScrollWrapper::-webkit-scrollbar {
       width: 8px;
       height: 8px;
     }
 
-    ::-webkit-scrollbar-track {
-      background: var(--bs-light);
+    .scheduleScrollWrapper::-webkit-scrollbar-track {
+      background: var(--bs-gray-100);
       border-radius: 4px;
     }
 
-    ::-webkit-scrollbar-thumb {
-      background: linear-gradient(45deg, var(--schedule-primary), var(--schedule-primary-light));
+    .scheduleScrollWrapper::-webkit-scrollbar-thumb {
+      background: var(--bs-gray-400);
       border-radius: 4px;
-      transition: all 0.3s ease;
     }
 
-    ::-webkit-scrollbar-thumb:hover {
-      background: linear-gradient(45deg, var(--schedule-primary-light), var(--schedule-primary));
-      transform: scale(1.1);
+    .scheduleScrollWrapper::-webkit-scrollbar-thumb:hover {
+      background: var(--bs-gray-500);
     }
 
-    [data-bs-theme="dark"] ::-webkit-scrollbar-track {
-      background: var(--bs-dark);
-    }
-
-    /* Firefox 滚动条 */
-    * {
-      scrollbar-width: thin;
-      scrollbar-color: var(--schedule-primary) var(--bs-light);
-    }
-
-    [data-bs-theme="dark"] * {
-      scrollbar-color: var(--schedule-primary) var(--bs-dark);
-    }
-
-    .schedule-modal .modal-content {
-      border: none;
-      border-radius: var(--bs-border-radius);
-      box-shadow: var(--schedule-shadow-lg);
-      backdrop-filter: blur(20px);
-    }
-
-    .modal-backdrop {
-      backdrop-filter: blur(8px);
-    }
-
-    /* 固定表格容器 */
-    .schedule-table-container {
-      position: relative;
-      max-height: 60vh;
-      border: 1px solid var(--bs-border-color);
-      border-radius: var(--bs-border-radius);
-      overflow: hidden;
-      box-shadow: var(--schedule-shadow);
-    }
-
-    .schedule-table-wrapper {
-      overflow: auto;
-      scroll-behavior: smooth;
-      position: relative;
-    }
-
-    .schedule-table {
-      margin: 0;
-      border-collapse: separate;
-      border-spacing: 0;
-      font-size: 0.875rem;
-      white-space: nowrap;
-    }
-
-    /* 固定表头 */
-    .schedule-table thead th {
-      position: sticky;
-      top: 0;
-      z-index: 30;
-      background: linear-gradient(135deg, var(--schedule-primary), var(--schedule-primary-light));
-      color: white;
-      font-weight: 600;
-      border: none;
-      padding: 1rem 0.75rem;
-      text-align: center;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    }
-
-    /* 固定第一列 */
-    .date-cell {
-      position: sticky;
-      left: 0;
-      z-index: 20;
-      background: var(--bs-light);
-      font-weight: 600;
-      text-align: center;
-      border-right: 2px solid var(--bs-border-color);
-      box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
-      min-width: 60px;
-      width: 60px;
-    }
-
-    /* 固定左上角单元格 */
-    .schedule-table thead th:first-child {
-      position: sticky;
-      left: 0;
-      z-index: 40;
-      background: linear-gradient(135deg, #374151, #6b7280);
-      border-right: 2px solid rgba(255, 255, 255, 0.2);
-      box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.15);
-    }
-
-    [data-bs-theme="dark"] .date-cell {
-      background: var(--bs-dark);
-    }
-
-    [data-bs-theme="dark"] .schedule-table thead th:first-child {
-      background: linear-gradient(135deg, #1f2937, #374151);
-    }
-
-    .schedule-table td {
-      padding: 0.75rem;
-      border-bottom: 1px solid var(--bs-border-color-translucent);
-      border-right: 1px solid var(--bs-border-color-translucent);
-      vertical-align: top;
-      min-width: 100px;
-      width: 100px;
-    }
-
-    .schedule-cell {
-      background: var(--bs-white);
-      transition: all 0.3s ease;
-    }
-
-    .schedule-cell:hover {
-      background: var(--bs-light);
-      transform: translateY(-1px);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    }
-
-    [data-bs-theme="dark"] .schedule-cell {
-      background: var(--bs-dark);
-    }
-
-    [data-bs-theme="dark"] .schedule-cell:hover {
+    [data-bs-theme="dark"] .scheduleScrollWrapper::-webkit-scrollbar-track {
       background: var(--bs-gray-800);
     }
 
-    .staff-count {
+    [data-bs-theme="dark"] .scheduleScrollWrapper::-webkit-scrollbar-thumb {
+      background: var(--bs-gray-600);
+    }
+
+    /* 加载动画 */
+    .scheduleLoadingOverlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(255, 255, 255, 0.9);
       display: flex;
-      align-items: center;
       justify-content: center;
-      gap: 0.25rem;
-      font-weight: 600;
-      color: var(--schedule-primary);
-      margin-bottom: 0.5rem;
-      font-size: 0.75rem;
-    }
-
-    /* 竖排人员名单 */
-    .staff-list {
-      display: flex;
-      flex-direction: column;
-      gap: 0.25rem;
       align-items: center;
+      z-index: 10;
+      transition: opacity 0.3s ease;
     }
 
-    .staff-badge {
-      background: linear-gradient(135deg, var(--bs-light), var(--bs-gray-100));
-      color: var(--bs-body-color);
-      padding: 0.25rem 0.5rem;
-      border-radius: 0.5rem;
-      font-size: 0.7rem;
-      font-weight: 500;
-      border: 1px solid var(--bs-border-color);
-      writing-mode: vertical-rl;
-      text-orientation: mixed;
-      min-height: 1.5rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.3s ease;
-      cursor: default;
+    [data-bs-theme="dark"] .scheduleLoadingOverlay {
+      background: rgba(33, 37, 41, 0.9);
     }
 
-    .staff-badge:hover {
-      background: linear-gradient(135deg, var(--schedule-primary-light), var(--schedule-primary));
-      color: white;
-      transform: scale(1.05);
-    }
-
-    [data-bs-theme="dark"] .staff-badge {
-      background: linear-gradient(135deg, var(--bs-gray-800), var(--bs-gray-700));
-      border-color: var(--bs-gray-600);
-    }
-
-    .empty-schedule {
-      color: var(--bs-text-muted);
-      text-align: center;
-      padding: 1rem 0;
-      opacity: 0.6;
-    }
-
-    .theme-toggle {
-      position: fixed;
-      top: 1rem;
-      right: 1rem;
-      z-index: 1060;
-      background: linear-gradient(135deg, var(--schedule-primary), var(--schedule-primary-light));
-      border: none;
-      color: white;
+    .scheduleLoadingSpinner {
+      width: 40px;
+      height: 40px;
+      border: 4px solid var(--bs-gray-300);
+      border-top: 4px solid var(--bs-primary);
       border-radius: 50%;
-      width: 3rem;
-      height: 3rem;
-      box-shadow: var(--schedule-shadow);
-      transition: all 0.3s ease;
+      animation: scheduleSpinAnimation 1s linear infinite;
     }
 
-    .theme-toggle:hover {
-      transform: scale(1.1) rotate(180deg);
-      box-shadow: var(--schedule-shadow-lg);
-    }
-
-    .btn-primary {
-      background: linear-gradient(135deg, var(--schedule-primary), var(--schedule-primary-light));
-      border: none;
-      border-radius: 0.75rem;
-      padding: 0.75rem 1.5rem;
-      font-weight: 600;
-      box-shadow: var(--schedule-shadow);
-      transition: all 0.3s ease;
-    }
-
-    .btn-primary:hover {
-      transform: translateY(-2px);
-      box-shadow: var(--schedule-shadow-lg);
-    }
-
-    .modal-header {
-      border-bottom: 1px solid var(--bs-border-color-translucent);
-      padding: 1.5rem;
-      background: linear-gradient(135deg, rgba(99, 102, 241, 0.05), rgba(165, 180, 252, 0.05));
-    }
-
-    .modal-body {
-      padding: 1.5rem;
-    }
-
-    .modal-footer {
-      border-top: 1px solid var(--bs-border-color-translucent);
-      padding: 1.5rem;
-      background: linear-gradient(135deg, rgba(99, 102, 241, 0.02), rgba(165, 180, 252, 0.02));
-    }
-
-    /* 移动端优化 */
-    @media (max-width: 768px) {
-      .schedule-table {
-        font-size: 0.75rem;
+    @keyframes scheduleSpinAnimation {
+      0% {
+        transform: rotate(0deg);
       }
 
-      .schedule-table th,
-      .schedule-table td {
-        padding: 0.5rem 0.25rem;
-      }
-
-      .date-cell {
-        min-width: 40px;
-        width: 40px;
-        font-size: 0.7rem;
-      }
-
-      .staff-badge {
-        font-size: 0.65rem;
-        padding: 0.2rem 0.4rem;
-        min-height: 1.2rem;
-      }
-
-      .modal-dialog {
-        margin: 0.25rem;
-      }
-
-      .schedule-table-container {
-        max-height: 50vh;
-      }
-
-      .staff-count {
-        font-size: 0.65rem;
+      100% {
+        transform: rotate(360deg);
       }
     }
 
-    /* 优雅的动画效果 */
-    .fade-in {
-      animation: fadeIn 0.5s ease-in-out;
+    .scheduleFadeIn {
+      animation: scheduleFadeInAnimation 0.5s ease-in;
     }
 
-    @keyframes fadeIn {
+    @keyframes scheduleFadeInAnimation {
       from {
         opacity: 0;
         transform: translateY(20px);
@@ -328,362 +384,232 @@
         transform: translateY(0);
       }
     }
-
-    .modal.show .modal-dialog {
-      animation: modalSlideIn 0.3s ease-out;
-    }
-
-    @keyframes modalSlideIn {
-      from {
-        opacity: 0;
-        transform: scale(0.9) translateY(-50px);
-      }
-
-      to {
-        opacity: 1;
-        transform: scale(1) translateY(0);
-      }
-    }
   </style>
 </head>
 
 <body>
-  <!-- 主题切换按钮 -->
-  <button class="btn theme-toggle" id="themeToggle" title="切换主题">
-    <i class="bi bi-sun-fill" id="themeIcon"></i>
-  </button>
+  <div class="container-fluid p-3">
+    <!-- 浮动控制按钮 -->
+    <div class="scheduleFloatingControls">
+      <button id="scheduleThemeToggle" class="scheduleControlBtn" title="切换主题">
+        <i class="bi bi-moon-fill"></i>
+      </button>
+    </div>
 
-  <!-- 主页面内容 -->
-  <div class="container-fluid py-5">
-    <div class="row justify-content-center">
-      <div class="col-12 col-md-8 col-lg-6">
-        <div class="text-center fade-in">
-          <h1 class="display-6 fw-bold mb-4">
-            <i class="bi bi-calendar-check text-primary me-2"></i>
-            排班管理系统
-          </h1>
-          <p class="lead text-muted mb-4">高效优雅的排班检查和管理工具</p>
-          <button type="button" class="btn btn-primary btn-lg" data-bs-toggle="modal" data-bs-target="#scheduleModal">
-            <i class="bi bi-table me-2"></i>
-            查看排班表
-          </button>
+    <div class="checkScheduleContainer scheduleFadeIn">
+      <div class="scheduleScrollWrapper" id="scheduleTableWrapper">
+        <div class="scheduleLoadingOverlay" id="scheduleLoadingOverlay">
+          <div class="scheduleLoadingSpinner"></div>
         </div>
+
+        <table class="checkAllScheduleTable" id="checkScheduleDataTable">
+          <thead>
+            <tr>
+              <th class="scheduleFixedCell">
+                <i class="bi bi-person-badge"></i>
+                员工姓名
+              </th>
+              <th>周一</th>
+              <th>周二</th>
+              <th>周三</th>
+              <th>周四</th>
+              <th>周五</th>
+              <th>周六</th>
+              <th>周日</th>
+              <th>本周时长</th>
+              <th>部门</th>
+              <th>状态</th>
+            </tr>
+          </thead>
+          <tbody id="checkScheduleTableBody">
+            <!-- 数据将通过JavaScript动态生成 -->
+          </tbody>
+        </table>
       </div>
     </div>
   </div>
 
-  <!-- 排班检查模态对话框 -->
-  <div class="modal fade schedule-modal" id="scheduleModal" tabindex="-1" aria-labelledby="scheduleModalLabel"
-    aria-hidden="true">
-    <div class="modal-dialog modal-xl modal-dialog-scrollable">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h1 class="modal-title fs-4 fw-bold" id="scheduleModalLabel">
-            <i class="bi bi-clipboard-check text-primary me-2"></i>
-            排班检查表
-          </h1>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="关闭"></button>
-        </div>
-        <div class="modal-body">
-          <div class="d-flex justify-content-between align-items-center mb-3">
-            <div class="text-muted">
-              <i class="bi bi-info-circle me-1"></i>
-              固定表头和首列，支持丝滑滚动
-            </div>
-            <button class="btn btn-outline-primary btn-sm" id="refreshData">
-              <i class="bi bi-arrow-clockwise me-1"></i>
-              刷新数据
-            </button>
-          </div>
-
-          <div class="schedule-table-container">
-            <div class="schedule-table-wrapper">
-              <table class="table schedule-table" id="scheduleTable">
-                <thead>
-                  <tr id="tableHeader">
-                    <th scope="col">日期</th>
-                  </tr>
-                </thead>
-                <tbody id="tableBody">
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-            <i class="bi bi-x-circle me-1"></i>
-            关闭
-          </button>
-          <button type="button" class="btn btn-success" id="exportData">
-            <i class="bi bi-download me-1"></i>
-            导出数据
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Bootstrap 5 JS -->
+  <!-- Bootstrap JS -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+  <!-- Swiper JS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Swiper/10.0.4/swiper-bundle.min.js"></script>
 
   <script>
-    // 示例数据
-    const scheduleData = {
-      "2025-5-1": {
-        "today_mandatory_schedule": [
-          "1A", "1B", "1C", "2A", "2B", "2C",
-          "3A", "3B", "3C", "S1", "S2", "N1", "N2"
-        ],
-        "today_planed_schedule": {
-          "叶荣": "S1", "闫昱萤": "S1", "戴梦莹": "S2", "曾小洲": "S2",
-          "杨星": "N1", "郑霞": "N2", "金小靖": "N2", "肖贵珍": "1B",
-          "付昱东": "1A", "黄文军": "1B", "黄发生": "2C", "杨鹏": "2B",
-          "余涛": "2A", "王吉锐": "2A", "唐晓燕": "3B", "余翔": "3A",
-          "谭林": "3A", "徐博": "3B", "康正樾": "1A", "张旭辉": "2C",
-          "廖中凡": "2B", "尹红科": "1B"
-        }
-      },
-      "2025-5-2": {
-        "today_mandatory_schedule": [
-          "1A", "1B", "1C", "2A", "2B", "2C",
-          "3A", "3B", "3C", "S1", "S2", "N1", "N2"
-        ],
-        "today_planed_schedule": {
-          "叶荣": "1A", "闫昱萤": "1B", "戴梦莹": "1C", "曾小洲": "2A",
-          "杨星": "2B", "郑霞": "2C", "金小靖": "3A", "肖贵珍": "3B",
-          "付昱东": "3C", "黄文军": "S1", "黄发生": "S2", "杨鹏": "N1",
-          "余涛": "N2", "王吉锐": "1A", "唐晓燕": "1B", "余翔": "2A"
-        }
-      },
-      "2025-5-3": {
-        "today_mandatory_schedule": [
-          "1A", "1B", "1C", "2A", "2B", "2C",
-          "3A", "3B", "3C", "S1", "S2", "N1", "N2"
-        ],
-        "today_planed_schedule": {
-          "唐晓燕": "1A", "余翔": "1B", "谭林": "2A", "徐博": "2B",
-          "康正樾": "3A", "张旭辉": "3B", "廖中凡": "S1", "尹红科": "S2",
-          "叶荣": "N1", "闫昱萤": "N2", "戴梦莹": "1C", "曾小洲": "3C"
-        }
-      },
-      "2025-5-4": {
-        "today_mandatory_schedule": [
-          "1A", "1B", "1C", "2A", "2B", "2C",
-          "3A", "3B", "3C", "S1", "S2", "N1", "N2"
-        ],
-        "today_planed_schedule": {
-          "杨星": "1A", "郑霞": "1B", "金小靖": "2A", "肖贵珍": "2B",
-          "付昱东": "3A", "黄文军": "3B", "黄发生": "S1", "杨鹏": "S2",
-          "余涛": "N1", "王吉锐": "N2"
-        }
-      },
-      "2025-5-5": {
-        "today_mandatory_schedule": [
-          "1A", "1B", "1C", "2A", "2B", "2C",
-          "3A", "3B", "3C", "S1", "S2", "N1", "N2"
-        ],
-        "today_planed_schedule": {
-          "叶荣": "2A", "闫昱萤": "2B", "戴梦莹": "2C", "曾小洲": "3A",
-          "杨星": "3B", "郑霞": "3C", "金小靖": "S1", "肖贵珍": "S2",
-          "付昱东": "N1", "黄文军": "N2", "黄发生": "1A", "杨鹏": "1B",
-          "余涛": "1C"
-        }
+    class CheckAllScheduleSystem {
+      constructor() {
+        this.scheduleData = this.generateScheduleData();
+        this.currentScheduleTheme = 'light';
+        this.initScheduleSystem();
       }
-    };
 
-    // 主题切换功能
-    const themeToggle = document.getElementById('themeToggle');
-    const themeIcon = document.getElementById('themeIcon');
-    const html = document.documentElement;
-
-    function updateThemeIcon() {
-      const currentTheme = html.getAttribute('data-bs-theme');
-      if (currentTheme === 'dark') {
-        themeIcon.className = 'bi bi-moon-stars-fill';
-      } else {
-        themeIcon.className = 'bi bi-sun-fill';
+      initScheduleSystem() {
+        this.renderScheduleTable();
+        this.bindScheduleEvents();
+        this.hideScheduleLoading();
       }
-    }
 
-    themeToggle.addEventListener('click', () => {
-      const currentTheme = html.getAttribute('data-bs-theme');
-      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-      html.setAttribute('data-bs-theme', newTheme);
-      updateThemeIcon();
-      localStorage.setItem('theme', newTheme);
-    });
+      generateScheduleData() {
+        const employees = [
+          '张三', '李四', '王五', '赵六', '孙七', '周八', '吴九', '郑十',
+          '陈一', '刘二', '杨三', '黄四', '朱五', '许六', '何七', '吕八'
+        ];
 
-    // 初始化主题
-    const savedTheme = localStorage.getItem('theme') || 'light';
-    html.setAttribute('data-bs-theme', savedTheme);
-    updateThemeIcon();
+        const departments = ['前台服务', '后勤保障', '技术支持', '安全保卫', '清洁维护'];
+        const shifts = ['早班', '中班', '晚班', '休假', '加班'];
+        const scheduleStatuses = ['正常', '缺勤', '调班', '请假'];
 
-    // 处理排班数据
-    function processScheduleData(data) {
-      const dates = Object.keys(data).sort();
-      const allShifts = new Set();
+        return employees.map((employee, index) => {
+          const weekSchedule = [];
+          let totalHours = 0;
 
-      // 收集所有班次类型
-      dates.forEach(date => {
-        data[date].today_mandatory_schedule.forEach(shift => {
-          allShifts.add(shift);
-        });
-      });
+          for (let i = 0; i < 7; i++) {
+            const shift = shifts[Math.floor(Math.random() * shifts.length)];
+            weekSchedule.push(shift);
 
-      const shifts = Array.from(allShifts).sort();
-
-      // 为每个日期和班次统计人员
-      const processedData = {};
-      dates.forEach(date => {
-        processedData[date] = {};
-        shifts.forEach(shift => {
-          processedData[date][shift] = [];
-        });
-
-        // 将人员分配到对应班次
-        Object.entries(data[date].today_planed_schedule).forEach(([person, shift]) => {
-          if (processedData[date][shift]) {
-            processedData[date][shift].push(person);
-          }
-        });
-      });
-
-      return { dates, shifts, processedData };
-    }
-
-    // 生成表格
-    function generateTable(data) {
-      const { dates, shifts, processedData } = processScheduleData(data);
-
-      const tableHeader = document.getElementById('tableHeader');
-      const tableBody = document.getElementById('tableBody');
-
-      // 清空现有内容
-      tableHeader.innerHTML = '<th scope="col">日期</th>';
-      tableBody.innerHTML = '';
-
-      // 生成表头
-      shifts.forEach(shift => {
-        const th = document.createElement('th');
-        th.scope = 'col';
-        th.textContent = shift;
-        tableHeader.appendChild(th);
-      });
-
-      // 生成表格行
-      dates.forEach(date => {
-        const row = document.createElement('tr');
-
-        // 日期列
-        const dateCell = document.createElement('td');
-        dateCell.className = 'date-cell';
-        const dateObj = new Date(date);
-        const month = (dateObj.getMonth() + 1).toString();
-        const day = dateObj.getDate().toString();
-        dateCell.innerHTML = `
-                    <div style="writing-mode: vertical-rl; text-orientation: mixed;">
-                        ${month}/${day}
-                    </div>
-                `;
-        row.appendChild(dateCell);
-
-        // 班次列
-        shifts.forEach(shift => {
-          const cell = document.createElement('td');
-          cell.className = 'schedule-cell';
-
-          const staff = processedData[date][shift];
-
-          if (staff.length > 0) {
-            // 人数统计
-            const countDiv = document.createElement('div');
-            countDiv.className = 'staff-count';
-            countDiv.innerHTML = `
-                            <i class="bi bi-people-fill"></i>
-                            <span>${staff.length}</span>
-                        `;
-            cell.appendChild(countDiv);
-
-            // 人员列表（竖排）
-            const listDiv = document.createElement('div');
-            listDiv.className = 'staff-list';
-            staff.forEach(person => {
-              const badge = document.createElement('div');
-              badge.className = 'staff-badge';
-              badge.textContent = person;
-              badge.title = person; // 添加悬停提示
-              listDiv.appendChild(badge);
-            });
-            cell.appendChild(listDiv);
-          } else {
-            const emptyDiv = document.createElement('div');
-            emptyDiv.className = 'empty-schedule';
-            emptyDiv.innerHTML = '<i class="bi bi-dash-circle"></i>';
-            cell.appendChild(emptyDiv);
+            // 计算工作时长
+            if (shift === '早班' || shift === '中班' || shift === '晚班') {
+              totalHours += 8;
+            } else if (shift === '加班') {
+              totalHours += 10;
+            }
           }
 
-          row.appendChild(cell);
+          return {
+            employee,
+            monday: weekSchedule[0],
+            tuesday: weekSchedule[1],
+            wednesday: weekSchedule[2],
+            thursday: weekSchedule[3],
+            friday: weekSchedule[4],
+            saturday: weekSchedule[5],
+            sunday: weekSchedule[6],
+            totalHours,
+            department: departments[Math.floor(Math.random() * departments.length)],
+            status: scheduleStatuses[Math.floor(Math.random() * scheduleStatuses.length)]
+          };
+        });
+      }
+
+      renderScheduleTable() {
+        const tbody = document.getElementById('checkScheduleTableBody');
+        tbody.innerHTML = '';
+
+        this.scheduleData.forEach(row => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+                        <td class="scheduleFixedCell">
+                            <i class="bi bi-person-circle me-2"></i>
+                            ${row.employee}
+                        </td>
+                        <td class="scheduleDataCell">${this.formatShiftCell(row.monday)}</td>
+                        <td class="scheduleDataCell">${this.formatShiftCell(row.tuesday)}</td>
+                        <td class="scheduleDataCell">${this.formatShiftCell(row.wednesday)}</td>
+                        <td class="scheduleDataCell">${this.formatShiftCell(row.thursday)}</td>
+                        <td class="scheduleDataCell">${this.formatShiftCell(row.friday)}</td>
+                        <td class="scheduleDataCell">${this.formatShiftCell(row.saturday)}</td>
+                        <td class="scheduleDataCell">${this.formatShiftCell(row.sunday)}</td>
+                        <td class="scheduleDataCell fw-bold ${row.totalHours >= 40 ? 'scheduleNormal' : 'scheduleAlert'}">
+                            <i class="bi bi-clock me-1"></i>
+                            ${row.totalHours}小时
+                        </td>
+                        <td>
+                            <i class="bi bi-building me-1"></i>
+                            ${row.department}
+                        </td>
+                        <td>
+                            <span class="badge scheduleStatusBadge bg-${this.getScheduleStatusColor(row.status)}">
+                                <i class="bi bi-${this.getScheduleStatusIcon(row.status)} me-1"></i>
+                                ${row.status}
+                            </span>
+                        </td>
+                    `;
+          tbody.appendChild(tr);
+        });
+      }
+
+      formatShiftCell(shift) {
+        const shiftIcons = {
+          '早班': 'sunrise',
+          '中班': 'sun',
+          '晚班': 'moon',
+          '休假': 'house',
+          '加班': 'clock-history'
+        };
+
+        return `<i class="bi bi-${shiftIcons[shift] || 'circle'} me-1"></i>${shift}`;
+      }
+
+      getScheduleStatusColor(status) {
+        const colors = {
+          '正常': 'success',
+          '缺勤': 'danger',
+          '调班': 'warning',
+          '请假': 'info'
+        };
+        return colors[status] || 'secondary';
+      }
+
+      getScheduleStatusIcon(status) {
+        const icons = {
+          '正常': 'check-circle-fill',
+          '缺勤': 'x-circle-fill',
+          '调班': 'arrow-left-right',
+          '请假': 'calendar-x-fill'
+        };
+        return icons[status] || 'circle-fill';
+      }
+
+      bindScheduleEvents() {
+        // 主题切换
+        document.getElementById('scheduleThemeToggle').addEventListener('click', () => {
+          this.toggleScheduleTheme();
         });
 
-        tableBody.appendChild(row);
-      });
-    }
+        // 添加表格滚动效果
+        const wrapper = document.getElementById('scheduleTableWrapper');
+        wrapper.addEventListener('scroll', () => {
+          this.handleScheduleScroll();
+        });
+      }
 
-    // 刷新数据按钮
-    document.getElementById('refreshData').addEventListener('click', () => {
-      generateTable(scheduleData);
+      toggleScheduleTheme() {
+        const html = document.documentElement;
+        const themeToggle = document.getElementById('scheduleThemeToggle');
+        const icon = themeToggle.querySelector('i');
 
-      // 显示成功提示
-      const button = document.getElementById('refreshData');
-      const originalHTML = button.innerHTML;
-      button.innerHTML = '<i class="bi bi-check-circle-fill me-1"></i>已刷新';
-      button.classList.remove('btn-outline-primary');
-      button.classList.add('btn-success');
+        if (this.currentScheduleTheme === 'light') {
+          html.setAttribute('data-bs-theme', 'dark');
+          icon.className = 'bi bi-sun-fill';
+          this.currentScheduleTheme = 'dark';
+        } else {
+          html.setAttribute('data-bs-theme', 'light');
+          icon.className = 'bi bi-moon-fill';
+          this.currentScheduleTheme = 'light';
+        }
+      }
 
-      setTimeout(() => {
-        button.innerHTML = originalHTML;
-        button.classList.remove('btn-success');
-        button.classList.add('btn-outline-primary');
-      }, 1500);
-    });
+      handleScheduleScroll() {
+        const wrapper = document.getElementById('scheduleTableWrapper');
+        const scrollLeft = wrapper.scrollLeft;
+        const scrollTop = wrapper.scrollTop;
 
-    // 导出数据功能
-    document.getElementById('exportData').addEventListener('click', () => {
-      const dataStr = JSON.stringify(scheduleData, null, 2);
-      const dataBlob = new Blob([dataStr], { type: 'application/json' });
-      const url = URL.createObjectURL(dataBlob);
+        if (scrollLeft > 0 || scrollTop > 0) {
+          wrapper.classList.add('scrolled');
+        } else {
+          wrapper.classList.remove('scrolled');
+        }
+      }
 
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = '排班数据_' + new Date().toISOString().split('T')[0] + '.json';
-      link.click();
-
-      URL.revokeObjectURL(url);
-    });
-
-    // 丝滑滚动增强
-    function enhanceScrolling() {
-      const wrapper = document.querySelector('.schedule-table-wrapper');
-      if (wrapper) {
-        wrapper.style.scrollBehavior = 'smooth';
-
-        // 添加滚动惯性（如果支持）
-        wrapper.style.webkitOverflowScrolling = 'touch';
-        wrapper.style.overflowScrolling = 'touch';
+      hideScheduleLoading() {
+        setTimeout(() => {
+          document.getElementById('scheduleLoadingOverlay').style.display = 'none';
+        }, 500);
       }
     }
 
-    // 初始化表格
+    // 初始化排班检查系统
     document.addEventListener('DOMContentLoaded', () => {
-      generateTable(scheduleData);
-      enhanceScrolling();
-    });
-
-    // 模态框显示时刷新表格和滚动增强
-    document.getElementById('scheduleModal').addEventListener('shown.bs.modal', () => {
-      generateTable(scheduleData);
-      enhanceScrolling();
+      new CheckAllScheduleSystem();
     });
   </script>
 </body>

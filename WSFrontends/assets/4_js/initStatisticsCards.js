@@ -96,7 +96,7 @@ class initStatisticsCards {
     // 创建单个卡片
     _createUserCard(user) {
         return `
-                <div class="col-12 col-xl-6 mb-4 user-card-wrapper" data-user-name="${user.name}">
+                <div class="col-12 col-xl-6 mb-4 user-card-wrapper" data-user-name="${user.name}" style="max-width: 600px">
                     <div class="user-card p-4">
                         <!-- 用户基本信息 -->
                         <div class="d-flex mb-4">
