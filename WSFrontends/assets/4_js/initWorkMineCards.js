@@ -137,7 +137,7 @@ class InitMineCards {
                     type: 'icons' // 使用图标而不是SVG
                 },
                 viewMode: 'months',
-                theme: localStorage.getItem('theme'),
+                theme: 'auto',
                 components: {
                     calendar: true,
                     decades: true,
