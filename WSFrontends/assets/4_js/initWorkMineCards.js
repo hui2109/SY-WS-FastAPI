@@ -6,7 +6,8 @@ class InitMineCards {
         this.initDatePicker();
         this.initSwiper();
         this.bindClick();
-        this._getBanTypeInfo().then(r => console.log(r));
+        this._getBanTypeInfo().then(r => {
+        });
     }
 
     init() {
@@ -79,7 +80,6 @@ class InitMineCards {
             }
         } catch (error) {
             debugger;
-            alert('未知错误！');
             console.error('error!!!', error);
         }
     }
@@ -294,7 +294,7 @@ class InitMineCards {
                 }
             })
         }).catch(error => {
-            alert('未知错误！');
+            debugger;
             console.error(error);
         })
     }

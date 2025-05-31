@@ -5,7 +5,8 @@ class InitTables {
         this._updateDateLabel(this.today);
         this.initDatePicker();
         this.bindClick();
-        this._getBanTypeInfo().then(r => console.log(r));
+        this._getBanTypeInfo().then(r => {
+        });
     }
 
     init() {
@@ -78,7 +79,6 @@ class InitTables {
             }
         } catch (error) {
             debugger;
-            alert('未知错误！');
             console.error('error!!!', error);
         }
     }
@@ -242,7 +242,7 @@ class InitTables {
                 }
             })
         }).catch(error => {
-            alert('未知错误！');
+            debugger;
             console.error(error);
         })
     }

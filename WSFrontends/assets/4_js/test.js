@@ -331,7 +331,6 @@ class InitVacationSettingCards {
             }
         } catch (error) {
             debugger;
-            alert('未知错误！');
             console.error('error!!!', error);
         }
     }

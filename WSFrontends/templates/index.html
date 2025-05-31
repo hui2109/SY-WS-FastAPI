@@ -231,7 +231,7 @@
 
   <!-- 主要内容区域 -->
   <main class="container">
-    <div class="main-content">
+    <div class="main-content p-2">
       <div class="tab-content" id="navContent">
         <!-- 我的排班 -->
         <div class="tab-pane fade show active" id="work-mine">
@@ -298,20 +298,23 @@
         <div class="tab-pane fade" id="work-all">
           <div class="fade-in">
             <div id="work-content-all" class="content-section">
-              <div class="p-3 border border-secondary border-opacity-75 border-2 rounded-3">
+              <!-- 加了border太丑 删了 -->
+              <div class="p-1 border-secondary border-opacity-75 border-2 rounded-3">
                 <!-- 日期切换组件 -->
                 <div class="row">
                   <div class="col-lg-4"></div>
                   <div class="col-lg-4">
                     <div class="d-flex justify-content-center align-items-center">
-                      <button type="button" class="btn btn-success btn-sm pre-month me-2">上一月</button>
+                      <button type="button" class="btn btn-success btn-sm pre-month me-2"
+                        style="font-size: 12px;">上一月</button>
                       <div id="datetimepicker1" data-td-target-input="nearest" data-td-target-toggle="nearest">
                         <span class="input-group-text" data-td-target="#datetimepicker1"
                           data-td-toggle="datetimepicker">
-                          <span class="mounianmouyue">某年某月</span>
+                          <span class="mounianmouyue" style="font-size: 12px;">某年某月</span>
                         </span>
                       </div>
-                      <button type="button" class="btn btn-success btn-sm next-month ms-2">下一月</button>
+                      <button type="button" class="btn btn-success btn-sm next-month ms-2"
+                        style="font-size: 12px;">下一月</button>
                     </div>
                   </div>
                   <div class="col-lg-4"></div>
@@ -454,36 +457,56 @@
         <div class="tab-pane fade" id="paiban-all">
           <div class="fade-in">
             <div id="paiban-content-all" class="content-section">
-              <div class="container">
-                <div class="p-3 border border-secondary border-opacity-75 border-2 rounded-3">
-                  <div class="d-flex align-items-center justify-content-center gap-3">
-                    <!-- 日期切换组件 -->
-                    <div id="datetimepicker3" data-td-target-input="nearest" data-td-target-toggle="nearest">
-                      <span data-td-target="#datetimepicker3" data-td-toggle="datetimepicker">
-                        <button type="button" class="btn btn-primary btn-sm mounianmouyue">某年某月</button>
-                      </span>
-                    </div>
-
-                    <!-- 自动排班组件 -->
-                    <button type="button" class="btn btn-success btn-sm" id="autoScheduleAll">自动排班</button>
-
-                    <!-- 显示上周期排班 -->
-                    <button type="button" class="btn btn-sm border border-warning"
-                      id="showLastSchedule">显示上周期排班</button>
-
-                    <!-- 清空排班 -->
-                    <button type="button" class="btn btn-danger btn-sm" id="clearAllSchedule">清空排班</button>
+              <!-- 加了border太丑 删了 -->
+              <div class="p-1 border-secondary border-opacity-75 border-2 rounded-3">
+                <!-- 工具栏 -->
+                <div class="d-flex align-items-center justify-content-center gap-1">
+                  <!-- 日期切换组件 -->
+                  <div id="datetimepicker3" data-td-target-input="nearest" data-td-target-toggle="nearest">
+                    <span data-td-target="#datetimepicker3" data-td-toggle="datetimepicker">
+                      <button type="button" class="btn btn-primary btn-sm mounianmouyue"
+                        style="font-size: 12px;">某年某月</button>
+                    </span>
                   </div>
 
-                  <!-- 表格本体 -->
-                  <div class="table-container m-auto mt-3 table-responsive">
-                    <table class="paiban-table m-auto table table-bordered">
-                      <thead>
-                      </thead>
-                      <tbody>
-                      </tbody>
-                    </table>
+                  <!-- 自动排班组件 -->
+                  <button type="button" class="btn btn-success btn-sm" id="autoScheduleAll"
+                    style="font-size: 12px;">自动排班</button>
+
+                  <!-- 显示上周期排班 -->
+                  <button type="button" class="btn btn-sm border border-warning" id="showLastSchedule"
+                    style="font-size: 12px;">显示上周期</button>
+
+                  <!-- 删除一个排班 -->
+                  <button type="button" class="btn btn-sm border border-warning" id="clearOneSchedule"
+                    style="font-size: 12px;"><i class="bi bi-eraser-fill"></i></button>
+
+                  <div class="dropdown" id="paibanToolBox">
+                    <button class="btn btn-sm border border-secondary text-secondary dropdown-toggle" type="button"
+                      data-bs-toggle="dropdown" aria-expanded="false">
+                      <i class="bi bi-wrench-adjustable-circle"></i>
+                    </button>
+                    <ul class="dropdown-menu">
+                      <li>
+                        <!-- 清空排班 -->
+                        <a class="dropdown-item" id="clearAllSchedule" style="font-size: 12px;">清空排班</a>
+                      </li>
+                      <li>
+                        <!-- 检查排班 -->
+                        <a class="dropdown-item" id="checkAllSchedule" style="font-size: 12px;">检查排班</a>
+                      </li>
+                    </ul>
                   </div>
+                </div>
+
+                <!-- 表格本体 -->
+                <div class="table-container m-auto mt-3 table-responsive">
+                  <table class="paiban-table m-auto table table-bordered">
+                    <thead>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                  </table>
                 </div>
               </div>
             </div>
@@ -914,7 +937,7 @@
 
   <!-- 排班对话框 -->
   <div class="modal fade" id="paibanModal" tabindex="-1" aria-labelledby="paibanModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-dialog-centered" style="width: 345px; margin: auto; font-size: 14px;">
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title" id="paibanModalLabel">排班</h5>
@@ -1176,7 +1199,7 @@
   <!-- 删除所有排班 确认 对话框 -->
   <div class="modal fade" id="clearAllScheduleModal" tabindex="-1" aria-labelledby="deleteAllScheduleLabel"
     aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-sm modal-dialog-centered" style="width: 348px; margin: auto; font-size: 15px;">
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title" id="deleteAllScheduleLabel">是否删除本月所有排班？</h5>
@@ -1235,6 +1258,10 @@
     </div>
   </div>
 
+  <!-- 自定义跟随光标元素 -->
+  <div id="customCursor" class="custom-cursor hidden">
+    <i class="bi bi-eraser-fill"></i>
+  </div>
 
   <script src="/WSFrontends/assets/plugin/node_modules/bootstrap/dist/js/bootstrap.bundle.js"></script>
   <script src="/WSFrontends/assets/plugin/node_modules/@popperjs/core/dist/umd/popper.min.js"></script>

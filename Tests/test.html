@@ -1,188 +1,691 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh-CN" data-bs-theme="light">
 
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>优化的模态框内容</title>
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.1/font/bootstrap-icons.min.css"
+  <title>排班检查系统</title>
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Bootstrap Icons -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.0/font/bootstrap-icons.min.css"
     rel="stylesheet">
+
   <style>
-    .info-card {
-      border: 1px solid #e9ecef;
-      border-radius: 8px;
-      background: #f8f9fa;
+    :root {
+      --bs-border-radius: 1rem;
+      --schedule-primary: #6366f1;
+      --schedule-primary-light: #a5b4fc;
+      --schedule-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+      --schedule-shadow-lg: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
     }
 
-    .info-item {
-      border-bottom: 1px solid #e9ecef;
+    [data-bs-theme="dark"] {
+      --schedule-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.2);
+      --schedule-shadow-lg: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
     }
 
-    .info-item:last-child {
-      border-bottom: none;
+    /* 自定义滚动条 */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
     }
 
-    .info-label {
-      font-weight: 600;
-      color: #495057;
-      min-width: 90px;
+    ::-webkit-scrollbar-track {
+      background: var(--bs-light);
+      border-radius: 4px;
     }
 
-    .info-value {
-      color: #212529;
+    ::-webkit-scrollbar-thumb {
+      background: linear-gradient(45deg, var(--schedule-primary), var(--schedule-primary-light));
+      border-radius: 4px;
+      transition: all 0.3s ease;
     }
 
-    .section-title {
-      font-weight: 700;
-      color: #0d6efd;
-      border-left: 4px solid #0d6efd;
-      padding-left: 12px;
-      margin-bottom: 16px;
+    ::-webkit-scrollbar-thumb:hover {
+      background: linear-gradient(45deg, var(--schedule-primary-light), var(--schedule-primary));
+      transform: scale(1.1);
     }
 
-    .shift-card {
-      border: 1px solid #dee2e6;
-      border-radius: 8px;
-      transition: all 0.2s ease;
-      background: white;
+    [data-bs-theme="dark"] ::-webkit-scrollbar-track {
+      background: var(--bs-dark);
     }
 
-    .shift-card:hover {
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-      transform: translateY(-1px);
+    /* Firefox 滚动条 */
+    * {
+      scrollbar-width: thin;
+      scrollbar-color: var(--schedule-primary) var(--bs-light);
     }
 
-    .shift-header {
-      background: linear-gradient(135deg, #0d6efd, #6610f2);
+    [data-bs-theme="dark"] * {
+      scrollbar-color: var(--schedule-primary) var(--bs-dark);
+    }
+
+    .schedule-modal .modal-content {
+      border: none;
+      border-radius: var(--bs-border-radius);
+      box-shadow: var(--schedule-shadow-lg);
+      backdrop-filter: blur(20px);
+    }
+
+    .modal-backdrop {
+      backdrop-filter: blur(8px);
+    }
+
+    /* 固定表格容器 */
+    .schedule-table-container {
+      position: relative;
+      max-height: 60vh;
+      border: 1px solid var(--bs-border-color);
+      border-radius: var(--bs-border-radius);
+      overflow: hidden;
+      box-shadow: var(--schedule-shadow);
+    }
+
+    .schedule-table-wrapper {
+      overflow: auto;
+      scroll-behavior: smooth;
+      position: relative;
+    }
+
+    .schedule-table {
+      margin: 0;
+      border-collapse: separate;
+      border-spacing: 0;
+      font-size: 0.875rem;
+      white-space: nowrap;
+    }
+
+    /* 固定表头 */
+    .schedule-table thead th {
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      background: linear-gradient(135deg, var(--schedule-primary), var(--schedule-primary-light));
       color: white;
       font-weight: 600;
+      border: none;
+      padding: 1rem 0.75rem;
+      text-align: center;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     }
 
-    .time-badge {
-      background: #e7f3ff;
-      color: #0d6efd;
+    /* 固定第一列 */
+    .date-cell {
+      position: sticky;
+      left: 0;
+      z-index: 20;
+      background: var(--bs-light);
+      font-weight: 600;
+      text-align: center;
+      border-right: 2px solid var(--bs-border-color);
+      box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
+      min-width: 60px;
+      width: 60px;
+    }
+
+    /* 固定左上角单元格 */
+    .schedule-table thead th:first-child {
+      position: sticky;
+      left: 0;
+      z-index: 40;
+      background: linear-gradient(135deg, #374151, #6b7280);
+      border-right: 2px solid rgba(255, 255, 255, 0.2);
+      box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.15);
+    }
+
+    [data-bs-theme="dark"] .date-cell {
+      background: var(--bs-dark);
+    }
+
+    [data-bs-theme="dark"] .schedule-table thead th:first-child {
+      background: linear-gradient(135deg, #1f2937, #374151);
+    }
+
+    .schedule-table td {
+      padding: 0.75rem;
+      border-bottom: 1px solid var(--bs-border-color-translucent);
+      border-right: 1px solid var(--bs-border-color-translucent);
+      vertical-align: top;
+      min-width: 100px;
+      width: 100px;
+    }
+
+    .schedule-cell {
+      background: var(--bs-white);
+      transition: all 0.3s ease;
+    }
+
+    .schedule-cell:hover {
+      background: var(--bs-light);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    [data-bs-theme="dark"] .schedule-cell {
+      background: var(--bs-dark);
+    }
+
+    [data-bs-theme="dark"] .schedule-cell:hover {
+      background: var(--bs-gray-800);
+    }
+
+    .staff-count {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.25rem;
+      font-weight: 600;
+      color: var(--schedule-primary);
+      margin-bottom: 0.5rem;
+      font-size: 0.75rem;
+    }
+
+    /* 竖排人员名单 */
+    .staff-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+      align-items: center;
+    }
+
+    .staff-badge {
+      background: linear-gradient(135deg, var(--bs-light), var(--bs-gray-100));
+      color: var(--bs-body-color);
+      padding: 0.25rem 0.5rem;
+      border-radius: 0.5rem;
+      font-size: 0.7rem;
       font-weight: 500;
+      border: 1px solid var(--bs-border-color);
+      writing-mode: vertical-rl;
+      text-orientation: mixed;
+      min-height: 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+      cursor: default;
     }
 
-    .description-text {
-      background: #fff3cd;
-      color: #856404;
-      border-left: 3px solid #ffc107;
+    .staff-badge:hover {
+      background: linear-gradient(135deg, var(--schedule-primary-light), var(--schedule-primary));
+      color: white;
+      transform: scale(1.05);
+    }
+
+    [data-bs-theme="dark"] .staff-badge {
+      background: linear-gradient(135deg, var(--bs-gray-800), var(--bs-gray-700));
+      border-color: var(--bs-gray-600);
+    }
+
+    .empty-schedule {
+      color: var(--bs-text-muted);
+      text-align: center;
+      padding: 1rem 0;
+      opacity: 0.6;
+    }
+
+    .theme-toggle {
+      position: fixed;
+      top: 1rem;
+      right: 1rem;
+      z-index: 1060;
+      background: linear-gradient(135deg, var(--schedule-primary), var(--schedule-primary-light));
+      border: none;
+      color: white;
+      border-radius: 50%;
+      width: 3rem;
+      height: 3rem;
+      box-shadow: var(--schedule-shadow);
+      transition: all 0.3s ease;
+    }
+
+    .theme-toggle:hover {
+      transform: scale(1.1) rotate(180deg);
+      box-shadow: var(--schedule-shadow-lg);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--schedule-primary), var(--schedule-primary-light));
+      border: none;
+      border-radius: 0.75rem;
+      padding: 0.75rem 1.5rem;
+      font-weight: 600;
+      box-shadow: var(--schedule-shadow);
+      transition: all 0.3s ease;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--schedule-shadow-lg);
+    }
+
+    .modal-header {
+      border-bottom: 1px solid var(--bs-border-color-translucent);
+      padding: 1.5rem;
+      background: linear-gradient(135deg, rgba(99, 102, 241, 0.05), rgba(165, 180, 252, 0.05));
+    }
+
+    .modal-body {
+      padding: 1.5rem;
+    }
+
+    .modal-footer {
+      border-top: 1px solid var(--bs-border-color-translucent);
+      padding: 1.5rem;
+      background: linear-gradient(135deg, rgba(99, 102, 241, 0.02), rgba(165, 180, 252, 0.02));
+    }
+
+    /* 移动端优化 */
+    @media (max-width: 768px) {
+      .schedule-table {
+        font-size: 0.75rem;
+      }
+
+      .schedule-table th,
+      .schedule-table td {
+        padding: 0.5rem 0.25rem;
+      }
+
+      .date-cell {
+        min-width: 40px;
+        width: 40px;
+        font-size: 0.7rem;
+      }
+
+      .staff-badge {
+        font-size: 0.65rem;
+        padding: 0.2rem 0.4rem;
+        min-height: 1.2rem;
+      }
+
+      .modal-dialog {
+        margin: 0.25rem;
+      }
+
+      .schedule-table-container {
+        max-height: 50vh;
+      }
+
+      .staff-count {
+        font-size: 0.65rem;
+      }
+    }
+
+    /* 优雅的动画效果 */
+    .fade-in {
+      animation: fadeIn 0.5s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .modal.show .modal-dialog {
+      animation: modalSlideIn 0.3s ease-out;
+    }
+
+    @keyframes modalSlideIn {
+      from {
+        opacity: 0;
+        transform: scale(0.9) translateY(-50px);
+      }
+
+      to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+      }
     }
   </style>
 </head>
 
-<body class="bg-light p-4">
-  <div class="container">
-    <!-- 模拟模态框效果 -->
-    <div class="card shadow-lg" style="max-width: 600px; margin: 0 auto;">
-      <div class="card-header bg-primary text-white">
-        <h5 class="card-title mb-0">
-          <i class="bi bi-info-circle me-2"></i>详细信息
-        </h5>
-      </div>
+<body>
+  <!-- 主题切换按钮 -->
+  <button class="btn theme-toggle" id="themeToggle" title="切换主题">
+    <i class="bi bi-sun-fill" id="themeIcon"></i>
+  </button>
 
-      <div id="bantypeInfoContent" class="card-body p-4">
-        <!-- 基础信息部分 -->
-        <div class="section-title">
-          <i class="bi bi-person-fill me-2"></i>基础信息
-        </div>
-
-        <div class="info-card p-3 mb-4">
-          <div class="row g-0">
-            <div class="col-12 info-item py-2">
-              <div class="d-flex align-items-center">
-                <div class="info-label">
-                  <i class="bi bi-person me-1"></i>姓名：
-                </div>
-                <div class="info-value">张旭辉</div>
-              </div>
-            </div>
-            <div class="col-12 info-item py-2">
-              <div class="d-flex align-items-center">
-                <div class="info-label">
-                  <i class="bi bi-calendar3 me-1"></i>日期：
-                </div>
-                <div class="info-value">2025年5月21日（周三）</div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- 班种信息部分 -->
-        <div class="section-title">
-          <i class="bi bi-clock-fill me-2"></i>班种信息
-        </div>
-
-        <div class="row g-3">
-          <!-- 第一个班种 -->
-          <div class="col-12">
-            <div class="shift-card">
-              <div class="shift-header px-3 py-2 rounded-top">
-                <i class="bi bi-briefcase me-2"></i>班种：1A
-              </div>
-              <div class="card-body p-3">
-                <div class="row g-2">
-                  <div class="col-sm-6">
-                    <div class="d-flex align-items-center mb-2">
-                      <i class="bi bi-play-circle text-success me-2"></i>
-                      <span class="info-label me-2">开始：</span>
-                      <span class="badge time-badge">08:00</span>
-                    </div>
-                  </div>
-                  <div class="col-sm-6">
-                    <div class="d-flex align-items-center mb-2">
-                      <i class="bi bi-stop-circle text-danger me-2"></i>
-                      <span class="info-label me-2">结束：</span>
-                      <span class="badge time-badge">13:00</span>
-                    </div>
-                  </div>
-                </div>
-                <div class="description-text p-2 rounded mt-2">
-                  <i class="bi bi-chat-square-text me-1"></i>
-                  <strong>描述：</strong>哈哈哈哈
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- 第二个班种 -->
-          <div class="col-12">
-            <div class="shift-card">
-              <div class="shift-header px-3 py-2 rounded-top">
-                <i class="bi bi-briefcase me-2"></i>班种：OAF
-              </div>
-              <div class="card-body p-3">
-                <div class="row g-2">
-                  <div class="col-sm-6">
-                    <div class="d-flex align-items-center mb-2">
-                      <i class="bi bi-play-circle text-success me-2"></i>
-                      <span class="info-label me-2">开始：</span>
-                      <span class="badge time-badge">13:00</span>
-                    </div>
-                  </div>
-                  <div class="col-sm-6">
-                    <div class="d-flex align-items-center mb-2">
-                      <i class="bi bi-stop-circle text-danger me-2"></i>
-                      <span class="info-label me-2">结束：</span>
-                      <span class="badge time-badge">15:00</span>
-                    </div>
-                  </div>
-                </div>
-                <div class="description-text p-2 rounded mt-2">
-                  <i class="bi bi-chat-square-text me-1"></i>
-                  <strong>描述：</strong>加班
-                </div>
-              </div>
-            </div>
-          </div>
+  <!-- 主页面内容 -->
+  <div class="container-fluid py-5">
+    <div class="row justify-content-center">
+      <div class="col-12 col-md-8 col-lg-6">
+        <div class="text-center fade-in">
+          <h1 class="display-6 fw-bold mb-4">
+            <i class="bi bi-calendar-check text-primary me-2"></i>
+            排班管理系统
+          </h1>
+          <p class="lead text-muted mb-4">高效优雅的排班检查和管理工具</p>
+          <button type="button" class="btn btn-primary btn-lg" data-bs-toggle="modal" data-bs-target="#scheduleModal">
+            <i class="bi bi-table me-2"></i>
+            查看排班表
+          </button>
         </div>
       </div>
     </div>
   </div>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+  <!-- 排班检查模态对话框 -->
+  <div class="modal fade schedule-modal" id="scheduleModal" tabindex="-1" aria-labelledby="scheduleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-4 fw-bold" id="scheduleModalLabel">
+            <i class="bi bi-clipboard-check text-primary me-2"></i>
+            排班检查表
+          </h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="关闭"></button>
+        </div>
+        <div class="modal-body">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <div class="text-muted">
+              <i class="bi bi-info-circle me-1"></i>
+              固定表头和首列，支持丝滑滚动
+            </div>
+            <button class="btn btn-outline-primary btn-sm" id="refreshData">
+              <i class="bi bi-arrow-clockwise me-1"></i>
+              刷新数据
+            </button>
+          </div>
+
+          <div class="schedule-table-container">
+            <div class="schedule-table-wrapper">
+              <table class="table schedule-table" id="scheduleTable">
+                <thead>
+                  <tr id="tableHeader">
+                    <th scope="col">日期</th>
+                  </tr>
+                </thead>
+                <tbody id="tableBody">
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+            <i class="bi bi-x-circle me-1"></i>
+            关闭
+          </button>
+          <button type="button" class="btn btn-success" id="exportData">
+            <i class="bi bi-download me-1"></i>
+            导出数据
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap 5 JS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+
+  <script>
+    // 示例数据
+    const scheduleData = {
+      "2025-5-1": {
+        "today_mandatory_schedule": [
+          "1A", "1B", "1C", "2A", "2B", "2C",
+          "3A", "3B", "3C", "S1", "S2", "N1", "N2"
+        ],
+        "today_planed_schedule": {
+          "叶荣": "S1", "闫昱萤": "S1", "戴梦莹": "S2", "曾小洲": "S2",
+          "杨星": "N1", "郑霞": "N2", "金小靖": "N2", "肖贵珍": "1B",
+          "付昱东": "1A", "黄文军": "1B", "黄发生": "2C", "杨鹏": "2B",
+          "余涛": "2A", "王吉锐": "2A", "唐晓燕": "3B", "余翔": "3A",
+          "谭林": "3A", "徐博": "3B", "康正樾": "1A", "张旭辉": "2C",
+          "廖中凡": "2B", "尹红科": "1B"
+        }
+      },
+      "2025-5-2": {
+        "today_mandatory_schedule": [
+          "1A", "1B", "1C", "2A", "2B", "2C",
+          "3A", "3B", "3C", "S1", "S2", "N1", "N2"
+        ],
+        "today_planed_schedule": {
+          "叶荣": "1A", "闫昱萤": "1B", "戴梦莹": "1C", "曾小洲": "2A",
+          "杨星": "2B", "郑霞": "2C", "金小靖": "3A", "肖贵珍": "3B",
+          "付昱东": "3C", "黄文军": "S1", "黄发生": "S2", "杨鹏": "N1",
+          "余涛": "N2", "王吉锐": "1A", "唐晓燕": "1B", "余翔": "2A"
+        }
+      },
+      "2025-5-3": {
+        "today_mandatory_schedule": [
+          "1A", "1B", "1C", "2A", "2B", "2C",
+          "3A", "3B", "3C", "S1", "S2", "N1", "N2"
+        ],
+        "today_planed_schedule": {
+          "唐晓燕": "1A", "余翔": "1B", "谭林": "2A", "徐博": "2B",
+          "康正樾": "3A", "张旭辉": "3B", "廖中凡": "S1", "尹红科": "S2",
+          "叶荣": "N1", "闫昱萤": "N2", "戴梦莹": "1C", "曾小洲": "3C"
+        }
+      },
+      "2025-5-4": {
+        "today_mandatory_schedule": [
+          "1A", "1B", "1C", "2A", "2B", "2C",
+          "3A", "3B", "3C", "S1", "S2", "N1", "N2"
+        ],
+        "today_planed_schedule": {
+          "杨星": "1A", "郑霞": "1B", "金小靖": "2A", "肖贵珍": "2B",
+          "付昱东": "3A", "黄文军": "3B", "黄发生": "S1", "杨鹏": "S2",
+          "余涛": "N1", "王吉锐": "N2"
+        }
+      },
+      "2025-5-5": {
+        "today_mandatory_schedule": [
+          "1A", "1B", "1C", "2A", "2B", "2C",
+          "3A", "3B", "3C", "S1", "S2", "N1", "N2"
+        ],
+        "today_planed_schedule": {
+          "叶荣": "2A", "闫昱萤": "2B", "戴梦莹": "2C", "曾小洲": "3A",
+          "杨星": "3B", "郑霞": "3C", "金小靖": "S1", "肖贵珍": "S2",
+          "付昱东": "N1", "黄文军": "N2", "黄发生": "1A", "杨鹏": "1B",
+          "余涛": "1C"
+        }
+      }
+    };
+
+    // 主题切换功能
+    const themeToggle = document.getElementById('themeToggle');
+    const themeIcon = document.getElementById('themeIcon');
+    const html = document.documentElement;
+
+    function updateThemeIcon() {
+      const currentTheme = html.getAttribute('data-bs-theme');
+      if (currentTheme === 'dark') {
+        themeIcon.className = 'bi bi-moon-stars-fill';
+      } else {
+        themeIcon.className = 'bi bi-sun-fill';
+      }
+    }
+
+    themeToggle.addEventListener('click', () => {
+      const currentTheme = html.getAttribute('data-bs-theme');
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      html.setAttribute('data-bs-theme', newTheme);
+      updateThemeIcon();
+      localStorage.setItem('theme', newTheme);
+    });
+
+    // 初始化主题
+    const savedTheme = localStorage.getItem('theme') || 'light';
+    html.setAttribute('data-bs-theme', savedTheme);
+    updateThemeIcon();
+
+    // 处理排班数据
+    function processScheduleData(data) {
+      const dates = Object.keys(data).sort();
+      const allShifts = new Set();
+
+      // 收集所有班次类型
+      dates.forEach(date => {
+        data[date].today_mandatory_schedule.forEach(shift => {
+          allShifts.add(shift);
+        });
+      });
+
+      const shifts = Array.from(allShifts).sort();
+
+      // 为每个日期和班次统计人员
+      const processedData = {};
+      dates.forEach(date => {
+        processedData[date] = {};
+        shifts.forEach(shift => {
+          processedData[date][shift] = [];
+        });
+
+        // 将人员分配到对应班次
+        Object.entries(data[date].today_planed_schedule).forEach(([person, shift]) => {
+          if (processedData[date][shift]) {
+            processedData[date][shift].push(person);
+          }
+        });
+      });
+
+      return { dates, shifts, processedData };
+    }
+
+    // 生成表格
+    function generateTable(data) {
+      const { dates, shifts, processedData } = processScheduleData(data);
+
+      const tableHeader = document.getElementById('tableHeader');
+      const tableBody = document.getElementById('tableBody');
+
+      // 清空现有内容
+      tableHeader.innerHTML = '<th scope="col">日期</th>';
+      tableBody.innerHTML = '';
+
+      // 生成表头
+      shifts.forEach(shift => {
+        const th = document.createElement('th');
+        th.scope = 'col';
+        th.textContent = shift;
+        tableHeader.appendChild(th);
+      });
+
+      // 生成表格行
+      dates.forEach(date => {
+        const row = document.createElement('tr');
+
+        // 日期列
+        const dateCell = document.createElement('td');
+        dateCell.className = 'date-cell';
+        const dateObj = new Date(date);
+        const month = (dateObj.getMonth() + 1).toString();
+        const day = dateObj.getDate().toString();
+        dateCell.innerHTML = `
+                    <div style="writing-mode: vertical-rl; text-orientation: mixed;">
+                        ${month}/${day}
+                    </div>
+                `;
+        row.appendChild(dateCell);
+
+        // 班次列
+        shifts.forEach(shift => {
+          const cell = document.createElement('td');
+          cell.className = 'schedule-cell';
+
+          const staff = processedData[date][shift];
+
+          if (staff.length > 0) {
+            // 人数统计
+            const countDiv = document.createElement('div');
+            countDiv.className = 'staff-count';
+            countDiv.innerHTML = `
+                            <i class="bi bi-people-fill"></i>
+                            <span>${staff.length}</span>
+                        `;
+            cell.appendChild(countDiv);
+
+            // 人员列表（竖排）
+            const listDiv = document.createElement('div');
+            listDiv.className = 'staff-list';
+            staff.forEach(person => {
+              const badge = document.createElement('div');
+              badge.className = 'staff-badge';
+              badge.textContent = person;
+              badge.title = person; // 添加悬停提示
+              listDiv.appendChild(badge);
+            });
+            cell.appendChild(listDiv);
+          } else {
+            const emptyDiv = document.createElement('div');
+            emptyDiv.className = 'empty-schedule';
+            emptyDiv.innerHTML = '<i class="bi bi-dash-circle"></i>';
+            cell.appendChild(emptyDiv);
+          }
+
+          row.appendChild(cell);
+        });
+
+        tableBody.appendChild(row);
+      });
+    }
+
+    // 刷新数据按钮
+    document.getElementById('refreshData').addEventListener('click', () => {
+      generateTable(scheduleData);
+
+      // 显示成功提示
+      const button = document.getElementById('refreshData');
+      const originalHTML = button.innerHTML;
+      button.innerHTML = '<i class="bi bi-check-circle-fill me-1"></i>已刷新';
+      button.classList.remove('btn-outline-primary');
+      button.classList.add('btn-success');
+
+      setTimeout(() => {
+        button.innerHTML = originalHTML;
+        button.classList.remove('btn-success');
+        button.classList.add('btn-outline-primary');
+      }, 1500);
+    });
+
+    // 导出数据功能
+    document.getElementById('exportData').addEventListener('click', () => {
+      const dataStr = JSON.stringify(scheduleData, null, 2);
+      const dataBlob = new Blob([dataStr], { type: 'application/json' });
+      const url = URL.createObjectURL(dataBlob);
+
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = '排班数据_' + new Date().toISOString().split('T')[0] + '.json';
+      link.click();
+
+      URL.revokeObjectURL(url);
+    });
+
+    // 丝滑滚动增强
+    function enhanceScrolling() {
+      const wrapper = document.querySelector('.schedule-table-wrapper');
+      if (wrapper) {
+        wrapper.style.scrollBehavior = 'smooth';
+
+        // 添加滚动惯性（如果支持）
+        wrapper.style.webkitOverflowScrolling = 'touch';
+        wrapper.style.overflowScrolling = 'touch';
+      }
+    }
+
+    // 初始化表格
+    document.addEventListener('DOMContentLoaded', () => {
+      generateTable(scheduleData);
+      enhanceScrolling();
+    });
+
+    // 模态框显示时刷新表格和滚动增强
+    document.getElementById('scheduleModal').addEventListener('shown.bs.modal', () => {
+      generateTable(scheduleData);
+      enhanceScrolling();
+    });
+  </script>
 </body>
 
 </html>

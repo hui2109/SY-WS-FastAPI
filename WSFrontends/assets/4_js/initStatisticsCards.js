@@ -262,7 +262,6 @@ class initStatisticsCards {
             }
         } catch (error) {
             debugger;
-            alert('未知错误！');
             console.error('error!!!', error);
         }
     }
@@ -335,7 +334,6 @@ class initStatisticsCards {
                     })
                 }).catch(error => {
                     debugger;
-                    alert('未知错误！');
                     console.error('error!!!', error);
                 });
             }

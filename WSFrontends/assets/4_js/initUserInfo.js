@@ -48,7 +48,7 @@ class initUserInfo {
                 }
             })
         }).catch(error => {
-            alert('未知错误！');
+            debugger;
             console.error('error!!!', error);
         });
     }
@@ -105,7 +105,7 @@ class initUserInfo {
                 }
             })
         }).catch(error => {
-            alert('未知错误！');
+            debugger;
             console.error(error);
         });
     }
@@ -162,7 +162,7 @@ class initUserInfo {
                         window.location.href = '/login';
                     })
                 }).catch(error => {
-                    alert('未知错误！');
+                    debugger;
                     console.error('error!!!', error);
 
                     // 出错也清除token并重定向

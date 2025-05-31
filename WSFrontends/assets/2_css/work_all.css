@@ -102,11 +102,15 @@
 }
 #work-content-all .table-container .paiban-table .special-days {
   position: absolute;
-  top: 2px;
-  right: 2px;
-  font-size: 11px;
-  color: mediumvioletred;
-  background-color: #f9c428;
+  top: 1px;
+  right: 1px;
+  font-size: 7px;
+  padding: 2px 4px;
+  font-weight: 700;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  color: white;
+  box-shadow: 0 2px 4px rgba(245, 158, 11, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.3);
 }
 #work-content-all .table-container .paiban-table .clickable-paiban-cell {
   cursor: pointer;
@@ -130,7 +134,7 @@
 }
 @media (max-width: 480px) {
   #work-content-all .table-container {
-    height: 74vh;
+    height: 78vh;
     border-radius: 4px;
   }
   #work-content-all .table-container .paiban-table thead tr th {

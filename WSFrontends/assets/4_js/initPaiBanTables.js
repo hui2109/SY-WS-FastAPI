@@ -145,8 +145,11 @@ class InitPaiBanTables {
     }
 
     _deleteOnePaiban(event, name, work_date, ban) {
-        let elementThis = event.currentTarget;
-        elementThis.parentElement.remove();
+        // 确保这个函数可以单独调用
+        if (event) {
+            let elementThis = event.currentTarget;
+            elementThis.parentElement.remove();
+        }
 
         let data = {
             "name": name,
@@ -158,8 +161,6 @@ class InitPaiBanTables {
         if (!token) {
             return;
         }
-
-        debugger;
 
         fetch('/delete_work_schedule', {
             method: 'POST',
@@ -178,8 +179,15 @@ class InitPaiBanTables {
                         message: `已为 ${name} 在 ${work_date.format('YYYY-MM-DD')} 删除排班 ${ban}`
                     });
 
-                    // 重新渲染表格
+                    // 不用重新渲染表格，只需将单元格的内容删了就行
                     this.getRecordsFromServer();
+                    //let td = this.paibanTable.querySelector(`.clickable-paiban-cell[data-date="${work_date.format('YYYY-MM-DD')}"][data-name="${name}"]`);
+                    //for (let child of td.children) {
+                    //    if (child.textContent === ban) {
+                    //        child.remove();
+                    //        break;
+                    //    }
+                    //}
 
                     // 如果删除后没有排班了，则显示暂无
                     if (this.existingPaiban.children.length === 0) {
@@ -207,7 +215,7 @@ class InitPaiBanTables {
                 }
             })
         }).catch(error => {
-            alert('未知错误！');
+            debugger;
             console.error('error!!!', error);
         });
     }
@@ -287,7 +295,6 @@ class InitPaiBanTables {
             }
         } catch (error) {
             debugger;
-            alert('未知错误！');
             console.error('error!!!', error);
         }
     }
@@ -317,10 +324,65 @@ class InitPaiBanTables {
         }
     }
 
+    _changeCursorToEraser() {
+        // 找到所有可点击的单元格，将光标设为none
+        this.paibanTable.querySelectorAll('.clickable-paiban-cell').forEach(cell => {
+            cell.style.cursor = 'none';
+        });
+
+        // 创建事件处理函数并保存引用
+        this.mouseMoveHandler = (e) => {
+            this.customCursor.style.left = e.clientX + 'px';
+            this.customCursor.style.top = e.clientY + 'px';
+        };
+
+        this.mouseLeaveHandler = () => {
+            this.customCursor.classList.add('hidden');
+        };
+
+        this.mouseEnterHandler = () => {
+            this.customCursor.classList.remove('hidden');
+        };
+
+        // 添加事件监听器
+        document.addEventListener('mousemove', this.mouseMoveHandler);
+        document.addEventListener('mouseleave', this.mouseLeaveHandler);
+        document.addEventListener('mouseenter', this.mouseEnterHandler);
+
+        this.customCursor.classList.remove('hidden');
+    }
+
+    _changeCursorToDefault() {
+        // 恢复单元格光标样式
+        this.paibanTable.querySelectorAll('.clickable-paiban-cell').forEach(cell => {
+            cell.style.cursor = 'pointer';
+        });
+
+        // 移除事件监听器
+        if (this.mouseMoveHandler) {
+            document.removeEventListener('mousemove', this.mouseMoveHandler);
+            this.mouseMoveHandler = null;
+        }
+
+        if (this.mouseLeaveHandler) {
+            document.removeEventListener('mouseleave', this.mouseLeaveHandler);
+            this.mouseLeaveHandler = null;
+        }
+
+        if (this.mouseEnterHandler) {
+            document.removeEventListener('mouseenter', this.mouseEnterHandler);
+            this.mouseEnterHandler = null;
+        }
+
+        // 隐藏自定义光标
+        this.customCursor.classList.add('hidden');
+    }
+
     lookElement() {
         this.paibanTable = document.querySelector('#paiban-content-all .paiban-table');
         this.dateLabel = document.querySelector('#paiban-content-all .mounianmouyue');
         this.clearAllSchedule = document.getElementById('clearAllSchedule');
+        this.clearOneSchedule = document.getElementById('clearOneSchedule');
         this.showLastSchedule = document.getElementById('showLastSchedule');
         this.autoScheduleAll = document.getElementById('autoScheduleAll');
 
@@ -357,7 +419,9 @@ class InitPaiBanTables {
 
         this.weekMap = getWeekMap();
         this.banTypeColor = getBanTypeColor();
-        this.mustBansList = ["1A", "1B", "2A", "2B", "2C", "3A", "3B", "S1", "S2", "N1", "N2"]
+        this.mustBansList = ["1A", "1B", "2A", "2B", "2C", "3A", "3B", "S1", "S2", "N1", "N2"];
+        this.customCursor = document.getElementById('customCursor');
+        this.tempEraseMode = false;
     }
 
     initDatePicker() {
@@ -414,7 +478,7 @@ class InitPaiBanTables {
 
         // 监听日期显示事件
         this.datetimepicker3.addEventListener('show.td', () => {
-            adjustDatePickerPosition(this.dateLabel);
+            adjustDatePickerPosition(this.autoScheduleAll);  // 这里不传this.dateLabel，在手机上会被挡住
 
             let datePicker = document.querySelector('.tempus-dominus-widget.show');
             datePicker.classList.remove('light');
@@ -474,7 +538,7 @@ class InitPaiBanTables {
                 }
             })
         }).catch(error => {
-            alert('未知错误！');
+            debugger;
             console.error(error);
         })
     }
@@ -555,10 +619,6 @@ class InitPaiBanTables {
             td.textContent = name;
 
             td.dataset.name = name;
-            td.addEventListener('click', (et) => {
-                this.handleHeadClick(et);
-            });
-
             tr.appendChild(td);
 
             for (let j = 0; j < daysNum; j++) {
@@ -571,6 +631,12 @@ class InitPaiBanTables {
                 td.classList.add('clickable-paiban-cell');
                 td.dataset.name = name;
                 td.dataset.date = dayjs(currDate).format('YYYY-MM-DD');
+                if (!this.tempEraseMode) {
+                    td.style.cursor = 'pointer';
+                } else {
+                    td.style.cursor = 'none';
+                }
+
                 td.addEventListener('click', (et) => {
                     this.handleCellClick(et);
                 });
@@ -640,12 +706,23 @@ class InitPaiBanTables {
     }
 
     handleCellClick(et) {
-        this._resetAll();
-
         let srcCell = et.currentTarget;
         let name = srcCell.dataset.name;
         let date = srcCell.dataset.date;
         let dateObj = dayjs(date);
+
+        // 判断下是不是擦除模式
+        if (this.tempEraseMode) {
+            for (let child of srcCell.children) {
+                let ban = child.textContent;
+                if (ban !== '' && !child.classList.contains('fake')) {
+                    this._deleteOnePaiban(null, name, dateObj, ban);
+                }
+            }
+            return;
+        }
+
+        this._resetAll();
 
         this.paibanSelectHD.dataset.name = name;
         this.paibanSelectHD.dataset.date = date;
@@ -669,24 +746,29 @@ class InitPaiBanTables {
         if (cellChildren.length === 0) {
             this.existingPaiban.appendChild(span);
         } else {
-            if (cellChildren[0].classList.contains('fake')) {
-                this.existingPaiban.appendChild(span);
-            } else {
-                for (let child of srcCell.children) {
-                    let span1 = span.cloneNode();
-                    let i = document.createElement('i');
-                    i.classList.add('bi', 'bi-x');
-                    i.style.marginLeft = '0.35rem';
-                    i.style.cursor = 'pointer';
-                    i.addEventListener('click', (event) => {
-                        this._deleteOnePaiban(event, name, dateObj, child.textContent);
-                    });
-
-                    span1.textContent = child.textContent;
-                    span1.appendChild(i);
-
-                    this.existingPaiban.appendChild(span1);
+            for (let child of srcCell.children) {
+                if (child.classList.contains('fake')) {
+                    this.existingPaiban.appendChild(span);
+                    break;
                 }
+
+                if (!child.classList.contains('badge')) {
+                    continue;
+                }
+
+                let span1 = span.cloneNode();
+                let i = document.createElement('i');
+                i.classList.add('bi', 'bi-x');
+                i.style.marginLeft = '0.35rem';
+                i.style.cursor = 'pointer';
+                i.addEventListener('click', (event) => {
+                    this._deleteOnePaiban(event, name, dateObj, child.textContent);
+                });
+
+                span1.textContent = child.textContent;
+                span1.appendChild(i);
+
+                this.existingPaiban.appendChild(span1);
             }
         }
 
@@ -699,8 +781,8 @@ class InitPaiBanTables {
             let date = this.configureDateInfo.value;
             this._resetConfigureDate();
             localStorage.removeItem(date);
-            this.generateThead();
-        })
+            this._autoFillConfigureDates();
+        });
 
         this.confirmConfigureDate.addEventListener('click', () => {
             let date = this.configureDateInfo.value;
@@ -718,13 +800,13 @@ class InitPaiBanTables {
 
             if (data['mustBans'].length !== 0) {
                 localStorage.setItem(date, JSON.stringify(data));
-                this.generateThead();
+                this._autoFillConfigureDates();
             }
 
             // 隐藏对话框
             const modalInstance = bootstrap.Modal.getInstance(this.configureDateModal);
             modalInstance.hide();
-        })
+        });
     }
 
     bindCellClick() {
@@ -858,7 +940,7 @@ class InitPaiBanTables {
                     }
                 })
             }).catch(error => {
-                alert('未知错误！');
+                debugger;
                 console.error('error!!!', error);
             });
         });
@@ -903,7 +985,7 @@ class InitPaiBanTables {
                         }
                     })
                 }).catch(error => {
-                    alert('未知错误！');
+                    debugger;
                     console.error(error);
                 })
             }
@@ -973,13 +1055,33 @@ class InitPaiBanTables {
                         }
                     } catch (error) {
                         debugger;
-                        alert('未知错误！');
                         console.error('error!!!', error);
                     }
                 }
                 currentDate = currentDate.add(1, 'day');
             }
         });
+
+        this.clearOneSchedule.addEventListener('click', (event) => {
+            let elementThis = event.currentTarget;
+
+            // 判断状态
+            if (elementThis.classList.contains('btn-warning')) {
+                // 禁用状态
+                elementThis.className = 'btn btn-sm border border-warning';
+
+                // 恢复光标
+                this._changeCursorToDefault();
+                this.tempEraseMode = false;
+            } else {
+                // 启用状态
+                elementThis.className = "btn btn-warning btn-sm";
+
+                // 将光标改为橡皮擦
+                this._changeCursorToEraser();
+                this.tempEraseMode = true;
+            }
+        })
     }
 
     getExpectedRelax(name, date) {
@@ -1016,7 +1118,7 @@ class InitPaiBanTables {
                 }
             })
         }).catch(error => {
-            alert('未知错误！');
+            debugger;
             console.error('error!!!', error);
         });
     }
@@ -1026,6 +1128,8 @@ class InitPaiBanTables {
         if (!res) {
             return;  // 如果没有配置，则不进行后续操作
         }
+
+        debugger;
 
         // 获取token
         const token = getToken();
@@ -1054,7 +1158,7 @@ class InitPaiBanTables {
                 }
             })
         }).catch(error => {
-            alert('未知错误！');
+            debugger;
             console.error('error!!!', error);
         });
     }
@@ -1102,7 +1206,7 @@ class InitPaiBanTables {
                 }
             })
         }).catch(error => {
-            alert('未知错误！');
+            debugger;
             console.error('error!!!', error);
         });
 

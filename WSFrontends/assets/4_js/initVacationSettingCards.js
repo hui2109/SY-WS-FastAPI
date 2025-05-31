@@ -284,7 +284,6 @@ class InitVacationSettingCards {
                 })
             }).catch(error => {
                 debugger;
-                alert('未知错误！');
                 console.error('error!!!', error);
             });
         }
@@ -368,7 +367,7 @@ class InitVacationSettingCards {
                 }
             })
         }).catch(error => {
-            alert('未知错误！');
+            debugger;
             console.error('error!!!', error);
         });
     }
@@ -432,7 +431,6 @@ class InitVacationSettingCards {
             }
         } catch (error) {
             debugger;
-            alert('未知错误！');
             console.error('error!!!', error);
         }
     }
