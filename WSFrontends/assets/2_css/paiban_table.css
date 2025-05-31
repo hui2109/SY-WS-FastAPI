@@ -59,7 +59,7 @@
 #paiban-content-all .table-container .paiban-table .configure-days-cell {
   position: absolute;
   top: 2px;
-  left: 0;
+  left: 2px;
   font-size: 11px;
   cursor: pointer;
   color: var(--bs-emphasis-color);
@@ -70,7 +70,7 @@
 #paiban-content-all .table-container .paiban-table .special-days {
   position: absolute;
   top: 2px;
-  left: 52px;
+  right: 2px;
   font-size: 11px;
   color: mediumvioletred;
   background-color: #f9c428;

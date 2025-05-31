@@ -115,7 +115,7 @@ class initStatisticsCards {
                         <!-- 假期规则设置 -->
                         <div class="mb-4">
                             <h6 class="fw-bold mb-3">
-                                <i class="bi bi-calendar-plus me-2"></i>假期规则设置
+                                <i class="bi bi-calendar-plus me-2"></i>假期规则
                             </h6>
                             <div id="holidayRules-${user.id}">
                                 ${user.holidayRules.map((rule, index) => this._createHolidayRule(user.id, rule, index)).join('')}

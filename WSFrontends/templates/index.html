@@ -303,15 +303,15 @@
                 <div class="row">
                   <div class="col-lg-4"></div>
                   <div class="col-lg-4">
-                    <div class="d-flex justify-content-between">
-                      <button type="button" class="btn btn-success pre-month">上一月</button>
+                    <div class="d-flex justify-content-center align-items-center">
+                      <button type="button" class="btn btn-success btn-sm pre-month me-2">上一月</button>
                       <div id="datetimepicker1" data-td-target-input="nearest" data-td-target-toggle="nearest">
                         <span class="input-group-text" data-td-target="#datetimepicker1"
                           data-td-toggle="datetimepicker">
                           <span class="mounianmouyue">某年某月</span>
                         </span>
                       </div>
-                      <button type="button" class="btn btn-success next-month">下一月</button>
+                      <button type="button" class="btn btn-success btn-sm next-month ms-2">下一月</button>
                     </div>
                   </div>
                   <div class="col-lg-4"></div>
@@ -1196,6 +1196,45 @@
       </div>
     </div>
   </div>
+
+  <!-- 班种信息 对话框 -->
+  <div class="modal fade" id="bantypeInfoModal" tabindex="-1" aria-labelledby="bantypeInfoLabel" aria-hidden="true">
+    <div class="modal-dialog modal-sm modal-dialog-centered" style="width: 240px; margin: auto; font-size: 14px;">
+      <div class="modal-content shadow-lg">
+        <div class="modal-header">
+          <h6 class="modal-title fw-bold" id="bantypeInfoLabel">
+            <i class="bi bi-info-circle me-2 text-primary"></i>
+            班种详细信息
+          </h6>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+
+        <div id="bantypeInfoContent" class="modal-body">
+          <!-- 基础信息 -->
+          <h6 class="text-secondary mb-2">基础信息</h6>
+          <div class="d-flex mb-1">
+            <div class="text-muted">姓名：</div>
+            <div id="bantypeInfoName">张旭辉</div>
+          </div>
+          <div class="d-flex mb-4">
+            <div class="text-muted">日期：</div>
+            <div id="bantypeInfoDate">2025年10月21日（周三）</div>
+          </div>
+
+          <!-- 班种信息 -->
+          <h6 class="text-secondary mb-2">班种信息</h6>
+          <div id="bantypeInfoCards">
+            <!-- JS 动态生成 -->
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary px-4" data-bs-dismiss="modal">已阅，关闭</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
 
   <script src="/WSFrontends/assets/plugin/node_modules/bootstrap/dist/js/bootstrap.bundle.js"></script>
   <script src="/WSFrontends/assets/plugin/node_modules/@popperjs/core/dist/umd/popper.min.js"></script>

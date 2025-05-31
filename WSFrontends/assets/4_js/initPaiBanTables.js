@@ -398,6 +398,7 @@ class InitPaiBanTables {
             },
         });
         let tempusDominusWidget = document.querySelector('.tempus-dominus-widget');
+        this.picker.dates.setValue(new tempusDominus.DateTime(this.today));
 
         // 先把已有的日期选择控件删了
         if (tempusDominusWidget) {
@@ -414,6 +415,11 @@ class InitPaiBanTables {
         // 监听日期显示事件
         this.datetimepicker3.addEventListener('show.td', () => {
             adjustDatePickerPosition(this.dateLabel);
+
+            let datePicker = document.querySelector('.tempus-dominus-widget.show');
+            datePicker.classList.remove('light');
+            datePicker.classList.remove('dark');
+            datePicker.classList.add(localStorage.getItem('theme'));
 
             // 取消预览上个月的排版状态
             this.showLastSchedule.classList.add('active');
@@ -503,7 +509,7 @@ class InitPaiBanTables {
             div3.innerHTML = '<i class="bi bi-gear"></i>'
             div3.classList.add('configure-days-cell');
 
-            div3.dataset.date = this.dateList[i].toISOString().split("T")[0];
+            div3.dataset.date = dayjs(this.dateList[i]).format('YYYY-MM-DD');
             div3.addEventListener('click', (et) => {
                 this.handleHeadClick(et);
             })
@@ -564,7 +570,7 @@ class InitPaiBanTables {
 
                 td.classList.add('clickable-paiban-cell');
                 td.dataset.name = name;
-                td.dataset.date = currDate.toISOString().split("T")[0];
+                td.dataset.date = dayjs(currDate).format('YYYY-MM-DD');
                 td.addEventListener('click', (et) => {
                     this.handleCellClick(et);
                 });
@@ -584,10 +590,17 @@ class InitPaiBanTables {
                             div.style.backgroundColor = this.banTypeColor[_value];
                             div.classList.add('badge')
                         }
-
+                        // 让badge强制换行，他是行内快标签，不会自动换行
+                        let div_space = document.createElement('div');
                         td.appendChild(div)
+                        td.appendChild(div_space)
                     }
                 }
+                // td去除最后一个空div元素
+                if (td.lastElementChild.textContent === '') {
+                    td.removeChild(td.lastElementChild);
+                }
+
                 tr.appendChild(td);
             }
             tbody.appendChild(tr);
@@ -632,7 +645,7 @@ class InitPaiBanTables {
         let srcCell = et.currentTarget;
         let name = srcCell.dataset.name;
         let date = srcCell.dataset.date;
-        let dateObj = dayjs(date).hour(10).minute(0).second(0).millisecond(0);
+        let dateObj = dayjs(date);
 
         this.paibanSelectHD.dataset.name = name;
         this.paibanSelectHD.dataset.date = date;
@@ -676,7 +689,6 @@ class InitPaiBanTables {
                 }
             }
         }
-
 
         const modalInstance = new bootstrap.Modal(this.paibanModal);
         modalInstance.show();

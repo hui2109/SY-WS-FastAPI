@@ -47,8 +47,9 @@ class QueryMonthlyWorkScheduleStatistics(BaseModel):
 
 
 # 查询单个月的排班情况
-@router.post("/select-month-schedule")
-async def select_month_schedule(queryMonth: QueryMonth, session: SessionDep):
+@router.post("/select-month-schedule", dependencies=None)
+async def select_month_schedule(queryMonth: QueryMonth, session: SessionDep, user: Account = Depends(get_current_user)):
+    priority_name = user.personnel.name
     queryMonthResponse = {}
     personnel_set = set()
 
@@ -77,7 +78,7 @@ async def select_month_schedule(queryMonth: QueryMonth, session: SessionDep):
                 queryMonthResponse[_key].append(f'{ban.value}')
 
             personnel_set.add(personnel_name)
-    queryMonthResponse['personnels'] = personnel_set
+    personnel_list = list(personnel_set)
 
     # 增加内容：判断奇怪的休假日和休息日
     isHolidays = dict()
@@ -95,6 +96,34 @@ async def select_month_schedule(queryMonth: QueryMonth, session: SessionDep):
         current_date += timedelta(days=1)
 
     queryMonthResponse['isHolidays'] = isHolidays
+
+    # 更改班名的顺序
+    for _key, _value in queryMonthResponse.items():
+        if _key == 'isHolidays' or _key == 'personnels':
+            continue
+
+        if len(_value) > 1:
+            new_value_list = []
+            for _value_item in _value:
+                if _value_item in MANDATORY_SCHEDULE:
+                    new_value_list.insert(0, _value_item)
+                else:
+                    new_value_list.append(_value_item)
+            queryMonthResponse[_key] = new_value_list
+
+    # 更改personnels的顺序, 按照CURRENT_PERSONNEL的顺序, 如果元素不在CURRENT_PERSONNEL里, 移至最后; 如果name在personnels中，则将它移至最前面
+    # 创建优先级字典
+    priority = {name: i for i, name in enumerate(CURRENT_PERSONNEL)}
+
+    # 排序函数
+    def sort_key(name):
+        if name == priority_name:
+            return -1, 0  # 最高优先
+        return 0, priority.get(name, float('inf'))  # 其次按 CURRENT_PERSONNEL 顺序，其他放最后
+
+    # 排序
+    personnel_list = sorted(personnel_list, key=sort_key)
+    queryMonthResponse['personnels'] = personnel_list
 
     return queryMonthResponse
 
@@ -524,3 +553,24 @@ async def get_work_schedule_statistics(monthlyWorkScheduleStatistics: QueryMonth
         data['workSchedule']['schedules'].append({'type': value, 'count': count})
 
     return data
+
+
+@router.post('/get_bantype_info')
+async def get_bantype_info(session: SessionDep):
+    bantype_info_dict = dict()
+    bantypes = session.query(Bantype).all()
+
+    for bantype in bantypes:
+        bantype: Bantype
+        ban_name = bantype.ban.value
+        ban_start_time = bantype.start_time.strftime('%H:%M')
+        ban_end_time = bantype.end_time.strftime('%H:%M')
+        ban_description = bantype.description
+
+        bantype_info_dict[ban_name] = {
+            'start_time': ban_start_time,
+            'end_time': ban_end_time,
+            'description': ban_description
+        }
+
+    return bantype_info_dict

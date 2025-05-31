@@ -1,13 +1,11 @@
-"use strict";
-
-
 class InitTables {
     constructor(today) {
-        this.today = today
+        this.today = dayjs(today)
         this.lookElement();
         this._updateDateLabel(this.today);
         this.initDatePicker();
         this.bindClick();
+        this._getBanTypeInfo().then(r => console.log(r));
     }
 
     init() {
@@ -17,7 +15,72 @@ class InitTables {
 
     _updateDateLabel(date) {
         // 写入日期: XX年XX月
-        this.dateLabel.textContent = `${date.getFullYear()}年${date.getMonth() + 1}月`;
+        this.dateLabel.textContent = `${date.year()}年${date.month() + 1}月`;
+    }
+
+    _renderBantypeInfoCard(divBan) {
+        let ban = divBan.dataset.ban;
+        let bantype_info = JSON.parse(sessionStorage.getItem('bantype_info'));
+        let start_time = bantype_info[ban]['start_time'];
+        let end_time = bantype_info[ban]['end_time'];
+        let description = bantype_info[ban]['description'];
+
+        return `
+            <div class="card border-primary mb-2">
+                  <div class="card-header bg-primary text-white py-2" style="padding-left: 8px;">
+                    班种名称：<span class="badge bg-light text-primary">${ban}</span>
+                  </div>
+                  <div class="card-body p-1">
+                    <ul class="list-group list-group-flush">
+                      <li class="list-group-item p-1">开始时间：<span class="fw-semibold">${start_time}</span>
+                      </li>
+                      <li class="list-group-item p-1">结束时间：<span class="fw-semibold">${end_time}</span></li>
+                      <li class="list-group-item p-1">班种描述：<span
+                          class="fw-normal">${description}</span>
+                      </li>
+                    </ul>
+                  </div>
+            </div>
+        `;
+    }
+
+    async _getBanTypeInfo() {
+        // 获取token
+        const token = getToken();
+        if (!token) {
+            return;
+        }
+
+        if (sessionStorage.getItem('bantype_info')) {
+            return;
+        }
+
+        try {
+            let response = await fetch('/get_bantype_info', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+            })
+
+            let data = await response.json();
+
+            if (!response.ok) {
+                showAlert({
+                    type: 'danger',
+                    title: '获取班种信息失败！',
+                    message: data.detail,
+                });
+            } else {
+                sessionStorage.setItem('bantype_info', JSON.stringify(data));
+            }
+        } catch (error) {
+            debugger;
+            alert('未知错误！');
+            console.error('error!!!', error);
+        }
     }
 
     lookElement() {
@@ -26,18 +89,46 @@ class InitTables {
         this.preMonth = document.querySelector('#work-content-all .pre-month');
         this.nextMonth = document.querySelector('#work-content-all .next-month');
         this.datetimepicker1 = document.getElementById('datetimepicker1');
+
+        this.bantypeInfoModal = document.getElementById('bantypeInfoModal');
+        this.bantypeInfoName = document.getElementById('bantypeInfoName');
+        this.bantypeInfoDate = document.getElementById('bantypeInfoDate');
+        this.bantypeInfoCards = document.getElementById('bantypeInfoCards');
+
+        this.weekMap = getWeekMap();
+        this.banTypeColor = getBanTypeColor();
+    }
+
+    handleCellClick(et) {
+        let srcCell = et.currentTarget;
+        let name = srcCell.dataset.name;
+        let date = srcCell.dataset.date;
+        let dateObj = dayjs(date);
+
+        this.bantypeInfoName.textContent = name;
+        this.bantypeInfoDate.textContent = `${dateObj.format('YYYY年M月D日')}（${this.weekMap[dateObj.day()]}）`;
+
+        let div_bans = srcCell.querySelectorAll('div[data-ban]');
+        this.bantypeInfoCards.innerHTML = '';
+        for (let divBan of div_bans) {
+            let bantypeInfoCard = this._renderBantypeInfoCard(divBan);
+            this.bantypeInfoCards.innerHTML += bantypeInfoCard;
+        }
+
+        const modalInstance = new bootstrap.Modal(this.bantypeInfoModal);
+        modalInstance.show();
     }
 
     bindClick() {
         this.preMonth.addEventListener('click', () => {
             // 获取当前月的上一个月的第一天
-            this.today = new Date(this.today.getFullYear(), this.today.getMonth() - 1, 1);
+            this.today = this.today.subtract(1, 'month').startOf("month");
             this.picker.dates.setValue(new tempusDominus.DateTime(this.today));
         });
 
         this.nextMonth.addEventListener('click', () => {
             // 获取当前月的下一个月的第一天
-            this.today = new Date(this.today.getFullYear(), this.today.getMonth() + 1, 1);
+            this.today = this.today.add(1, 'month').startOf("month");
             this.picker.dates.setValue(new tempusDominus.DateTime(this.today));
         });
     }
@@ -80,6 +171,7 @@ class InitTables {
             },
         });
         let tempusDominusWidget = document.querySelector('.tempus-dominus-widget');
+        this.picker.dates.setValue(new tempusDominus.DateTime(this.today));
 
         // 先把已有的日期选择控件删了
         if (tempusDominusWidget) {
@@ -88,7 +180,7 @@ class InitTables {
 
         // 监听日期改变事件
         this.datetimepicker1.addEventListener('change.td', (event) => {
-            this.today = event.detail.date;
+            this.today = dayjs(event.detail.date);
             this._updateDateLabel(this.today);
             this.init();
         });
@@ -96,6 +188,10 @@ class InitTables {
         // 监听日期显示事件
         this.datetimepicker1.addEventListener('show.td', () => {
             adjustDatePickerPosition(this.dateLabel);
+            let datePicker = document.querySelector('.tempus-dominus-widget.show');
+            datePicker.classList.remove('light');
+            datePicker.classList.remove('dark');
+            datePicker.classList.add(localStorage.getItem('theme'));
         });
     }
 
@@ -137,6 +233,7 @@ class InitTables {
         }).then(response => {
             response.json().then(data => {
                 if (response.ok) {
+                    //debugger;
                     this.records = data;
                     this.generateThead();
                     this.generateTbody();
@@ -173,10 +270,21 @@ class InitTables {
 
             let div1 = document.createElement('div'); // 写星期
             let div2 = document.createElement('div'); // 写日子
+
             div1.textContent = this.dayMaps[this.dateList[i].getDay()];
             div2.textContent = String(this.dateList[i].getDate());
             th.appendChild(div1);
             th.appendChild(div2);
+
+            // 新增特殊的休息日和节假日
+            let date = dayjs(this.dateList[i]).format('YYYY-MM-DD');
+            if (this.records['isHolidays'][date]) {
+                let div4 = document.createElement('div');  // 写特殊日
+                div4.textContent = this.records['isHolidays'][date];
+                div4.classList.add('special-days');
+                th.appendChild(div4);
+            }
+
             tr.appendChild(th);
         }
         thead.appendChild(tr);
@@ -203,61 +311,43 @@ class InitTables {
                 let _key = `${name}_${currDate.getFullYear()}_${currDate.getMonth() + 1}_${currDate.getDate()}`
                 let _value_list = this.records[_key]
 
+                td.classList.add('clickable-paiban-cell');
+                td.dataset.name = name;
+                td.dataset.date = dayjs(currDate).format('YYYY-MM-DD');
+                td.addEventListener('click', (et) => {
+                    this.handleCellClick(et);
+                });
+
                 if (_value_list === undefined) {
-                    td.textContent = 'null'
+                    let div = document.createElement('div')
+                    div.textContent = 'null'
+                    div.classList.add('fake', "fst-italic", "text-muted");
+                    td.appendChild(div)
                 } else {
                     for (let _value of _value_list) {
-                        let div = document.createElement('div')
-                        div.textContent = _value
+                        let div = document.createElement('div');
+                        div.textContent = _value;
+                        div.dataset.ban = _value;
+
+                        // 加点颜色，更好看
+                        if (this.banTypeColor[_value]) {
+                            div.style.backgroundColor = this.banTypeColor[_value];
+                            div.classList.add('badge')
+                        }
+                        // 让badge强制换行，他是行内快标签，不会自动换行
+                        let div_space = document.createElement('div');
                         td.appendChild(div)
+                        td.appendChild(div_space)
                     }
                 }
+                // td去除最后一个空div元素
+                if (td.lastElementChild.textContent === '') {
+                    td.removeChild(td.lastElementChild);
+                }
+
                 tr.appendChild(td);
             }
             tbody.appendChild(tr);
-        }
-    }
-
-    // 判断日期是否为休息日
-    isRestDay(dateString) {
-        // 解析日期字符串，例如："2025年-2月-2-周日"
-        const date = new Date(parseInt(dateString.split('-')[0]), parseInt(dateString.split('-')[1]) - 1, // 月份的索引从0开始
-            parseInt(dateString.split('-')[2]));
-        // 获取星期几 (0是周日, 6是周六)
-        const day = date.getDay();
-        // 构造检测字符串 (没有星期)
-        const dateWithoutWeek = `${date.getFullYear()}年-${date.getMonth() + 1}月-${date.getDate()}`;
-        if (SpecialRestDays.includes(dateWithoutWeek)) {
-            return true;
-        } else if (SpecialWorkDays.includes(dateWithoutWeek)) {
-            return false;
-        } else {
-            return day === 0 || day === 6;
-        }
-    }
-
-    // 设置休息日样式
-    setRestDayStyle(th, columnIndex) {
-        if (this.isRestDay(this.dateList[columnIndex])) {
-            // 设置表头样式
-            th.style.backgroundColor = 'var(--bs-success-bg-subtle)'; // 使用Bootstrap的颜色变量
-            th.style.color = 'var(--bs-success-text)';
-            // 设置该列所有单元格的样式
-            const tbody = this.paibanTable.querySelector('tbody');
-            const rows = tbody.getElementsByTagName('tr');
-            for (let i = 0; i < rows.length; i++) {
-                const td = rows[i].children[columnIndex + 1]; // +1 是因为第一列是人员名字
-                td.style.backgroundColor = 'var(--bs-success-bg-subtle)';
-                td.style.color = 'var(--bs-success-text)';
-            }
-        }
-    }
-
-    // 检查并设置休息日样式
-    checkForRestDays() {
-        console.log(this.thead_tr.children);
-        for (let i = 0; i < this.dateList.length; i++) {
-            this.setRestDayStyle(this.thead_tr.children[i + 1], i);
         }
     }
 }
