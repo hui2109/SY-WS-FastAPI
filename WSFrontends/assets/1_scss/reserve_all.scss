@@ -101,22 +101,46 @@
         &:first-child {
           th {
             &:first-child {
+              position: sticky;
               left: 0;
-              z-index: 4;
+              top: 0;
+              z-index: 10; // 提高z-index到最高
               background: var(--bs-body-bg);
               width: 75px;
               border-top-left-radius: 12px;
               font-weight: 500;
+              // 确保背景不透明
+              background-clip: padding-box;
 
+              // 深色模式背景
+              [data-bs-theme="dark"] & {
+                background: var(--bs-dark);
+              }
+
+              // 移动端特殊处理
               @media (max-width: 768px) {
                 width: 80px;
                 font-size: 12px;
                 border-top-left-radius: 8px;
+                z-index: 15; // 移动端更高的z-index
+                background: var(--bs-body-bg) !important;
+                // 添加阴影增强层次感
+                box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+                // 强制硬件加速
+                transform: translateZ(0);
+                will-change: transform;
+
+                // 深色模式
+                [data-bs-theme="dark"] & {
+                  background: var(--bs-dark) !important;
+                  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+                }
               }
 
               @media (max-width: 480px) {
                 width: 70px;
                 font-size: 11px;
+                z-index: 20; // 小屏幕更高的z-index
               }
 
               .dropdown {
@@ -157,17 +181,41 @@
 
             position: sticky;
             top: 0;
-            z-index: 2;
+            z-index: 8; // 提高z-index
             background: var(--bs-secondary-bg);
             color: var(--bs-body-color);
             font-weight: 500;
             padding: 12px 8px;
             font-size: 14px;
             border-bottom: 2px solid var(--bs-border-color);
+            // 确保背景不透明
+            background-clip: padding-box;
 
+            // 深色模式背景
+            [data-bs-theme="dark"] & {
+              background: var(--bs-dark);
+            }
+
+            // 移动端特殊优化
             @media (max-width: 768px) {
               padding: 10px 6px;
               font-size: 12px;
+              z-index: 12; // 移动端更高的z-index
+              background: var(--bs-secondary-bg) !important;
+              // 强制硬件加速
+              transform: translateZ(0);
+              will-change: transform;
+              // 添加边框增强分离效果
+              border-bottom: 2px solid var(--bs-border-color);
+
+              // 深色模式
+              [data-bs-theme="dark"] & {
+                background: var(--bs-dark) !important;
+              }
+            }
+
+            @media (max-width: 480px) {
+              z-index: 15; // 小屏幕更高的z-index
             }
           }
         }
@@ -176,12 +224,19 @@
           th {
             position: sticky;
             top: 48px;
-            z-index: 2;
+            z-index: 7; // 提高z-index
             background: var(--bs-body-bg);
             color: var(--bs-secondary-color);
             font-weight: 500;
             padding: 10px 8px;
             border-bottom: 1px solid var(--bs-border-color);
+            // 确保背景不透明
+            background-clip: padding-box;
+
+            // 深色模式背景
+            [data-bs-theme="dark"] & {
+              background: var(--bs-dark);
+            }
 
             @media (max-width: 768px) {
               top: 40px;
@@ -190,6 +245,18 @@
 
             @media (max-width: 480px) {
               top: 40px;
+            }
+
+            // 第一个单元格（左上角）需要特殊处理
+            &:first-child {
+              z-index: 9; // 更高的z-index
+              left: 0;
+              background: var(--bs-body-bg);
+
+              // 深色模式背景
+              [data-bs-theme="dark"] & {
+                background: var(--bs-dark);
+              }
             }
           }
         }
@@ -206,12 +273,19 @@
           &:first-child {
             position: sticky;
             left: 0;
-            z-index: 3;
+            z-index: 6; // 提高z-index
             background: var(--bs-body-bg);
             color: var(--bs-body-color);
             font-weight: 500;
             padding: 12px 8px;
             border-right: 2px solid var(--bs-border-color);
+            // 确保背景不透明
+            background-clip: padding-box;
+
+            // 深色模式背景
+            [data-bs-theme="dark"] & {
+              background: var(--bs-dark);
+            }
 
             @media (max-width: 768px) {
               width: 80px;
