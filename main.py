@@ -53,12 +53,12 @@ def main():
     add_routers()
     add_static_files()
 
-    # uvicorn.run(app)
-    uvicorn.run(
-        app,
-        host="::",  # 使用 :: 来监听所有 IPv6 和 IPv4 地址
-        port=8000,
-    )
+    uvicorn.run(app)
+    # uvicorn.run(
+    #     app,
+    #     host="::",  # 使用 :: 来监听所有 IPv6 和 IPv4 地址
+    #     port=8000,
+    # )
 
 
 if __name__ == '__main__':

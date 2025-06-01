@@ -245,14 +245,16 @@
                   <div class="col-2"></div>
                   <div class="col-8">
                     <div class="d-flex justify-content-between">
-                      <button type="button" class="btn btn-success pre-month btn-sm">上一月</button>
+                      <button type="button" class="btn btn-success pre-month btn-sm"
+                        style="font-size: 12px;">上一月</button>
                       <div id="datetimepicker2" data-td-target-input="nearest" data-td-target-toggle="nearest">
                         <span class="input-group-text" data-td-target="#datetimepicker2"
                           data-td-toggle="datetimepicker">
-                          <span class="mounianmouyue">某年某月</span>
+                          <span class="mounianmouyue" style="font-size: 14px;">某年某月</span>
                         </span>
                       </div>
-                      <button type="button" class="btn btn-success next-month btn-sm">下一月</button>
+                      <button type="button" class="btn btn-success next-month btn-sm"
+                        style="font-size: 12px;">下一月</button>
                     </div>
                   </div>
                   <div class="col-2"></div>
@@ -310,7 +312,7 @@
                       <div id="datetimepicker1" data-td-target-input="nearest" data-td-target-toggle="nearest">
                         <span class="input-group-text" data-td-target="#datetimepicker1"
                           data-td-toggle="datetimepicker">
-                          <span class="mounianmouyue" style="font-size: 12px;">某年某月</span>
+                          <span class="mounianmouyue" style="font-size: 14px;">某年某月</span>
                         </span>
                       </div>
                       <button type="button" class="btn btn-success btn-sm next-month ms-2"
@@ -516,7 +518,7 @@
         <!-- 假期设置 -->
         <div class="tab-pane fade" id="vacation-all">
           <div class="fade-in">
-            <div id="vacation-content-all" class="content-section" style="max-width: 1500px;">
+            <div id="vacation-content-all" class="content-section">
               <!-- 搜索区域 -->
               <div class="search-container">
                 <div class="container">
@@ -1131,14 +1133,6 @@
           <h3 class="badge border border-success text-success mb-3" style="font-size: 1.0rem;">今天必须安排的班种：</h3>
           <div class="d-flex flex-wrap mb-3 justify-content-start align-items-center" id="mustBans">
             <div class="form-check me-3">
-              <input class="form-check-input" type="checkbox" value="S1" id="mustBanS1">
-              <label class="form-check-label" for="mustBanS1">S1</label>
-            </div>
-            <div class="form-check me-3">
-              <input class="form-check-input" type="checkbox" value="S2" id="mustBanS2">
-              <label class="form-check-label" for="mustBanS2">S2</label>
-            </div>
-            <div class="form-check me-3">
               <input class="form-check-input" type="checkbox" value="1A" id="mustBan1A">
               <label class="form-check-label" for="mustBan1A">1A</label>
             </div>
@@ -1173,6 +1167,14 @@
             <div class="form-check me-3">
               <input class="form-check-input" type="checkbox" value="3C" id="mustBan3C">
               <label class="form-check-label" for="mustBan3C">3C</label>
+            </div>
+            <div class="form-check me-3">
+              <input class="form-check-input" type="checkbox" value="S1" id="mustBanS1">
+              <label class="form-check-label" for="mustBanS1">S1</label>
+            </div>
+            <div class="form-check me-3">
+              <input class="form-check-input" type="checkbox" value="S2" id="mustBanS2">
+              <label class="form-check-label" for="mustBanS2">S2</label>
             </div>
             <div class="form-check me-3">
               <input class="form-check-input" type="checkbox" value="N1" id="mustBanN1">
@@ -1222,7 +1224,7 @@
 
   <!-- 班种信息 对话框 -->
   <div class="modal fade" id="bantypeInfoModal" tabindex="-1" aria-labelledby="bantypeInfoLabel" aria-hidden="true">
-    <div class="modal-dialog modal-sm modal-dialog-centered" style="width: 240px; margin: auto; font-size: 14px;">
+    <div class="modal-dialog modal-xl modal-dialog-centered" style="width: 240px; margin: auto; font-size: 14px;">
       <div class="modal-content shadow-lg">
         <div class="modal-header">
           <h6 class="modal-title fw-bold" id="bantypeInfoLabel">
@@ -1253,6 +1255,35 @@
 
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary px-4" data-bs-dismiss="modal">已阅，关闭</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 检查排班对话框 -->
+  <div class="modal fade" id="checkScheduleModal" tabindex="-1" aria-labelledby="checkScheduleLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="checkScheduleLabel">核对本月排班</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+
+        <div id="checkScheduleContent" class="modal-body">
+          <div class="table-container m-auto mt-3 table-responsive">
+            <table class="schedule-table m-auto table table-bordered">
+              <thead>
+                <!-- JS动态生成 -->
+              </thead>
+              <tbody>
+                <!-- JS动态生成 -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
         </div>
       </div>
     </div>

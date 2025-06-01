@@ -7,8 +7,8 @@ class initIndex {
         this.lookElement();
         this.bindEvent();
         this.changeTheme();
-        this.navLinks[2].click();
-        //this.paibanDesktopDropdownItems[0].click();
+        //this.navLinks[2].click();
+        this.paibanDesktopDropdownItems[0].click();
     }
 
     _updateThemeIcons(mode) {

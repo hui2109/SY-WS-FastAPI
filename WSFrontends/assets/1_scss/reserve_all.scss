@@ -248,16 +248,16 @@
             }
 
             // 第一个单元格（左上角）需要特殊处理
-            &:first-child {
-              z-index: 9; // 更高的z-index
-              left: 0;
-              background: var(--bs-body-bg);
-
-              // 深色模式背景
-              [data-bs-theme="dark"] & {
-                background: var(--bs-dark);
-              }
-            }
+            //&:first-child {
+            //  z-index: 9; // 更高的z-index
+            //  left: 0;
+            //  background: var(--bs-body-bg);
+            //
+            //  // 深色模式背景
+            //  [data-bs-theme="dark"] & {
+            //    background: var(--bs-dark);
+            //  }
+            //}
           }
         }
       }

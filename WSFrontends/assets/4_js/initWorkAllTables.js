@@ -1,6 +1,6 @@
 class InitTables {
     constructor(today) {
-        this.today = dayjs(today)
+        this.today = today;
         this.lookElement();
         this._updateDateLabel(this.today);
         this.initDatePicker();
@@ -109,11 +109,17 @@ class InitTables {
         this.bantypeInfoDate.textContent = `${dateObj.format('YYYY年M月D日')}（${this.weekMap[dateObj.day()]}）`;
 
         let div_bans = srcCell.querySelectorAll('div[data-ban]');
-        this.bantypeInfoCards.innerHTML = '';
-        for (let divBan of div_bans) {
-            let bantypeInfoCard = this._renderBantypeInfoCard(divBan);
-            this.bantypeInfoCards.innerHTML += bantypeInfoCard;
+
+        if (div_bans.length === 0) {
+            this.bantypeInfoCards.innerHTML = '<span class="badge border border-secondary text-secondary" style="font-size: 1.0rem">暂无班种信息</span>';
+        } else {
+            this.bantypeInfoCards.innerHTML = '';
+            for (let divBan of div_bans) {
+                let bantypeInfoCard = this._renderBantypeInfoCard(divBan);
+                this.bantypeInfoCards.innerHTML += bantypeInfoCard;
+            }
         }
+
 
         const modalInstance = new bootstrap.Modal(this.bantypeInfoModal);
         modalInstance.show();
@@ -196,8 +202,8 @@ class InitTables {
     }
 
     getStartEndDate() {
-        this.startDate = dayjs(this.today).startOf('month');
-        this.endDate = dayjs(this.today).endOf('month');
+        this.startDate = this.today.startOf('month');
+        this.endDate = this.today.endOf('month');
 
         this.dateList = goThroughDate(this.startDate, this.endDate);
         this.dayMaps = {
@@ -219,8 +225,8 @@ class InitTables {
         }
 
         let data = {
-            month_start: dayjs(this.startDate).format('YYYY-MM-DD'),
-            month_end: dayjs(this.endDate).format('YYYY-MM-DD')
+            month_start: this.startDate.format('YYYY-MM-DD'),
+            month_end: this.endDate.format('YYYY-MM-DD')
         }
         fetch('/select-month-schedule', {
             method: 'POST',
@@ -271,13 +277,13 @@ class InitTables {
             let div1 = document.createElement('div'); // 写星期
             let div2 = document.createElement('div'); // 写日子
 
-            div1.textContent = this.dayMaps[this.dateList[i].getDay()];
-            div2.textContent = String(this.dateList[i].getDate());
+            div1.textContent = this.dayMaps[this.dateList[i].day()];
+            div2.textContent = String(this.dateList[i].date());
             th.appendChild(div1);
             th.appendChild(div2);
 
             // 新增特殊的休息日和节假日
-            let date = dayjs(this.dateList[i]).format('YYYY-MM-DD');
+            let date = this.dateList[i].format('YYYY-MM-DD');
             if (this.records['isHolidays'][date]) {
                 let div4 = document.createElement('div');  // 写特殊日
                 div4.textContent = this.records['isHolidays'][date];
@@ -308,12 +314,12 @@ class InitTables {
             for (let j = 0; j < daysNum; j++) {
                 td = document.createElement('td');
                 let currDate = this.dateList[j]
-                let _key = `${name}_${currDate.getFullYear()}_${currDate.getMonth() + 1}_${currDate.getDate()}`
+                let _key = `${name}_${currDate.year()}_${currDate.month() + 1}_${currDate.date()}`
                 let _value_list = this.records[_key]
 
                 td.classList.add('clickable-paiban-cell');
                 td.dataset.name = name;
-                td.dataset.date = dayjs(currDate).format('YYYY-MM-DD');
+                td.dataset.date = currDate.format('YYYY-MM-DD');
                 td.addEventListener('click', (et) => {
                     this.handleCellClick(et);
                 });
@@ -352,5 +358,5 @@ class InitTables {
     }
 }
 
-let iTs = new InitTables(new Date());
+let iTs = new InitTables(dayjs());
 iTs.init();

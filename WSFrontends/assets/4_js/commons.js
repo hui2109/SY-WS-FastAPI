@@ -11,14 +11,16 @@ function getToken() {
 }
 
 function goThroughDate(startDate, endDate) {
-    let dateList = [];
-    // 创建副本，不影响原始对象
-    let currentDate = new Date(startDate);
-    while (currentDate <= endDate) {
-        dateList.push(new Date(currentDate));
-        currentDate.setDate(currentDate.getDate() + 1);
+    const dates = [];
+    let current = startDate.startOf('day');
+    const final = endDate.startOf('day');
+
+    while (current <= final) {
+        dates.push(current);
+        current = current.add(1, 'day');
     }
-    return dateList;
+
+    return dates;
 }
 
 // 根据dateLabel标签的位置, 改变日期选择器(.tempus-dominus-widget)弹出的位置

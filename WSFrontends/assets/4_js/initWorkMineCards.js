@@ -1,6 +1,6 @@
 class InitMineCards {
     constructor(today) {
-        this.today = today
+        this.today = today;
         this.lookElement();
         this._updateDateLabel(this.today);
         this.initDatePicker();
@@ -17,7 +17,7 @@ class InitMineCards {
 
     _updateDateLabel(date) {
         // 写入日期: XX年XX月
-        this.dateLabel.textContent = `${date.getFullYear()}年${date.getMonth() + 1}月`;
+        this.dateLabel.textContent = `${date.year()}年${date.month() + 1}月`;
     }
 
     _renderBantypeInfoCard(divBan) {
@@ -157,7 +157,7 @@ class InitMineCards {
                 locale: 'zh-CN'
             },
         });
-        // 先设置一个初始日期, 免的swiper乱动
+        // 先设置一个初始日期, 免的DatePicker乱动
         this.picker.dates.setValue(new tempusDominus.DateTime(this.today));
 
         // 先把已有的日期选择控件删了
@@ -168,8 +168,7 @@ class InitMineCards {
 
         // 监听日期改变事件
         this.datetimepicker2.addEventListener('change.td', (event) => {
-            this.today = event.detail.date;
-            this.today.setDate(1);
+            this.today = dayjs(event.detail.date).startOf('month');
             this._updateDateLabel(this.today);
 
             this.init();
@@ -246,20 +245,20 @@ class InitMineCards {
 
         this.preMonth.addEventListener('click', () => {
             // 获取当前月的上一个月的第一天
-            this.today = new Date(this.today.getFullYear(), this.today.getMonth() - 1, 1);
+            this.today = this.today.subtract(1, 'month').startOf('month');
             this.picker.dates.setValue(new tempusDominus.DateTime(this.today));
         });
 
         this.nextMonth.addEventListener('click', () => {
             // 获取当前月的下一个月的第一天
-            this.today = new Date(this.today.getFullYear(), this.today.getMonth() + 1, 1);
+            this.today = this.today.add(1, 'month').startOf('month');
             this.picker.dates.setValue(new tempusDominus.DateTime(this.today));
         });
     }
 
     getStartEndDate() {
-        this.startDate = dayjs(this.today).startOf('month').startOf('isoWeek');
-        this.endDate = dayjs(this.today).endOf('month').endOf('isoWeek');
+        this.startDate = this.today.startOf('month').startOf('isoWeek');
+        this.endDate = this.today.endOf('month').endOf('isoWeek');
 
         this.dateList = goThroughDate(this.startDate, this.endDate);
     }
@@ -273,8 +272,8 @@ class InitMineCards {
         }
 
         let data = {
-            month_start: dayjs(this.startDate).format('YYYY-MM-DD'),
-            month_end: dayjs(this.endDate).format('YYYY-MM-DD')
+            month_start: this.startDate.format('YYYY-MM-DD'),
+            month_end: this.endDate.format('YYYY-MM-DD')
         }
         fetch('/select-my-month-schedule', {
             method: 'POST',
@@ -322,12 +321,12 @@ class InitMineCards {
                 div_date_item.classList.add('date-item');
 
                 // 非本月, 加上那个月的日期
-                if (this.dateList[i + j].getMonth() !== this.today.getMonth()) {
-                    div_date_item.textContent = `${this.dateList[i + j].getDate()}/${this.dateList[i + j].getMonth() + 1}`;
+                if (this.dateList[i + j].month() !== this.today.month()) {
+                    div_date_item.textContent = `${this.dateList[i + j].date()}/${this.dateList[i + j].month() + 1}`;
                 } else {
-                    div_date_item.textContent = this.dateList[i + j].getDate();
+                    div_date_item.textContent = this.dateList[i + j].date();
                 }
-                div_date_item.dataset.date = dayjs(this.dateList[i + j]).format('YYYY-MM-DD');
+                div_date_item.dataset.date = this.dateList[i + j].format('YYYY-MM-DD');
 
                 let div_info_item = this.getInfoItem(this.dateList[i + j], 0);
 
@@ -379,7 +378,7 @@ class InitMineCards {
         }
 
         let name = Object.keys(this.records)[0].split('_')[0]
-        let _key = `${name}_${date.getFullYear()}_${date.getMonth() + 1}_${date.getDate()}`
+        let _key = `${name}_${date.year()}_${date.month() + 1}_${date.date()}`
 
         let info_list = this.records[_key];
         if (!info_list) {
@@ -413,7 +412,7 @@ class InitMineCards {
 
                 // 添加点击事件
                 div_info.style.cursor = 'pointer';
-                div_info.dataset.date = dayjs(date).format('YYYY-MM-DD');
+                div_info.dataset.date = date.format('YYYY-MM-DD');
                 div_info.dataset.ban = ban;
                 div_info.dataset.name = name;
                 div_info.addEventListener('click', (et) => {
@@ -450,7 +449,7 @@ class InitMineCards {
 
             // 添加点击事件
             div_info.style.cursor = 'pointer';
-            div_info.dataset.date = dayjs(rest[1]).format('YYYY-MM-DD');
+            div_info.dataset.date = rest[1].format('YYYY-MM-DD');
             div_info.dataset.ban = text;
             div_info.dataset.name = rest[0];
             div_info.addEventListener('click', (et) => {
@@ -471,7 +470,7 @@ class InitMineCards {
 
     gotoTodayCard() {
         let swiperSlides = document.querySelectorAll('.swiper-wrapper .swiper-slide');
-        let today_str = dayjs(this.today).format('YYYY-MM-DD');
+        let today_str = this.today.format('YYYY-MM-DD');
 
         for (let i = 0; i < swiperSlides.length; i++) {
             let dateItems = swiperSlides[i].querySelectorAll('.date-item[data-date]');
@@ -485,5 +484,5 @@ class InitMineCards {
     }
 }
 
-let iMCs = new InitMineCards(new Date());
+let iMCs = new InitMineCards(dayjs());
 iMCs.init();
