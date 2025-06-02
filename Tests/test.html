@@ -1,53 +1,387 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
+  <title>排班检查系统</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.1/font/bootstrap-icons.min.css"
+    rel="stylesheet">
+  <style>
+    .schedule-table {
+      border-collapse: collapse;
+      font-size: 0.85rem;
+    }
 
-  <link rel="stylesheet" href="/WSFrontends/assets/plugin/node_modules/bootstrap/dist/css/bootstrap.min.css">
-  <link rel="stylesheet"
-    href="/WSFrontends/assets/plugin/node_modules/@eonasdan/tempus-dominus/dist/css/tempus-dominus.min.css">
-  <link rel="stylesheet" href="/WSFrontends/assets/plugin/node_modules/bootstrap-icons/font/bootstrap-icons.min.css">
-  <link rel="stylesheet" href="/WSFrontends/assets/plugin/node_modules/swiper/swiper-bundle.min.css">
+    .schedule-table th,
+    .schedule-table td {
+      border: 1px solid var(--bs-border-color);
+      padding: 0.5rem;
+      text-align: center;
+      vertical-align: top;
+      min-width: 120px;
+    }
 
-  <link rel="stylesheet" href="/WSFrontends/assets/2_css/test.css">
+    .schedule-table th {
+      background-color: var(--bs-primary);
+      color: white;
+      font-weight: 600;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .schedule-table .date-header {
+      background-color: var(--bs-secondary);
+      color: white;
+      font-weight: 600;
+      position: sticky;
+      left: 0;
+      z-index: 5;
+      min-width: 100px;
+    }
+
+    .schedule-table .corner-cell {
+      background-color: var(--bs-dark);
+      color: white;
+      font-weight: 600;
+      position: sticky;
+      left: 0;
+      top: 0;
+      z-index: 15;
+    }
+
+    .person-count {
+      font-weight: bold;
+      color: var(--bs-primary);
+      margin-bottom: 0.25rem;
+    }
+
+    .person-name {
+      font-size: 0.75rem;
+      color: var(--bs-secondary);
+      margin: 0.1rem 0;
+    }
+
+    .missing-schedule {
+      background-color: var(--bs-danger-bg-subtle);
+      color: var(--bs-danger-text-emphasis);
+    }
+
+    .complete-schedule {
+      background-color: var(--bs-success-bg-subtle);
+      color: var(--bs-success-text-emphasis);
+    }
+
+    .table-container {
+      max-height: 70vh;
+      overflow: auto;
+      border: 1px solid var(--bs-border-color);
+      border-radius: 0.5rem;
+    }
+
+    .status-badge {
+      font-size: 0.7rem;
+      padding: 0.2rem 0.4rem;
+    }
+
+    .modal-header {
+      background: linear-gradient(135deg, var(--bs-primary), var(--bs-primary-dark, #0b5ed7));
+      color: white;
+    }
+
+    .modal-header .btn-close {
+      filter: invert(1);
+    }
+
+    @media (max-width: 768px) {
+      .schedule-table {
+        font-size: 0.75rem;
+      }
+
+      .schedule-table th,
+      .schedule-table td {
+        padding: 0.25rem;
+        min-width: 80px;
+      }
+
+      .person-name {
+        font-size: 0.65rem;
+      }
+    }
+
+    [data-bs-theme="dark"] .schedule-table th {
+      background-color: var(--bs-primary);
+    }
+
+    [data-bs-theme="dark"] .schedule-table .date-header {
+      background-color: var(--bs-secondary);
+    }
+
+    [data-bs-theme="dark"] .schedule-table .corner-cell {
+      background-color: var(--bs-dark);
+    }
+  </style>
 </head>
 
-<body>
-  <button type="button" class="btn btn-primary" id="checkSchedule">排班检查</button>
+<body data-bs-theme="light">
+  <div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h2><i class="bi bi-calendar-check me-2"></i>排班管理系统</h2>
+      <div>
+        <button class="btn btn-outline-secondary me-2" onclick="toggleTheme()">
+          <i class="bi bi-moon-stars" id="theme-icon"></i>
+        </button>
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#scheduleModal">
+          <i class="bi bi-plus-circle me-2"></i>检查排班
+        </button>
+      </div>
+    </div>
+  </div>
 
-  <!-- 检查排班对话框 -->
-  <div class="modal fade" id="checkScheduleModal" tabindex="-1" aria-labelledby="checkScheduleLabel" aria-hidden="true">
-    <div class="modal-dialog">
+  <!-- 排班检查模态对话框 -->
+  <div class="modal fade" id="scheduleModal" tabindex="-1" aria-labelledby="scheduleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-fullscreen-lg-down modal-xl">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="checkScheduleLabel">核对本月排班</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          <h5 class="modal-title" id="scheduleModalLabel">
+            <i class="bi bi-clipboard2-check me-2"></i>排班检查
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="关闭"></button>
         </div>
-
-        <div id="checkScheduleContent" class="modal-body">
-
+        <div class="modal-body">
+          <div class="row mb-3">
+            <div class="col-12">
+              <label for="scheduleData" class="form-label">
+                <i class="bi bi-code-square me-2"></i>排班数据 (JSON格式)
+              </label>
+              <textarea class="form-control" id="scheduleData" rows="8" placeholder="请输入排班数据..."></textarea>
+            </div>
+          </div>
+          <div class="row mb-3">
+            <div class="col-12">
+              <button type="button" class="btn btn-success" onclick="generateScheduleTable()">
+                <i class="bi bi-table me-2"></i>生成排班表
+              </button>
+              <button type="button" class="btn btn-outline-secondary ms-2" onclick="loadSampleData()">
+                <i class="bi bi-clipboard-data me-2"></i>加载示例数据
+              </button>
+            </div>
+          </div>
+          <div id="scheduleTableContainer" style="display: none;">
+            <hr>
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <h6><i class="bi bi-table me-2"></i>排班检查结果</h6>
+              <div id="summaryBadges"></div>
+            </div>
+            <div class="table-container">
+              <table class="table table-bordered schedule-table mb-0" id="scheduleTable">
+                <!-- 表格内容将通过JavaScript生成 -->
+              </table>
+            </div>
+          </div>
         </div>
-
-        <div class="modal-footer justify-content-between">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+            <i class="bi bi-x-circle me-2"></i>关闭
+          </button>
         </div>
       </div>
     </div>
   </div>
 
-  <script src="/WSFrontends/assets/plugin/node_modules/bootstrap/dist/js/bootstrap.bundle.js"></script>
-  <script src="/WSFrontends/assets/plugin/node_modules/@popperjs/core/dist/umd/popper.min.js"></script>
-  <script src="/WSFrontends/assets/plugin/node_modules/@eonasdan/tempus-dominus/dist/js/tempus-dominus.min.js"></script>
-  <script src="/WSFrontends/assets/plugin/node_modules/swiper/swiper-bundle.min.js"></script>
-  <script src="/WSFrontends/assets/plugin/node_modules/dayjs/dayjs.min.js"></script>
-  <script src="/WSFrontends/assets/plugin/node_modules/dayjs/plugin/isoWeek.js"></script>
-  <script src="/WSFrontends/assets/plugin/node_modules/dayjs/plugin/localeData.js"></script>
-  <script src="/WSFrontends/assets/plugin/node_modules/dayjs/locale/zh-cn.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // 主题切换功能
+    function toggleTheme() {
+      const html = document.documentElement;
+      const currentTheme = html.getAttribute('data-bs-theme');
+      const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+      const icon = document.getElementById('theme-icon');
 
-  <script src="/WSFrontends/assets/4_js/test.js"></script>
+      html.setAttribute('data-bs-theme', newTheme);
+      document.body.setAttribute('data-bs-theme', newTheme);
+
+      icon.className = newTheme === 'light' ? 'bi bi-moon-stars' : 'bi bi-sun';
+    }
+
+    // 加载示例数据
+    function loadSampleData() {
+      const sampleData = {
+        "2025-5-1": {
+          "today_mandatory_schedule": [
+            "1A", "1B", "1C", "2A", "2B", "2C",
+            "3A", "3B", "3C", "S1", "S2", "N1", "N2"
+          ],
+          "today_planed_schedule": {
+            "叶荣": "S1", "闫昱萤": "S1", "戴梦莹": "S2", "曾小洲": "S2",
+            "杨星": "N1", "郑霞": "N2", "金小靖": "N2", "肖贵珍": "1B",
+            "付昱东": "1A", "黄文军": "1B", "黄发生": "2C", "杨鹏": "2B",
+            "余涛": "2A", "王吉锐": "2A", "唐晓燕": "3B", "余翔": "3A",
+            "谭林": "3A", "徐博": "3B", "康正樾": "1A", "张旭辉": "2C",
+            "廖中凡": "2B", "尹红科": "1B"
+          }
+        },
+        "2025-5-2": {
+          "today_mandatory_schedule": [
+            "1A", "1B", "1C", "2A", "2B", "2C",
+            "3A", "3B", "3C", "S1", "S2", "N1", "N2"
+          ],
+          "today_planed_schedule": {
+            "叶荣": "S2", "闫昱萤": "S1", "戴梦莹": "S1",
+            "杨星": "N1", "郑霞": "N2", "肖贵珍": "1A",
+            "付昱东": "1B", "黄文军": "1C", "余涛": "2A",
+            "唐晓燕": "3A", "余翔": "3B"
+          }
+        }
+      };
+
+      document.getElementById('scheduleData').value = JSON.stringify(sampleData, null, 2);
+    }
+
+    // 生成排班表
+    function generateScheduleTable() {
+      const dataText = document.getElementById('scheduleData').value.trim();
+
+      if (!dataText) {
+        alert('请输入排班数据');
+        return;
+      }
+
+      try {
+        const scheduleData = JSON.parse(dataText);
+        createScheduleTable(scheduleData);
+        document.getElementById('scheduleTableContainer').style.display = 'block';
+      } catch (error) {
+        alert('数据格式错误，请检查JSON格式是否正确');
+        console.error(error);
+      }
+    }
+
+    // 创建排班表
+    function createScheduleTable(scheduleData) {
+      const table = document.getElementById('scheduleTable');
+      const dates = Object.keys(scheduleData).sort();
+
+      // 获取所有班种
+      const allShifts = new Set();
+      dates.forEach(date => {
+        const mandatory = scheduleData[date].today_mandatory_schedule || [];
+        mandatory.forEach(shift => allShifts.add(shift));
+      });
+      const shifts = Array.from(allShifts).sort();
+
+      // 清空表格
+      table.innerHTML = '';
+
+      // 创建表头
+      const thead = document.createElement('thead');
+      const headerRow = document.createElement('tr');
+
+      // 左上角空白单元格
+      const cornerCell = document.createElement('th');
+      cornerCell.textContent = '日期/班次';
+      cornerCell.className = 'corner-cell';
+      headerRow.appendChild(cornerCell);
+
+      // 班次列标题
+      shifts.forEach(shift => {
+        const th = document.createElement('th');
+        th.textContent = shift;
+        headerRow.appendChild(th);
+      });
+
+      thead.appendChild(headerRow);
+      table.appendChild(thead);
+
+      // 创建表体
+      const tbody = document.createElement('tbody');
+      let totalMissing = 0;
+      let totalComplete = 0;
+
+      dates.forEach(date => {
+        const row = document.createElement('tr');
+
+        // 日期列
+        const dateCell = document.createElement('td');
+        dateCell.textContent = date;
+        dateCell.className = 'date-header';
+        row.appendChild(dateCell);
+
+        const dayData = scheduleData[date];
+        const mandatory = dayData.today_mandatory_schedule || [];
+        const planned = dayData.today_planed_schedule || {};
+
+        // 按班种分组人员
+        const shiftGroups = {};
+        Object.entries(planned).forEach(([person, shift]) => {
+          if (!shiftGroups[shift]) {
+            shiftGroups[shift] = [];
+          }
+          shiftGroups[shift].push(person);
+        });
+
+        // 为每个班种创建单元格
+        shifts.forEach(shift => {
+          const td = document.createElement('td');
+          const people = shiftGroups[shift] || [];
+          const requiredCount = mandatory.filter(s => s === shift).length;
+          const actualCount = people.length;
+
+          // 人数显示
+          const countDiv = document.createElement('div');
+          countDiv.className = 'person-count';
+          countDiv.textContent = `${actualCount}/${requiredCount}`;
+          td.appendChild(countDiv);
+
+          // 人员名单
+          people.forEach(person => {
+            const nameDiv = document.createElement('div');
+            nameDiv.className = 'person-name';
+            nameDiv.textContent = person;
+            td.appendChild(nameDiv);
+          });
+
+          // 根据排班情况设置样式
+          if (actualCount < requiredCount) {
+            td.className = 'missing-schedule';
+            totalMissing++;
+          } else if (actualCount >= requiredCount) {
+            td.className = 'complete-schedule';
+            totalComplete++;
+          }
+
+          row.appendChild(td);
+        });
+
+        tbody.appendChild(row);
+      });
+
+      table.appendChild(tbody);
+
+      // 更新汇总徽章
+      updateSummaryBadges(totalMissing, totalComplete);
+    }
+
+    // 更新汇总徽章
+    function updateSummaryBadges(missing, complete) {
+      const container = document.getElementById('summaryBadges');
+      container.innerHTML = `
+                <span class="badge bg-danger status-badge me-2">
+                    <i class="bi bi-exclamation-triangle me-1"></i>缺员: ${missing}
+                </span>
+                <span class="badge bg-success status-badge">
+                    <i class="bi bi-check-circle me-1"></i>完成: ${complete}
+                </span>
+            `;
+    }
+
+    // 页面加载时自动加载示例数据
+    document.addEventListener('DOMContentLoaded', function () {
+      loadSampleData();
+    });
+  </script>
 </body>
 
 </html>

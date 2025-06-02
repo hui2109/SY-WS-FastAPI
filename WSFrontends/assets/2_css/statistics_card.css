@@ -4,6 +4,11 @@
   margin-bottom: 20px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
+#statistics-content-all .user-card:hover {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+  transform: translateY(-2px);
+  transition: all 0.3s ease;
+}
 #statistics-content-all .user-card .user-avatar {
   width: 80px;
   height: 80px;
@@ -75,4 +80,79 @@
 }
 #statistics-content-all .search-container #searchInput2 {
   box-shadow: none;
+}
+[data-bs-theme=dark] #statistics-content-all .user-card {
+  border: 1px solid #495057;
+  background: #181d20;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+  color: #f8f9fa;
+}
+[data-bs-theme=dark] #statistics-content-all .user-card .holiday-rule {
+  background: #181d22;
+  border: 1px solid #6c757d;
+  color: #f8f9fa;
+}
+[data-bs-theme=dark] #statistics-content-all .user-card .holiday-stats {
+  background: #212529;
+  border: 1px solid #495057;
+  color: #f8f9fa;
+}
+[data-bs-theme=dark] #statistics-content-all .user-card .holiday-stats .holiday-type-badge {
+  background: #495057;
+  color: #f8f9fa;
+  border: 1px solid #6c757d;
+}
+[data-bs-theme=dark] #statistics-content-all .user-card .holiday-stats .stats-progress {
+  background: #495057;
+}
+[data-bs-theme=dark] #statistics-content-all .user-card .holiday-stats .stats-progress .progress-bar {
+  background: linear-gradient(90deg, #0d6efd, #6610f2);
+}
+[data-bs-theme=dark] #statistics-content-all .user-card .work-schedule {
+  background: #1a2332;
+  border: 1px solid #495057;
+}
+[data-bs-theme=dark] #statistics-content-all .user-card .work-schedule .schedule-item {
+  background: #212529;
+  border: 1px solid #495057;
+  color: #f8f9fa;
+}
+[data-bs-theme=dark] #statistics-content-all .user-card .btn-add-rule {
+  background: #198754;
+}
+[data-bs-theme=dark] #statistics-content-all .user-card .btn-add-rule:hover {
+  background: #157347;
+  box-shadow: 0 4px 12px rgba(25, 135, 84, 0.4);
+}
+[data-bs-theme=dark] #statistics-content-all .user-card .btn-save-rule {
+  background: #0d6efd;
+}
+[data-bs-theme=dark] #statistics-content-all .user-card .btn-save-rule:hover {
+  background: #0b5ed7;
+  box-shadow: 0 4px 12px rgba(13, 110, 253, 0.4);
+}
+[data-bs-theme=dark] #statistics-content-all .search-container {
+  background: linear-gradient(135deg, #183d62 0%, #343a40 100%);
+  border-bottom: 1px solid #495057;
+}
+[data-bs-theme=dark] #statistics-content-all .search-container #searchInput2 {
+  background: #212529;
+  border: 1px solid #495057;
+  color: #f8f9fa;
+}
+[data-bs-theme=dark] #statistics-content-all .search-container #searchInput2::placeholder {
+  color: #adb5bd;
+}
+[data-bs-theme=dark] #statistics-content-all .search-container #searchInput2:focus {
+  background: #212529;
+  border-color: #0d6efd;
+  color: #f8f9fa;
+}
+[data-bs-theme=dark] #statistics-content-all .user-avatar {
+  border: 2px solid #495057;
+}
+[data-bs-theme=dark] #statistics-content-all .user-card:hover {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+  transform: translateY(-2px);
+  transition: all 0.3s ease;
 }

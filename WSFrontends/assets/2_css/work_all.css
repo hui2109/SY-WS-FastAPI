@@ -47,6 +47,7 @@
   border-bottom: 1px solid #e5e7eb;
   border-right: 1px solid #f3f4f6;
   transition: background-color 0.15s ease;
+  vertical-align: middle;
 }
 #work-content-all .table-container .paiban-table thead tr th:first-child {
   left: 0;
@@ -55,7 +56,6 @@
   border-right: 1px solid #e5e7eb;
   font-weight: 600;
   color: #1f2937;
-  vertical-align: middle;
 }
 #work-content-all .table-container .paiban-table thead tr th:hover {
   background: #f1f5f9;

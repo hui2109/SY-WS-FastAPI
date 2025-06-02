@@ -162,7 +162,8 @@
     padding: 6px 3px;
   }
   #paiban-content-all #paibanToolBox {
-    top: -1px;
+    top: -6px;
+    right: -5px;
   }
   #paiban-content-all #paibanToolBox > button {
     border-radius: 6px;
@@ -175,7 +176,7 @@
     border-radius: 4px;
   }
   #paiban-content-all .table-container .paiban-table thead tr th {
-    width: 53px;
+    width: 55px;
     font-size: 11px;
     height: 38px;
   }
@@ -273,4 +274,229 @@ body #customCursor {
 }
 body #customCursor.hidden {
   opacity: 0;
+}
+
+#checkScheduleModal .table-container {
+  width: 100%;
+  height: 70vh;
+  overflow: auto;
+  z-index: 0;
+  border: 1px solid rgba(229, 231, 235, 0.8);
+  border-radius: 8px;
+  background: #ffffff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+#checkScheduleModal .table-container::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+#checkScheduleModal .table-container::-webkit-scrollbar-track {
+  background: #f9fafb;
+}
+#checkScheduleModal .table-container::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 3px;
+}
+#checkScheduleModal .table-container::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
+}
+#checkScheduleModal .table-container .schedule-table {
+  table-layout: fixed;
+  border-collapse: separate;
+  border-spacing: 0;
+  min-width: 100%;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+#checkScheduleModal .table-container .schedule-table thead tr th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: #f8fafc;
+  text-align: center;
+  width: 70px;
+  height: 44px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #374151;
+  letter-spacing: 0.025em;
+  border-bottom: 1px solid #e5e7eb;
+  border-right: 1px solid #f3f4f6;
+  transition: background-color 0.15s ease;
+  vertical-align: middle;
+}
+#checkScheduleModal .table-container .schedule-table thead tr th:first-child {
+  left: 0;
+  z-index: 3;
+  background: #f1f5f9;
+  border-right: 1px solid #e5e7eb;
+  font-weight: 600;
+  color: #1f2937;
+  width: 70px;
+}
+#checkScheduleModal .table-container .schedule-table thead tr th:hover {
+  background: #f1f5f9;
+}
+#checkScheduleModal .table-container .schedule-table tbody tr {
+  transition: background-color 0.15s ease;
+}
+#checkScheduleModal .table-container .schedule-table tbody tr:nth-child(even) {
+  background: #fafbfc;
+}
+#checkScheduleModal .table-container .schedule-table tbody tr:hover {
+  background: #f0f9ff;
+}
+#checkScheduleModal .table-container .schedule-table tbody tr td {
+  text-align: center;
+  height: 38px;
+  vertical-align: middle;
+  font-size: 15px;
+  font-weight: 400;
+  color: #1f2937;
+  border-bottom: 1px solid #f3f4f6;
+  border-right: 1px solid #f9fafb;
+  padding: 8px 4px;
+  transition: background-color 0.15s ease;
+}
+#checkScheduleModal .table-container .schedule-table tbody tr td:first-child {
+  position: sticky;
+  left: 0;
+  z-index: 2;
+  background: #f8fafc;
+  border-right: 1px solid #e5e7eb;
+  font-weight: 500;
+  color: #1f2937;
+}
+#checkScheduleModal .table-container .schedule-table tbody tr td:hover {
+  background: #eff6ff;
+  color: #1e40af;
+}
+#checkScheduleModal .table-container .schedule-table tbody tr:hover td:first-child {
+  background: #f1f5f9;
+}
+#checkScheduleModal .table-container .schedule-table tbody tr:nth-child(even):hover td:first-child {
+  background: #f1f5f9;
+}
+@media (max-width: 768px) {
+  #checkScheduleModal .table-container {
+    height: 60vh;
+    border-radius: 6px;
+    -webkit-overflow-scrolling: touch;
+  }
+  #checkScheduleModal .table-container .schedule-table thead tr th {
+    height: 40px;
+    font-size: 13px;
+  }
+  #checkScheduleModal .table-container .schedule-table tbody tr td {
+    height: 36px;
+    font-size: 13px;
+    padding: 6px 3px;
+  }
+}
+@media (max-width: 480px) {
+  #checkScheduleModal .table-container {
+    height: 78vh;
+    border-radius: 4px;
+  }
+  #checkScheduleModal .table-container .schedule-table thead tr th {
+    width: 55px;
+    font-size: 12px;
+    height: 38px;
+  }
+  #checkScheduleModal .table-container .schedule-table thead tr th:first-child {
+    width: 53px;
+  }
+  #checkScheduleModal .table-container .schedule-table tbody tr td {
+    font-size: 12px;
+    height: 34px;
+    padding: 4px 2px;
+  }
+  #checkScheduleModal .table-container .schedule-table tbody tr td:first-child {
+    font-size: 11px;
+  }
+}
+@media (max-width: 768px) and (orientation: landscape) {
+  #checkScheduleModal .table-container {
+    height: 65vh;
+  }
+}
+[data-bs-theme=dark] #checkScheduleModal .table-container {
+  background: #1f2937;
+  border: 1px solid rgba(75, 85, 99, 0.8);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+[data-bs-theme=dark] #checkScheduleModal .table-container::-webkit-scrollbar-track {
+  background: #374151;
+}
+[data-bs-theme=dark] #checkScheduleModal .table-container::-webkit-scrollbar-thumb {
+  background: #6b7280;
+}
+[data-bs-theme=dark] #checkScheduleModal .table-container::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
+}
+[data-bs-theme=dark] #checkScheduleModal .table-container .schedule-table thead tr th {
+  background: #374151;
+  color: #e5e7eb;
+  border-bottom: 1px solid #4b5563;
+  border-right: 1px solid #4b5563;
+}
+[data-bs-theme=dark] #checkScheduleModal .table-container .schedule-table thead tr th:first-child {
+  background: #4b5563;
+  border-right: 1px solid #6b7280;
+  color: #f9fafb;
+}
+[data-bs-theme=dark] #checkScheduleModal .table-container .schedule-table thead tr th:hover {
+  background: #4b5563;
+  color: #f3f4f6;
+}
+[data-bs-theme=dark] #checkScheduleModal .table-container .schedule-table tbody tr:nth-child(even) {
+  background: #262b35;
+}
+[data-bs-theme=dark] #checkScheduleModal .table-container .schedule-table tbody tr:nth-child(odd) {
+  background: #1f2937;
+}
+[data-bs-theme=dark] #checkScheduleModal .table-container .schedule-table tbody tr:hover {
+  background: #1e3a8a;
+}
+[data-bs-theme=dark] #checkScheduleModal .table-container .schedule-table tbody tr td {
+  color: #e5e7eb;
+  border-bottom: 1px solid #374151;
+  border-right: 1px solid #374151;
+}
+[data-bs-theme=dark] #checkScheduleModal .table-container .schedule-table tbody tr td:first-child {
+  background: #374151;
+  border-right: 1px solid #4b5563;
+  color: #f3f4f6;
+}
+[data-bs-theme=dark] #checkScheduleModal .table-container .schedule-table tbody tr td:hover {
+  background: #1e40af;
+  color: #ffffff;
+}
+[data-bs-theme=dark] #checkScheduleModal .table-container .schedule-table tbody tr:hover td:first-child {
+  background: #4b5563;
+  color: #f9fafb;
+}
+[data-bs-theme=dark] #checkScheduleModal .table-container .schedule-table tbody tr:nth-child(even):hover td:first-child {
+  background: #4b5563;
+  color: #f9fafb;
+}
+
+.custom-popover {
+  --bs-popover-max-width: 310px;
+  --bs-popover-border-color: #712cf9;
+  --bs-popover-header-bg: #712cf9;
+  --bs-popover-header-color: var(--bs-white);
+  --bs-popover-body-padding-x: 1rem;
+  --bs-popover-body-padding-y: .5rem;
+  font-size: 14px;
+}
+.custom-popover .popover-header {
+  font-size: 15px;
+}
+@media (max-width: 480px) {
+  .custom-popover {
+    font-size: 12px;
+  }
+  .custom-popover .popover-header {
+    font-size: 13px;
+  }
 }

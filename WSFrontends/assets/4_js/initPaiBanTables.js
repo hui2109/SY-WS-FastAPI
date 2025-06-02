@@ -420,6 +420,7 @@ class InitPaiBanTables {
         this.confirmClearAll = document.getElementById('confirmClearAll');
 
         this.checkScheduleModal = document.getElementById('checkScheduleModal');
+        this.checkScheduleLabel = document.getElementById('checkScheduleLabel');
 
         this.weekMap = getWeekMap();
         this.banTypeColor = getBanTypeColor();
@@ -1087,10 +1088,14 @@ class InitPaiBanTables {
         });
 
         this.checkAllSchedule.addEventListener('click', () => {
+            this.checkScheduleLabel.textContent = `核查 ${this.startDate.format('YYYY-MM-DD')}至${this.endDate.format('YYYY-MM-DD')} 的排班`
             this._renderCheckScheduleTable();
 
             const modalInstance = new bootstrap.Modal(this.checkScheduleModal);
             modalInstance.show();
+
+            const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]');
+            const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl));
         });
     }
 
@@ -1326,34 +1331,74 @@ class InitPaiBanTables {
         for (let dateKey in tbody_data) {
             let tr = document.createElement('tr');
             let td = document.createElement('td');
-            td.textContent = dateKey + `（${this.weekMap[this.dateList[parseInt(dateKey) - 1].day()]}）`;
+
+            let div1 = document.createElement('div');  // div1写日子
+            let div2 = document.createElement('div');  // div2写星期
+            let currDate = this.dateList[parseInt(dateKey) - 1]
+
+            div1.textContent = dateKey;
+            div2.textContent = `（${this.weekMap[currDate.day()]}）`;
+            td.appendChild(div1);
+            td.appendChild(div2);
+
             tr.appendChild(td);
 
-            for (let tbody_tr_data_list of tbody_data[dateKey]) {
+            for (let i = 0; i < tbody_data[dateKey].length; i++) {
+                let tbody_tr_data_list = tbody_data[dateKey][i];
                 let td = document.createElement('td');
                 let count = tbody_tr_data_list.length;
 
                 if (count === 0) {
-                    td.innerHTML = '<span class="badge bg-secondary" style="font-size: 0.9rem">暂无排班</span>'
+                    td.innerHTML = '<span class="badge bg-secondary">暂无排班</span>'
                 } else {
-                    td.innerHTML = `<span class="badge bg-success" style="font-size: 0.9rem">${count} 人</span>`;
+                    // 只显示前3个人
+                    let tbody_tr_data_list_trim = [];
+                    let dayu3Flag = false;
 
-                    // 只显示前4个人
-                    let dayu4Flag = false;
-                    if (count > 4) {
-                        tbody_tr_data_list = tbody_tr_data_list.slice(0, 4);
-                        dayu4Flag = true;
+                    if (count > 3) {
+                        tbody_tr_data_list_trim = tbody_tr_data_list.slice(0, 3);
+                        dayu3Flag = true;
+                    } else {
+                        tbody_tr_data_list_trim = tbody_tr_data_list;
                     }
-                    for (let i = 0; i < tbody_tr_data_list.length; i++) {
-                        td.innerHTML += `<span class="badge border border-success text-success" style="font-size: 0.9rem">${tbody_tr_data_list[i]}</span>`;
+
+                    // 不同颜色标识人数, 便于快速判断各班种安排的人
+                    let count_color_dict = {
+                        1: 'bg-primary',
+                        2: 'bg-success',
+                        3: 'bg-warning',
+                        4: 'bg-danger',
                     }
-                    if (dayu4Flag) {
-                        td.innerHTML += '<span class="badge bg-warning text-dark" style="font-size: 0.9rem">等等</span>';
-                    }
+
+                    td.innerHTML += `
+                        <div class="d-flex flex-column justify-content-between align-items-center">
+                            <div class="badge ${count_color_dict[count] ? count_color_dict[count] : 'bg-info'}">${count} 人</div>
+                            
+                            ${tbody_tr_data_list_trim.map(name => `
+                                <div class="text-muted" style="font-size: 0.75em">${name}</div>
+                            `).join('')}
+
+                            ${dayu3Flag ?
+                        `
+                        <a tabindex="0"
+                            class="badge bg-warning waitwaitBadge"
+                            style="font-size: 0.75em; cursor: pointer; text-decoration: none;"
+                            data-bs-toggle="popover"
+                            data-bs-placement="left"
+                            data-bs-custom-class="custom-popover"
+                            data-bs-trigger="focus"
+                            data-bs-title="${currDate.format('YY年M月D日')}${thead_data[i + 1]}班所有人员"
+                            data-bs-content="${tbody_tr_data_list.join('、')}">
+                            等等</a>
+                        `
+                        : ''}
+                        </div>
+                    `
                 }
 
                 tr.appendChild(td);
             }
+
             tbody.appendChild(tr);
         }
     }
