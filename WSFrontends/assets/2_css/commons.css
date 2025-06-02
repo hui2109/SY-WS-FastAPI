@@ -47,6 +47,14 @@
   left: var(--td-left) !important;
   transform: none !important;
 }
+.tempus-dominus-widget.light {
+  background-color: #fdfcfb;
+  color: #242222;
+}
+.tempus-dominus-widget .tempus-dominus-widget.dark {
+  background-color: #1b1b1b;
+  color: #e5dada;
+}
 
 @media (min-width: 1200px) {
   .container, .container-lg, .container-md, .container-sm, .container-xl {

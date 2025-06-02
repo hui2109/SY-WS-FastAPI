@@ -379,6 +379,186 @@ class InitPaiBanTables {
         this.customCursor.classList.add('hidden');
     }
 
+    _sortListByReference(A, B = this.mustBansAllList) {
+        return A.slice().sort((a, b) => {
+            // 定义排序规则
+            const indexA = B.indexOf(a);
+            const indexB = B.indexOf(b);
+
+            const isAInB = indexA !== -1;
+            const isBInB = indexB !== -1;
+
+            const isABujia = a === '补假';
+            const isBBujia = b === '补假';
+
+            // '补假' 永远排最后
+            if (isABujia && !isBBujia) return 1;
+            if (!isABujia && isBBujia) return -1;
+            if (isABujia && isBBujia) return 0;
+
+            // 都在B中，按B的顺序排
+            if (isAInB && isBInB) return indexA - indexB;
+
+            // 只有a在B中
+            if (isAInB && !isBInB) return -1;
+            // 只有b在B中
+            if (!isAInB && isBInB) return 1;
+
+            // 都不在B中，保持原序（也可以按字母排，这里按原顺序）
+            return 0;
+        });
+    }
+
+    _renderCheckScheduleTable() {
+        let thead = this.checkScheduleModal.querySelector('#checkScheduleContent thead');
+        let tbody = this.checkScheduleModal.querySelector('#checkScheduleContent tbody');
+        thead.innerHTML = '';
+        tbody.innerHTML = '';
+
+        let month_planed_schedule = {};
+        let month_bantype = new Set();
+        this.mustBansAllList = ["1A", "1B", "1C", "2A", "2B", "2C", "3A", "3B", "3C", "S1", "S2", "N1", "N2", "休息"];
+
+        // 获取当月所有排班数据
+        for (let i = 0; i < this.dateList.length; i++) {
+            let date = this.dateList[i].format('YYYY-MM-DD');
+            let clickablePaibanCells = this.paibanTable.querySelectorAll(`.clickable-paiban-cell[data-date="${date}"]`);
+            let today_planed_schedule = {};
+
+            for (let clickablePaibanCell of clickablePaibanCells) {
+                for (let divElement of clickablePaibanCell.children) {
+                    // 如果是上个月的排班，则不计入今天的计划排班; 如果是占位的空div，也排除
+                    if (!divElement.classList.contains('fake') && divElement.textContent !== '') {
+                        if (!today_planed_schedule[clickablePaibanCell.dataset.name]) {
+                            today_planed_schedule[clickablePaibanCell.dataset.name] = [divElement.textContent];
+                            month_bantype.add(divElement.textContent);
+                        } else {
+                            today_planed_schedule[clickablePaibanCell.dataset.name].push(divElement.textContent);
+                            month_bantype.add(divElement.textContent);
+                        }
+                    }
+                }
+            }
+
+            month_planed_schedule[this.dateList[i].date()] = today_planed_schedule;
+        }
+        month_bantype = this._sortListByReference(Array.from(month_bantype));
+
+        // 重构数据
+        let thead_data = [];
+        for (let i = -1; i < month_bantype.length; i++) {
+            if (i === -1) {
+                thead_data.push(`${this.startDate.year()}/${this.startDate.month() + 1}`)
+            } else {
+                thead_data.push(month_bantype[i]);
+            }
+        }
+
+        let tbody_data = {};
+        let date_keys = Object.keys(month_planed_schedule);
+        for (let dateKey of date_keys) {
+            tbody_data[dateKey] = [];
+
+            for (let bantype of month_bantype) {
+                let tbody_tr_data = [];
+
+                for (let name in month_planed_schedule[dateKey]) {
+                    let bans_list = month_planed_schedule[dateKey][name];
+
+                    for (let ban of bans_list) {
+                        if (bantype === ban) {
+                            tbody_tr_data.push(name);
+                        }
+                    }
+                }
+                tbody_data[dateKey].push(tbody_tr_data);
+            }
+        }
+
+        // 绘制表格
+        let tr = document.createElement('tr');
+        for (let content of thead_data) {
+            let th = document.createElement('th');
+            th.textContent = content;
+            tr.appendChild(th);
+        }
+        thead.appendChild(tr);
+
+        for (let dateKey in tbody_data) {
+            let tr = document.createElement('tr');
+            let td = document.createElement('td');
+
+            let div1 = document.createElement('div');  // div1写日子
+            let div2 = document.createElement('div');  // div2写星期
+            let currDate = this.dateList[parseInt(dateKey) - 1]
+
+            div1.textContent = dateKey;
+            div2.textContent = `（${this.weekMap[currDate.day()]}）`;
+            td.appendChild(div1);
+            td.appendChild(div2);
+
+            tr.appendChild(td);
+
+            for (let i = 0; i < tbody_data[dateKey].length; i++) {
+                let tbody_tr_data_list = tbody_data[dateKey][i];
+                let td = document.createElement('td');
+                let count = tbody_tr_data_list.length;
+
+                if (count === 0) {
+                    td.innerHTML = '<span class="badge bg-secondary">暂无排班</span>'
+                } else {
+                    // 只显示前3个人
+                    let tbody_tr_data_list_trim = [];
+                    let dayu3Flag = false;
+
+                    if (count > 3) {
+                        tbody_tr_data_list_trim = tbody_tr_data_list.slice(0, 3);
+                        dayu3Flag = true;
+                    } else {
+                        tbody_tr_data_list_trim = tbody_tr_data_list;
+                    }
+
+                    // 不同颜色标识人数, 便于快速判断各班种安排的人
+                    let count_color_dict = {
+                        1: 'bg-primary',
+                        2: 'bg-success',
+                        3: 'bg-warning',
+                        4: 'bg-danger',
+                    }
+
+                    td.innerHTML += `
+                        <div class="d-flex flex-column justify-content-between align-items-center">
+                            <div class="badge ${count_color_dict[count] ? count_color_dict[count] : 'bg-info'}">${count} 人</div>
+                            
+                            ${tbody_tr_data_list_trim.map(name => `
+                                <div class="text-muted" style="font-size: 0.75em">${name}</div>
+                            `).join('')}
+
+                            ${dayu3Flag ?
+                        `
+                        <a tabindex="0"
+                            class="badge bg-warning waitwaitBadge"
+                            style="font-size: 0.75em; cursor: pointer; text-decoration: none;"
+                            data-bs-toggle="popover"
+                            data-bs-placement="left"
+                            data-bs-custom-class="custom-popover"
+                            data-bs-trigger="focus"
+                            data-bs-title="${currDate.format('YY年M月D日')}${thead_data[i + 1]}班所有人员"
+                            data-bs-content="${tbody_tr_data_list.join('、')}">
+                            等等</a>
+                        `
+                        : ''}
+                        </div>
+                    `
+                }
+
+                tr.appendChild(td);
+            }
+
+            tbody.appendChild(tr);
+        }
+    }
+
     lookElement() {
         this.paibanTable = document.querySelector('#paiban-content-all .paiban-table');
         this.dateLabel = document.querySelector('#paiban-content-all .mounianmouyue');
@@ -387,6 +567,7 @@ class InitPaiBanTables {
         this.showLastSchedule = document.getElementById('showLastSchedule');
         this.autoScheduleAll = document.getElementById('autoScheduleAll');
         this.checkAllSchedule = document.getElementById('checkAllSchedule');
+        this.checkAllScheduleFanBtn = document.getElementById('checkAllScheduleFan');
 
         this.datetimepicker3 = document.getElementById('datetimepicker3');
         this.paibanModal = document.getElementById('paibanModal');
@@ -1100,6 +1281,17 @@ class InitPaiBanTables {
             const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]');
             const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl));
         });
+
+        this.checkAllScheduleFanBtn.addEventListener('click', () => {
+            this.checkScheduleLabel.textContent = `核查 ${this.startDate.format('YYYY-MM-DD')}至${this.endDate.format('YYYY-MM-DD')} 的排班`
+            this._renderCheckScheduleTable();
+
+            const modalInstance = new bootstrap.Modal(this.checkScheduleModal);
+            modalInstance.show();
+
+            const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]');
+            const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl));
+        });
     }
 
     getExpectedRelax(name, date) {
@@ -1255,187 +1447,6 @@ class InitPaiBanTables {
         }
 
     }
-
-    _renderCheckScheduleTable() {
-        let thead = this.checkScheduleModal.querySelector('#checkScheduleContent thead');
-        let tbody = this.checkScheduleModal.querySelector('#checkScheduleContent tbody');
-        thead.innerHTML = '';
-        tbody.innerHTML = '';
-
-        let month_planed_schedule = {};
-        let month_bantype = new Set();
-        this.mustBansAllList = ["1A", "1B", "1C", "2A", "2B", "2C", "3A", "3B", "3C", "S1", "S2", "N1", "N2", "休息"];
-
-        // 获取当月所有排班数据
-        for (let i = 0; i < this.dateList.length; i++) {
-            let date = this.dateList[i].format('YYYY-MM-DD');
-            let clickablePaibanCells = this.paibanTable.querySelectorAll(`.clickable-paiban-cell[data-date="${date}"]`);
-            let today_planed_schedule = {};
-
-            for (let clickablePaibanCell of clickablePaibanCells) {
-                for (let divElement of clickablePaibanCell.children) {
-                    // 如果是上个月的排班，则不计入今天的计划排班; 如果是占位的空div，也排除
-                    if (!divElement.classList.contains('fake') && divElement.textContent !== '') {
-                        if (!today_planed_schedule[clickablePaibanCell.dataset.name]) {
-                            today_planed_schedule[clickablePaibanCell.dataset.name] = [divElement.textContent];
-                            month_bantype.add(divElement.textContent);
-                        } else {
-                            today_planed_schedule[clickablePaibanCell.dataset.name].push(divElement.textContent);
-                            month_bantype.add(divElement.textContent);
-                        }
-                    }
-                }
-            }
-
-            month_planed_schedule[this.dateList[i].date()] = today_planed_schedule;
-        }
-        month_bantype = this._sortListByReference(Array.from(month_bantype));
-
-        // 重构数据
-        let thead_data = [];
-        for (let i = -1; i < month_bantype.length; i++) {
-            if (i === -1) {
-                thead_data.push(`${this.startDate.year()}/${this.startDate.month() + 1}`)
-            } else {
-                thead_data.push(month_bantype[i]);
-            }
-        }
-
-        let tbody_data = {};
-        let date_keys = Object.keys(month_planed_schedule);
-        for (let dateKey of date_keys) {
-            tbody_data[dateKey] = [];
-
-            for (let bantype of month_bantype) {
-                let tbody_tr_data = [];
-
-                for (let name in month_planed_schedule[dateKey]) {
-                    let bans_list = month_planed_schedule[dateKey][name];
-
-                    for (let ban of bans_list) {
-                        if (bantype === ban) {
-                            tbody_tr_data.push(name);
-                        }
-                    }
-                }
-                tbody_data[dateKey].push(tbody_tr_data);
-            }
-        }
-
-        // 绘制表格
-        let tr = document.createElement('tr');
-        for (let content of thead_data) {
-            let th = document.createElement('th');
-            th.textContent = content;
-            tr.appendChild(th);
-        }
-        thead.appendChild(tr);
-
-        for (let dateKey in tbody_data) {
-            let tr = document.createElement('tr');
-            let td = document.createElement('td');
-
-            let div1 = document.createElement('div');  // div1写日子
-            let div2 = document.createElement('div');  // div2写星期
-            let currDate = this.dateList[parseInt(dateKey) - 1]
-
-            div1.textContent = dateKey;
-            div2.textContent = `（${this.weekMap[currDate.day()]}）`;
-            td.appendChild(div1);
-            td.appendChild(div2);
-
-            tr.appendChild(td);
-
-            for (let i = 0; i < tbody_data[dateKey].length; i++) {
-                let tbody_tr_data_list = tbody_data[dateKey][i];
-                let td = document.createElement('td');
-                let count = tbody_tr_data_list.length;
-
-                if (count === 0) {
-                    td.innerHTML = '<span class="badge bg-secondary">暂无排班</span>'
-                } else {
-                    // 只显示前3个人
-                    let tbody_tr_data_list_trim = [];
-                    let dayu3Flag = false;
-
-                    if (count > 3) {
-                        tbody_tr_data_list_trim = tbody_tr_data_list.slice(0, 3);
-                        dayu3Flag = true;
-                    } else {
-                        tbody_tr_data_list_trim = tbody_tr_data_list;
-                    }
-
-                    // 不同颜色标识人数, 便于快速判断各班种安排的人
-                    let count_color_dict = {
-                        1: 'bg-primary',
-                        2: 'bg-success',
-                        3: 'bg-warning',
-                        4: 'bg-danger',
-                    }
-
-                    td.innerHTML += `
-                        <div class="d-flex flex-column justify-content-between align-items-center">
-                            <div class="badge ${count_color_dict[count] ? count_color_dict[count] : 'bg-info'}">${count} 人</div>
-                            
-                            ${tbody_tr_data_list_trim.map(name => `
-                                <div class="text-muted" style="font-size: 0.75em">${name}</div>
-                            `).join('')}
-
-                            ${dayu3Flag ?
-                        `
-                        <a tabindex="0"
-                            class="badge bg-warning waitwaitBadge"
-                            style="font-size: 0.75em; cursor: pointer; text-decoration: none;"
-                            data-bs-toggle="popover"
-                            data-bs-placement="left"
-                            data-bs-custom-class="custom-popover"
-                            data-bs-trigger="focus"
-                            data-bs-title="${currDate.format('YY年M月D日')}${thead_data[i + 1]}班所有人员"
-                            data-bs-content="${tbody_tr_data_list.join('、')}">
-                            等等</a>
-                        `
-                        : ''}
-                        </div>
-                    `
-                }
-
-                tr.appendChild(td);
-            }
-
-            tbody.appendChild(tr);
-        }
-    }
-
-    _sortListByReference(A, B = this.mustBansAllList) {
-        return A.slice().sort((a, b) => {
-            // 定义排序规则
-            const indexA = B.indexOf(a);
-            const indexB = B.indexOf(b);
-
-            const isAInB = indexA !== -1;
-            const isBInB = indexB !== -1;
-
-            const isABujia = a === '补假';
-            const isBBujia = b === '补假';
-
-            // '补假' 永远排最后
-            if (isABujia && !isBBujia) return 1;
-            if (!isABujia && isBBujia) return -1;
-            if (isABujia && isBBujia) return 0;
-
-            // 都在B中，按B的顺序排
-            if (isAInB && isBInB) return indexA - indexB;
-
-            // 只有a在B中
-            if (isAInB && !isBInB) return -1;
-            // 只有b在B中
-            if (!isAInB && isBInB) return 1;
-
-            // 都不在B中，保持原序（也可以按字母排，这里按原顺序）
-            return 0;
-        });
-    }
-
 }
 
 let iPBTs = new InitPaiBanTables(dayjs());

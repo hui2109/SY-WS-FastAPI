@@ -418,6 +418,10 @@ body #customCursor.hidden {
   #checkScheduleModal .table-container .schedule-table tbody tr td:first-child {
     font-size: 11px;
   }
+  #checkScheduleModal .modal-footer {
+    padding: 3px;
+    height: 45px !important;
+  }
 }
 @media (max-width: 768px) and (orientation: landscape) {
   #checkScheduleModal .table-container {

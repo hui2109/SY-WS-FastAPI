@@ -7,8 +7,8 @@ class initIndex {
         this.lookElement();
         this.bindEvent();
         this.changeTheme();
-        //this.navLinks[2].click();
-        this.paibanDesktopDropdownItems[0].click();
+        this.navLinks[0].click();
+        //this.paibanDesktopDropdownItems[0].click();
     }
 
     _updateThemeIcons(mode) {
@@ -66,11 +66,11 @@ class initIndex {
         this.mobileThemeDropdown = document.getElementById('mobileThemeDropdown');
 
         this.paibanDesktopTools = document.getElementById('paibanDesktopTools');
-        this.paibanToolLabel = this.paibanDesktopTools.querySelector('span');
+        this.paibanToolDesktopLabel = this.paibanDesktopTools.querySelector('span');
         this.paibanDesktopDropdownItems = this.paibanDesktopTools.parentNode.querySelectorAll('.dropdown-item');
 
         this.paibanMobileTools = document.getElementById('paibanMobileTools');
-
+        this.paibanToolMobileLabel = this.paibanMobileTools.querySelector('span');
         this.paibanMobileDropdownItems = this.paibanMobileTools.parentNode.querySelectorAll('.dropdown-item');
     }
 
@@ -110,7 +110,8 @@ class initIndex {
                 }
 
                 // 恢复 [排班工具] 对应的导航栏文字
-                this.paibanToolLabel.textContent = this.paibanToolLabel.dataset.default;
+                this.paibanToolDesktopLabel.textContent = this.paibanToolDesktopLabel.dataset.default;
+                this.paibanToolMobileLabel.textContent = this.paibanToolMobileLabel.dataset.default;
             });
         });
 
@@ -147,7 +148,8 @@ class initIndex {
                 }
 
                 // 更新 [排班工具] 对应的导航栏文字
-                this.paibanToolLabel.textContent = elementThis.textContent;
+                this.paibanToolDesktopLabel.textContent = elementThis.textContent;
+                this.paibanToolMobileLabel.textContent = elementThis.textContent;
             });
         });
 
@@ -184,6 +186,10 @@ class initIndex {
                         });
                     }, 10);
                 }
+
+                // 更新 [排班工具] 对应的导航栏文字
+                this.paibanToolDesktopLabel.textContent = elementThis.textContent;
+                this.paibanToolMobileLabel.textContent = elementThis.textContent;
             });
         });
 
