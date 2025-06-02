@@ -614,6 +614,9 @@ class InitPaiBanTables {
             // 如果当前人员列表小于等于原始人员列表，则使用原始人员列表
             if (this.personnel_list.length <= currentPersonnelList.length) {
                 this.personnel_list = currentPersonnelList;
+            } else {
+                // 否则使用 [当前人员列表], 但需要整理顺序
+                this.personnel_list = this._sortListByReference(this.personnel_list, currentPersonnelList);
             }
         }
 

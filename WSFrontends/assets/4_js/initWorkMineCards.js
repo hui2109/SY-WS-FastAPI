@@ -355,6 +355,14 @@ class InitMineCards {
             this.swiper_wrapper.appendChild(div_slide);
         }
 
+        // 在添加完所有 slide 后，检测 完全空 的slide，并删除
+        this.swiper_wrapper.querySelectorAll('.swiper-slide').forEach(slide => {
+            let content = slide.querySelector('.info-row').textContent.trim();
+            if (content === '') {
+                slide.remove();
+            }
+        });
+
         // 在添加完所有 slide 后更新 Swiper
         setTimeout(() => {
             this.swiper.update();
@@ -401,6 +409,11 @@ class InitMineCards {
         if (ban === '休息') {
             //this.currentWeekNormalRestDateList.push(date);
             return this.generateCommonInfoItem(div_info_item, '休息', name, date);
+        }
+
+        if (ban === '补假') {
+            //this.currentWeekNormalRestDateList.push(date);
+            return this.generateCommonInfoItem(div_info_item, '补假', name, date);
         }
 
         for (let i = -1; i < coworkers.length; i++) {

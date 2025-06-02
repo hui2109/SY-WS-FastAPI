@@ -219,6 +219,14 @@ body {
   font-size: 1.3rem;
   margin-bottom: 1px;
 }
+.bottom-nav .dropdown-toggle::after {
+  display: none;
+}
+@media (max-width: 380px) {
+  .bottom-nav .nav-link > div > div {
+    font-size: 9px !important;
+  }
+}
 
 /* 响应式设置 */
 @media (max-width: 992px) {

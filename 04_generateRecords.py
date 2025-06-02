@@ -27,56 +27,110 @@ def remove_duplicates(dict_list):
 
 
 def generate_bantype(bantype: str):
-    bantype_list = bantype.split('_')  # ['3A']  or  ['3A', 'F']  or ['休息']  or  ['3A', '补']
+    bantype_list = bantype.split('_')  # ['3A']  or  ['3A', 'F']  or ['休息']  or  ['3A', '补']  or  ['S1', 'F']
     pure_ban_list = []
 
-    for ban in bantype_list:  # '3A' or 'F' or '补'
+    for ban in bantype_list:  # '3A' or 'F' or '补' or 'OTB'
         if ban in Bans._value2member_map_:
             ban_template = {}
             ban_enum = Bans._value2member_map_[ban]
             name = ban_enum.name
             value = ban_enum.value
 
-            if 'A' in name and '_' in name:
+            # 重构下，明确一点
+            if name == '_1A':
                 start_time = time(hour=7, minute=0, second=0, microsecond=0)
                 end_time = time(hour=12, minute=30, second=0, microsecond=0)
-
-            elif 'B' in name and '_' in name:
+            elif name == '_2A':
+                start_time = time(hour=7, minute=0, second=0, microsecond=0)
+                end_time = time(hour=12, minute=30, second=0, microsecond=0)
+            elif name == '_3A':
+                start_time = time(hour=7, minute=0, second=0, microsecond=0)
+                end_time = time(hour=12, minute=30, second=0, microsecond=0)
+            elif name == '_1B':
                 start_time = time(hour=13, minute=0, second=0, microsecond=0)
                 end_time = time(hour=18, minute=30, second=0, microsecond=0)
-            elif 'C' in name and '_' in name:
+            elif name == '_2B':
+                start_time = time(hour=13, minute=0, second=0, microsecond=0)
+                end_time = time(hour=18, minute=30, second=0, microsecond=0)
+            elif name == '_3B':
+                start_time = time(hour=13, minute=0, second=0, microsecond=0)
+                end_time = time(hour=18, minute=30, second=0, microsecond=0)
+            elif name == '_1C':
                 start_time = time(hour=18, minute=30, second=0, microsecond=0)
                 end_time = time(hour=23, minute=59, second=0, microsecond=0)
-            elif 'S1' in name or 'S2' in name:
+            elif name == '_2C':
+                start_time = time(hour=18, minute=30, second=0, microsecond=0)
+                end_time = time(hour=23, minute=59, second=0, microsecond=0)
+            elif name == '_3C':
+                start_time = time(hour=18, minute=30, second=0, microsecond=0)
+                end_time = time(hour=23, minute=59, second=0, microsecond=0)
+            elif name == 'S1':
                 start_time = time(hour=7, minute=30, second=0, microsecond=0)
                 end_time = time(hour=13, minute=00, second=0, microsecond=0)
-            elif 'N1' in name or 'N2' in name:
+            elif name == 'S2':
+                start_time = time(hour=7, minute=30, second=0, microsecond=0)
+                end_time = time(hour=13, minute=00, second=0, microsecond=0)
+            elif name == 'N1':
                 start_time = time(hour=8, minute=0, second=0, microsecond=0)
                 end_time = time(hour=17, minute=30, second=0, microsecond=0)
-            elif 'ENGAGE' in name:
+            elif name == 'N2':
+                start_time = time(hour=8, minute=0, second=0, microsecond=0)
+                end_time = time(hour=17, minute=30, second=0, microsecond=0)
+            elif name == 'ENGAGE':
                 start_time = time(hour=8, minute=0, second=0, microsecond=0)
                 end_time = time(hour=18, minute=30, second=0, microsecond=0)
-            elif 'TRAIN' in name:
+            elif name == 'TRAIN':
                 start_time = time(hour=8, minute=0, second=0, microsecond=0)
                 end_time = time(hour=18, minute=30, second=0, microsecond=0)
-            elif 'JD' in name:
+            elif name == 'JD':
                 start_time = time(hour=8, minute=0, second=0, microsecond=0)
                 end_time = time(hour=14, minute=00, second=0, microsecond=0)
-            elif 'OPHY' in name:
-                start_time = time(hour=14, minute=0, second=0, microsecond=0)
-                end_time = time(hour=16, minute=30, second=0, microsecond=0)
-            elif 'TR' in name or 'TB' in name or 'VB' in name:
-                start_time = time(hour=8, minute=0, second=0, microsecond=0)
-                end_time = time(hour=17, minute=30, second=0, microsecond=0)
-            elif 'O' in name and 'A' in name:
+            elif name == 'OAE':
                 start_time = time(hour=13, minute=00, second=0, microsecond=0)
                 end_time = time(hour=15, minute=00, second=0, microsecond=0)
-            elif 'O' in name and 'B' in name:
+            elif name == 'OBE':
                 start_time = time(hour=10, minute=30, second=0, microsecond=0)
                 end_time = time(hour=12, minute=30, second=0, microsecond=0)
-            elif 'O' in name and 'C' in name:
+            elif name == 'OCE':
                 start_time = time(hour=16, minute=30, second=0, microsecond=0)
                 end_time = time(hour=18, minute=30, second=0, microsecond=0)
+            elif name == 'OAF':
+                start_time = time(hour=13, minute=00, second=0, microsecond=0)
+                end_time = time(hour=15, minute=00, second=0, microsecond=0)
+            elif name == 'OBF':
+                start_time = time(hour=10, minute=30, second=0, microsecond=0)
+                end_time = time(hour=12, minute=30, second=0, microsecond=0)
+            elif name == 'OCF':
+                start_time = time(hour=16, minute=30, second=0, microsecond=0)
+                end_time = time(hour=18, minute=30, second=0, microsecond=0)
+            elif name == 'T1A':
+                start_time = time(hour=8, minute=0, second=0, microsecond=0)
+                end_time = time(hour=12, minute=0, second=0, microsecond=0)
+            elif name == 'T1B':
+                start_time = time(hour=14, minute=0, second=0, microsecond=0)
+                end_time = time(hour=17, minute=30, second=0, microsecond=0)
+            elif name == 'T2A':
+                start_time = time(hour=8, minute=0, second=0, microsecond=0)
+                end_time = time(hour=12, minute=0, second=0, microsecond=0)
+            elif name == 'T2B':
+                start_time = time(hour=14, minute=0, second=0, microsecond=0)
+                end_time = time(hour=17, minute=30, second=0, microsecond=0)
+            elif name == 'T3A':
+                start_time = time(hour=8, minute=0, second=0, microsecond=0)
+                end_time = time(hour=12, minute=0, second=0, microsecond=0)
+            elif name == 'T3B':
+                start_time = time(hour=14, minute=0, second=0, microsecond=0)
+                end_time = time(hour=17, minute=30, second=0, microsecond=0)
+            elif name == 'TS1':
+                start_time = time(hour=8, minute=0, second=0, microsecond=0)
+                end_time = time(hour=12, minute=0, second=0, microsecond=0)
+            elif name == 'TS2':
+                start_time = time(hour=8, minute=0, second=0, microsecond=0)
+                end_time = time(hour=12, minute=0, second=0, microsecond=0)
+            elif name == 'PHY':
+                start_time = time(hour=14, minute=0, second=0, microsecond=0)
+                end_time = time(hour=16, minute=30, second=0, microsecond=0)
             elif '假' in value or '休息' in value:
                 start_time = time(hour=0, minute=0, second=0, microsecond=0)
                 end_time = time(hour=23, minute=59, second=0, microsecond=0)
@@ -101,9 +155,6 @@ def generate_bantype(bantype: str):
             elif 'F' in ban and 'C' in bantype:
                 ban = Bans.OCF.value
                 pure_ban_list += generate_bantype(ban)
-            elif 'EA' in ban:
-                ban = Bans.JD.value
-                pure_ban_list += generate_bantype(ban)
             elif 'E' in ban and ('A' in bantype or 'S1' in bantype or 'S2' in bantype):
                 ban = Bans.OAE.value
                 pure_ban_list += generate_bantype(ban)
@@ -113,17 +164,26 @@ def generate_bantype(bantype: str):
             elif 'E' in ban and 'C' in bantype:
                 ban = Bans.OCE.value
                 pure_ban_list += generate_bantype(ban)
+            elif 'EA' in ban:
+                ban = Bans.JD.value
+                pure_ban_list += generate_bantype(ban)
             elif 'X' in ban:
                 ban = Bans.RL.value
                 pure_ban_list += generate_bantype(ban)
-            elif 'TR' in ban:
-                ban = Bans.OTR.value
+            elif 'TR' in ban:  # 拆成2个班
+                ban = Bans.T1A.value
                 pure_ban_list += generate_bantype(ban)
-            elif 'TB' in ban:
-                ban = Bans.OTB.value
+                ban = Bans.T1B.value
                 pure_ban_list += generate_bantype(ban)
-            elif 'VB' in ban:
-                ban = Bans.OVB.value
+            elif 'TB' in ban:  # 拆成2个班
+                ban = Bans.T2A.value
+                pure_ban_list += generate_bantype(ban)
+                ban = Bans.T2B.value
+                pure_ban_list += generate_bantype(ban)
+            elif 'VB' in ban:  # 拆成2个班
+                ban = Bans.T3A.value
+                pure_ban_list += generate_bantype(ban)
+                ban = Bans.T3B.value
                 pure_ban_list += generate_bantype(ban)
             elif 'J' in ban:
                 ban = Bans.RELAX.value
@@ -178,8 +238,8 @@ def process_pkls():
 
 
 if __name__ == '__main__':
-    process_pkls()
+    # process_pkls()
 
-    # with open('./XiaohuData/oldRecords/total_schedule_records.pkl', 'rb') as f:
-    #     total_ban_records = pickle.load(f)
-    #     pprint(total_ban_records)
+    with open('./XiaohuData/oldRecords/total_ban_records.pkl', 'rb') as f:
+        total_ban_records = pickle.load(f)
+        pprint(total_ban_records)

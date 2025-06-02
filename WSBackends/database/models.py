@@ -46,7 +46,7 @@ class WorkschedulePersonnelLink(SQLModel, table=True):
 class Personnel(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
     name: str = Field(index=True)
-    weight: int = Field(default=1.0, index=True)
+    weight: float = Field(default=1.0, index=True)
     hiredate: date
     worknumber: str
     phonenumber: str

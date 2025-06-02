@@ -35,6 +35,7 @@ class Bans(Enum):
     CL = '育儿假'  # childcare leave
     FL = '丧假'  # funeral leave
     DL = '补假'  # deferred leave
+    LL = '调休假'  # lieu leave
     OTHERS = '其他假'
 
     OAE = 'OAE'  # Overtime
@@ -44,11 +45,16 @@ class Bans(Enum):
     OBF = 'OBF'
     OCF = 'OCF'
 
-    OTR = 'OTR'
-    OTB = 'OTB'
-    OVB = 'OVB'
-
-    OPHY = 'Phy'
+    # 实习班
+    T1A = 'T1A'
+    T1B = 'T1B'
+    T2A = 'T2A'
+    T2B = 'T2B'
+    T3A = 'T3A'
+    T3B = 'T3B'
+    TS1 = 'TS1'
+    TS2 = 'TS2'
+    PHY = 'Phy'
 
 
 class ScheduleStatus(Enum):

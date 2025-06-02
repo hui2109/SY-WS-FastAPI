@@ -67,7 +67,8 @@
               <!-- a标签里面不能套a标签了!!! -->
               <a class="nav-link dropdown-toggle" href="#" id="paibanDesktopTools" data-bs-toggle="dropdown"
                 aria-expanded="false">
-                <i class="bi bi-slack nav-icon"></i>排班
+                <i class="bi bi-slack nav-icon"></i>
+                <span id="paibanToolLabel" data-default="排班工具">排班工具</span>
               </a>
               <ul class="dropdown-menu">
                 <li>
@@ -182,34 +183,52 @@
       <div class="row justify-content-around">
         <div class="col-2 text-center">
           <a class="nav-link active" href="#work-mine">
-            <i class="bi bi-person-circle nav-icon"></i>
+            <div class="d-flex flex-column justify-content-center align-items-center" style="height: 30px;">
+              <i class="bi bi-person-circle nav-icon"></i>
+              <div style="font-size: 10px;">我的排班</div>
+            </div>
           </a>
         </div>
         <div class="col-2 text-center">
           <a class="nav-link" href="#work-all">
-            <i class="bi bi-people-fill nav-icon"></i>
+            <div class="d-flex flex-column justify-content-center align-items-center" style="height: 30px;">
+              <i class="bi bi-people-fill nav-icon"></i>
+              <div style="font-size: 10px;">全科排班</div>
+            </div>
           </a>
         </div>
         <div class="col-2 text-center">
           <a class="nav-link" href="#reserve-all">
-            <i class="bi bi-calendar-heart-fill nav-icon"></i>
+            <div class="d-flex flex-column justify-content-center align-items-center" style="height: 30px;">
+              <i class="bi bi-calendar-heart-fill nav-icon"></i>
+              <div style="font-size: 10px;">预约休假</div>
+            </div>
           </a>
         </div>
         <div class="col-2 text-center d-none">
           <a class="nav-link" href="#change-ban">
-            <i class="bi bi-arrow-left-right nav-icon"></i>
+            <div class="d-flex flex-column justify-content-center align-items-center" style="height: 30px;">
+              <i class="bi bi-arrow-left-right nav-icon"></i>
+              <div style="font-size: 10px;">换班</div>
+            </div>
           </a>
         </div>
         <div class="col-2 text-center">
           <a class="nav-link" href="#statistics-all">
-            <i class="bi bi-calculator-fill nav-icon"></i>
+            <div class="d-flex flex-column justify-content-center align-items-center" style="height: 30px;">
+              <i class="bi bi-calculator-fill nav-icon"></i>
+              <div style="font-size: 10px;">统计</div>
+            </div>
           </a>
         </div>
         <div class="col-2 text-center btn-group dropup">
           <!-- a标签里面不能套a标签了!!! -->
           <a class="nav-link dropdown-toggle" href="#" id="paibanMobileTools" data-bs-toggle="dropdown"
             aria-expanded="false">
-            <i class="bi bi-slack nav-icon"></i>
+            <div class="d-flex flex-column justify-content-center align-items-center" style="height: 30px;">
+              <i class="bi bi-slack nav-icon"></i>
+              <div style="font-size: 10px;">排班工具</div>
+            </div>
           </a>
           <ul class="dropdown-menu">
             <li>
@@ -223,7 +242,6 @@
               </a>
             </li>
           </ul>
-
         </div>
       </div>
     </div>
@@ -245,7 +263,7 @@
                   <div class="col-2"></div>
                   <div class="col-8">
                     <div class="d-flex justify-content-between">
-                      <button type="button" class="btn btn-success pre-month btn-sm"
+                      <button type="button" class="btn btn-sm btn-success pre-month btn-sm"
                         style="font-size: 12px;">上一月</button>
                       <div id="datetimepicker2" data-td-target-input="nearest" data-td-target-toggle="nearest">
                         <span class="input-group-text" data-td-target="#datetimepicker2"
@@ -253,7 +271,7 @@
                           <span class="mounianmouyue" style="font-size: 14px;">某年某月</span>
                         </span>
                       </div>
-                      <button type="button" class="btn btn-success next-month btn-sm"
+                      <button type="button" class="btn btn-sm btn-success next-month btn-sm"
                         style="font-size: 12px;">下一月</button>
                     </div>
                   </div>
@@ -307,7 +325,7 @@
                   <div class="col-lg-4"></div>
                   <div class="col-lg-4">
                     <div class="d-flex justify-content-center align-items-center">
-                      <button type="button" class="btn btn-success btn-sm pre-month me-2"
+                      <button type="button" class="btn btn-sm btn-success btn-sm pre-month me-2"
                         style="font-size: 12px;">上一月</button>
                       <div id="datetimepicker1" data-td-target-input="nearest" data-td-target-toggle="nearest">
                         <span class="input-group-text" data-td-target="#datetimepicker1"
@@ -315,7 +333,7 @@
                           <span class="mounianmouyue" style="font-size: 14px;">某年某月</span>
                         </span>
                       </div>
-                      <button type="button" class="btn btn-success btn-sm next-month ms-2"
+                      <button type="button" class="btn btn-sm btn-success btn-sm next-month ms-2"
                         style="font-size: 12px;">下一月</button>
                     </div>
                   </div>
@@ -341,16 +359,16 @@
           <div class="fade-in">
             <div id="reserve-content-all" class="content-section">
               <div class="container">
-                <h5 class="text-center mb-4">预约休假表</h5>
+                <h5 class="text-center mb-3">预约休假表</h5>
 
                 <!-- 上半年预约表 -->
-                <div class="table-container m-auto mb-5">
+                <div class="table-container m-auto mb-3">
                   <table class="table vacation-table table-bordered table-responsive">
                     <thead id="firstHalfTableHead">
                       <tr>
                         <th rowspan="2" class="half-year-selector">
                           <div class="dropdown">
-                            <button class="btn btn-secondary btn-sm dropdown-toggle fw-bold" type="button"
+                            <button class="btn btn-sm btn-secondary btn-sm dropdown-toggle fw-bold" type="button"
                               data-bs-toggle="dropdown" aria-expanded="false" style="font-size: 12px;">
                               选择年份
                             </button>
@@ -385,7 +403,7 @@
                       <tr>
                         <th rowspan="2" class="half-year-selector">
                           <div class="dropdown">
-                            <button class="btn btn-secondary btn-sm dropdown-toggle fw-bold" type="button"
+                            <button class="btn btn-sm btn-secondary btn-sm dropdown-toggle fw-bold" type="button"
                               data-bs-toggle="dropdown" aria-expanded="false" style="font-size: 12px;">
                               选择年份
                             </button>
@@ -466,26 +484,26 @@
                   <!-- 日期切换组件 -->
                   <div id="datetimepicker3" data-td-target-input="nearest" data-td-target-toggle="nearest">
                     <span data-td-target="#datetimepicker3" data-td-toggle="datetimepicker">
-                      <button type="button" class="btn btn-primary btn-sm mounianmouyue"
+                      <button type="button" class="btn btn-sm btn-primary btn-sm mounianmouyue"
                         style="font-size: 12px;">某年某月</button>
                     </span>
                   </div>
 
                   <!-- 自动排班组件 -->
-                  <button type="button" class="btn btn-success btn-sm" id="autoScheduleAll"
+                  <button type="button" class="btn btn-sm btn-success btn-sm" id="autoScheduleAll"
                     style="font-size: 12px;">自动排班</button>
 
                   <!-- 显示上周期排班 -->
-                  <button type="button" class="btn btn-sm border border-warning" id="showLastSchedule"
+                  <button type="button" class="btn btn-sm btn-sm border border-warning" id="showLastSchedule"
                     style="font-size: 12px;">显示上周期</button>
 
                   <!-- 删除一个排班 -->
-                  <button type="button" class="btn btn-sm border border-warning" id="clearOneSchedule"
+                  <button type="button" class="btn btn-sm btn-sm border border-warning" id="clearOneSchedule"
                     style="font-size: 12px;"><i class="bi bi-eraser-fill"></i></button>
 
                   <div class="dropdown" id="paibanToolBox">
-                    <button class="btn btn-sm border border-secondary text-secondary dropdown-toggle" type="button"
-                      data-bs-toggle="dropdown" aria-expanded="false">
+                    <button class="btn btn-sm btn-sm border border-secondary text-secondary dropdown-toggle"
+                      type="button" data-bs-toggle="dropdown" aria-expanded="false">
                       <i class="bi bi-wrench-adjustable-circle"></i>
                     </button>
                     <ul class="dropdown-menu">
@@ -666,8 +684,8 @@
           </div>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
-          <button type="button" class="btn btn-success" data-bs-dismiss="modal">确认选择</button>
+          <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">取消</button>
+          <button type="button" class="btn btn-sm btn-success" data-bs-dismiss="modal">确认选择</button>
         </div>
       </div>
     </div>
@@ -675,10 +693,10 @@
 
   <!-- 预约对话框 -->
   <div class="modal fade" id="bookingModal" tabindex="-1" aria-labelledby="bookingModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-dialog-centered" style="width: 420px; margin: auto; font-size: 14px;">
       <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="bookingModalLabel">预约休假</h5>
+        <div class="modal-header" style="height: 42px;">
+          <h6 class="modal-title" id="bookingModalLabel">预约休假</h6>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           <input type="hidden" id="bookingSequence" required>
         </div>
@@ -700,13 +718,14 @@
           <p class="mt-4 mb-2 ps-2">预约人：</p>
           <div class="d-flex bookingPerson">
             <div class="d-flex me-3">
-              <button type="button" class="btn btn-outline-success">张旭辉</button>
+              <button type="button" class="btn btn-sm btn-outline-success">张旭辉</button>
             </div>
 
             <div class="d-flex me-3">
-              <button type="button" class="btn btn-outline-primary better-pinjia-btn" data-default="拼假人1">拼假人1</button>
+              <button type="button" class="btn btn-sm btn-outline-primary better-pinjia-btn"
+                data-default="拼假人1">拼假人1</button>
               <button type="button"
-                class="btn btn-outline-primary dropdown-toggle dropdown-toggle-split better-pinjia-split"
+                class="btn btn-sm btn-outline-primary dropdown-toggle dropdown-toggle-split better-pinjia-split"
                 data-bs-toggle="dropdown" aria-expanded="false">
                 <span class="visually-hidden">Toggle Dropdown</span>
               </button>
@@ -717,9 +736,10 @@
             </div>
 
             <div class="d-flex">
-              <button type="button" class="btn btn-outline-warning better-pinjia-btn" data-default="拼假人2">拼假人2</button>
+              <button type="button" class="btn btn-sm btn-outline-warning better-pinjia-btn"
+                data-default="拼假人2">拼假人2</button>
               <button type="button"
-                class="btn btn-outline-warning dropdown-toggle dropdown-toggle-split better-pinjia-split"
+                class="btn btn-sm btn-outline-warning dropdown-toggle dropdown-toggle-split better-pinjia-split"
                 data-bs-toggle="dropdown" aria-expanded="false">
                 <span class="visually-hidden">Toggle Dropdown</span>
               </button>
@@ -744,7 +764,7 @@
                   <label class="form-check-label text-success" for="bookingDateCB0">2025年1月30日</label>
                 </div>
                 <div class="dropdown">
-                  <button type="button" class="btn btn-success dropdown-toggle" data-bs-toggle="dropdown"
+                  <button type="button" class="btn btn-sm btn-success dropdown-toggle" data-bs-toggle="dropdown"
                     aria-expanded="false" data-default="请选择">
                     请选择
                   </button>
@@ -771,7 +791,7 @@
                   <label class="form-check-label text-success" for="bookingDateCB1">2025年1月30日</label>
                 </div>
                 <div class="dropdown">
-                  <button type="button" class="btn btn-success dropdown-toggle" data-bs-toggle="dropdown"
+                  <button type="button" class="btn btn-sm btn-success dropdown-toggle" data-bs-toggle="dropdown"
                     aria-expanded="false" data-default="请选择">
                     请选择
                   </button>
@@ -798,7 +818,7 @@
                   <label class="form-check-label text-success" for="bookingDateCB2">2025年1月30日</label>
                 </div>
                 <div class="dropdown">
-                  <button type="button" class="btn btn-success dropdown-toggle" data-bs-toggle="dropdown"
+                  <button type="button" class="btn btn-sm btn-success dropdown-toggle" data-bs-toggle="dropdown"
                     aria-expanded="false" data-default="请选择">
                     请选择
                   </button>
@@ -825,7 +845,7 @@
                   <label class="form-check-label text-success" for="bookingDateCB3">2025年1月30日</label>
                 </div>
                 <div class="dropdown">
-                  <button type="button" class="btn btn-success dropdown-toggle" data-bs-toggle="dropdown"
+                  <button type="button" class="btn btn-sm btn-success dropdown-toggle" data-bs-toggle="dropdown"
                     aria-expanded="false" data-default="请选择">
                     请选择
                   </button>
@@ -852,7 +872,7 @@
                   <label class="form-check-label text-success" for="bookingDateCB4">2025年1月30日</label>
                 </div>
                 <div class="dropdown">
-                  <button type="button" class="btn btn-success dropdown-toggle" data-bs-toggle="dropdown"
+                  <button type="button" class="btn btn-sm btn-success dropdown-toggle" data-bs-toggle="dropdown"
                     aria-expanded="false" data-default="请选择">
                     请选择
                   </button>
@@ -879,7 +899,7 @@
                   <label class="form-check-label text-success" for="bookingDateCB5">2025年1月30日</label>
                 </div>
                 <div class="dropdown">
-                  <button type="button" class="btn btn-success dropdown-toggle" data-bs-toggle="dropdown"
+                  <button type="button" class="btn btn-sm btn-success dropdown-toggle" data-bs-toggle="dropdown"
                     aria-expanded="false" data-default="请选择">
                     请选择
                   </button>
@@ -906,7 +926,7 @@
                   <label class="form-check-label text-success" for="bookingDateCB6">2025年1月30日</label>
                 </div>
                 <div class="dropdown">
-                  <button type="button" class="btn btn-success dropdown-toggle" data-bs-toggle="dropdown"
+                  <button type="button" class="btn btn-sm btn-success dropdown-toggle" data-bs-toggle="dropdown"
                     aria-expanded="false" data-default="请选择">
                     请选择
                   </button>
@@ -930,12 +950,12 @@
         </div>
 
         <div class="modal-footer justify-content-between">
-          <button type="button" class="btn btn-info" id="resetBooking">重置</button>
+          <button type="button" class="btn btn-sm btn-info" id="resetBooking">重置</button>
           <div>
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
-            <button type="button" class="btn btn-info" id="confirmBooking">确认预约</button>
+            <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">关闭</button>
+            <button type="button" class="btn btn-sm btn-info" id="confirmBooking">确认预约</button>
           </div>
-          <button type="button" class="btn btn-danger d-none" id="deleteReserve">删除整个预约</button>
+          <button type="button" class="btn btn-sm btn-danger d-none" id="deleteReserve">删除整个预约</button>
         </div>
       </div>
     </div>
@@ -1009,7 +1029,7 @@
           <p class="mt-4 mb-2 ps-2">实际排班：</p>
           <div class='d-flex align-items-center'>
             <div class="dropdown" id="paibanSelectDropdown">
-              <button type="button" class="btn btn-warning dropdown-toggle" data-bs-toggle="dropdown"
+              <button type="button" class="btn btn-sm btn-warning dropdown-toggle" data-bs-toggle="dropdown"
                 aria-expanded="false" data-default="请选择">
                 请选择
               </button>
@@ -1098,11 +1118,11 @@
         </div>
 
         <div class="modal-footer justify-content-end">
-          <button type="button" class="btn btn-danger d-none" id="deletePaiban">删除所有排班</button>
+          <button type="button" class="btn btn-sm btn-danger d-none" id="deletePaiban">删除所有排班</button>
           <div>
-            <button type="button" class="btn btn-info" id="acceptPaiban">接受建议</button>
-            <button type="button" class="btn btn-primary" id="confirmPaiban">确认排班</button>
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
+            <button type="button" class="btn btn-sm btn-info" id="acceptPaiban">接受建议</button>
+            <button type="button" class="btn btn-sm btn-primary" id="confirmPaiban">确认排班</button>
+            <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">关闭</button>
           </div>
         </div>
       </div>
@@ -1192,10 +1212,10 @@
         </div>
 
         <div class="modal-footer justify-content-between">
-          <button type="button" class="btn btn-danger" id="resetConfigureDate">重置选择</button>
+          <button type="button" class="btn btn-sm btn-danger" id="resetConfigureDate">重置选择</button>
           <div>
-            <button type="button" class="btn btn-info" id="confirmConfigureDate">保存</button>
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
+            <button type="button" class="btn btn-sm btn-info" id="confirmConfigureDate">保存</button>
+            <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">关闭</button>
           </div>
         </div>
       </div>
@@ -1217,9 +1237,9 @@
         </div>
 
         <div class="modal-footer justify-content-between">
-          <button type="button" class="btn btn-danger" id="confirmClearAll">确认删除所有</button>
+          <button type="button" class="btn btn-sm btn-danger" id="confirmClearAll">确认删除所有</button>
           <div>
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">点错了，关闭</button>
+            <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">点错了，关闭</button>
           </div>
         </div>
       </div>
@@ -1258,7 +1278,7 @@
         </div>
 
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary px-4" data-bs-dismiss="modal">已阅，关闭</button>
+          <button type="button" class="btn btn-sm btn-secondary px-4" data-bs-dismiss="modal">已阅，关闭</button>
         </div>
       </div>
     </div>
@@ -1287,7 +1307,7 @@
         </div>
 
         <div class="modal-footer" style="height: 60px;">
-          <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">关闭</button>
+          <button type="button" class="btn btn-sm btn-sm btn-secondary" data-bs-dismiss="modal">关闭</button>
         </div>
       </div>
     </div>

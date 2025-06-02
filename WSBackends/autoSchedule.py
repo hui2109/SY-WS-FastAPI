@@ -3,9 +3,12 @@ from collections import Counter, defaultdict
 from enum import Enum
 from typing import Optional
 from datetime import date
+from sqlmodel import select
 
 from .database.utils import Bans
+from .database.models import Personnel
 from chinese_calendar import is_holiday, is_workday
+from .dependencies import SessionDep
 
 
 class Probability(Enum):
@@ -113,44 +116,56 @@ class Worker:
 
 class InitWorkers:
     @classmethod
-    def init_workers(cls):
+    def init_workers(cls, session: SessionDep = None):
         # 初始化所有员工
         # ['叶荣', '肖贵珍', '赵仲', '黄发生', '黄文军', '余翔', '余涛', '杨鹏', '闫昱萤', '谭林', '王吉锐', '唐晓燕', '付昱东', '徐博', '康正樾', '戴梦莹', '凌子涵', '曾小洲', '张旭辉', '廖中凡', '尹红科', '杨星', '郑霞', '金小靖']
-        Worker("叶荣", 1.0, accelerator_prob=Probability.NEVER, positioning_prob=Probability.ALWAYS, counter_prob=Probability.NEVER, positioning1_prob=Probability.ALWAYS)
-        Worker("肖贵珍", 1.0, accelerator_prob=Probability.ALWAYS, positioning_prob=Probability.NEVER, counter_prob=Probability.NEVER, accelerator1_prob=Probability.HIGH, accelerator2_prob=Probability.VERY_RARE,
+        weight_dict = dict()
+
+        if session:
+            # 查询每个人的权重
+            results = session.exec(select(Personnel)).all()
+            for result in results:
+                result: Personnel
+                weight_dict[result.name] = result.weight
+
+        Worker("叶荣", weight_dict.get('叶荣', 1.0), accelerator_prob=Probability.NEVER, positioning_prob=Probability.ALWAYS, counter_prob=Probability.NEVER, positioning1_prob=Probability.ALWAYS)
+        Worker("肖贵珍", weight_dict.get('肖贵珍', 1.0), accelerator_prob=Probability.ALWAYS, positioning_prob=Probability.NEVER, counter_prob=Probability.NEVER, accelerator1_prob=Probability.HIGH, accelerator2_prob=Probability.VERY_RARE,
                accelerator3_prob=Probability.VERY_RARE)
-        Worker("赵仲", 1.0, accelerator_prob=Probability.ALWAYS, positioning_prob=Probability.NEVER, counter_prob=Probability.NEVER, accelerator1_prob=Probability.HIGH, accelerator2_prob=Probability.FEW,
+        Worker("赵仲", weight_dict.get('赵仲', 1.0), accelerator_prob=Probability.ALWAYS, positioning_prob=Probability.NEVER, counter_prob=Probability.NEVER, accelerator1_prob=Probability.HIGH, accelerator2_prob=Probability.FEW,
                accelerator3_prob=Probability.VERY_RARE)
-        Worker("黄发生", 1.0, accelerator_prob=Probability.ALWAYS, positioning_prob=Probability.NEVER, counter_prob=Probability.NEVER, accelerator1_prob=Probability.FEW, accelerator2_prob=Probability.HIGH,
+        Worker("黄发生", weight_dict.get('黄发生', 1.0), accelerator_prob=Probability.ALWAYS, positioning_prob=Probability.NEVER, counter_prob=Probability.NEVER, accelerator1_prob=Probability.FEW, accelerator2_prob=Probability.HIGH,
                accelerator3_prob=Probability.VERY_RARE)
-        Worker("黄文军", 1.0, accelerator_prob=Probability.ALWAYS, positioning_prob=Probability.NEVER, counter_prob=Probability.NEVER, accelerator1_prob=Probability.HIGH, accelerator2_prob=Probability.FEW,
+        Worker("黄文军", weight_dict.get('黄文军', 1.0), accelerator_prob=Probability.ALWAYS, positioning_prob=Probability.NEVER, counter_prob=Probability.NEVER, accelerator1_prob=Probability.HIGH, accelerator2_prob=Probability.FEW,
                accelerator3_prob=Probability.VERY_RARE)
-        Worker("余翔", 1.0, accelerator_prob=Probability.ALWAYS, positioning_prob=Probability.NEVER, counter_prob=Probability.NEVER, accelerator1_prob=Probability.VERY_RARE, accelerator2_prob=Probability.FEW,
+        Worker("余翔", weight_dict.get('余翔', 1.0), accelerator_prob=Probability.ALWAYS, positioning_prob=Probability.NEVER, counter_prob=Probability.NEVER, accelerator1_prob=Probability.VERY_RARE, accelerator2_prob=Probability.FEW,
                accelerator3_prob=Probability.HIGH)
-        Worker("余涛", 1.0, accelerator_prob=Probability.ALWAYS, positioning_prob=Probability.NEVER, counter_prob=Probability.NEVER, accelerator1_prob=Probability.LOW, accelerator2_prob=Probability.HIGH, accelerator3_prob=Probability.FEW)
-        Worker("杨鹏", 1.0, accelerator_prob=Probability.HIGH, positioning_prob=Probability.FEW, counter_prob=Probability.NEVER, accelerator1_prob=Probability.FEW, accelerator2_prob=Probability.HIGH, accelerator3_prob=Probability.VERY_RARE,
+        Worker("余涛", weight_dict.get('余涛', 1.0), accelerator_prob=Probability.ALWAYS, positioning_prob=Probability.NEVER, counter_prob=Probability.NEVER, accelerator1_prob=Probability.LOW, accelerator2_prob=Probability.HIGH,
+               accelerator3_prob=Probability.FEW)
+        Worker("杨鹏", weight_dict.get('杨鹏', 1.0), accelerator_prob=Probability.HIGH, positioning_prob=Probability.FEW, counter_prob=Probability.NEVER, accelerator1_prob=Probability.FEW, accelerator2_prob=Probability.HIGH,
+               accelerator3_prob=Probability.VERY_RARE,
                positioning1_prob=Probability.ALWAYS)
-        Worker("闫昱萤", 1.0, accelerator_prob=Probability.NEVER, positioning_prob=Probability.ALWAYS, counter_prob=Probability.NEVER, positioning1_prob=Probability.ALWAYS)
-        Worker("谭林", 1.0, accelerator_prob=Probability.ALWAYS, positioning_prob=Probability.NEVER, counter_prob=Probability.NEVER, accelerator1_prob=Probability.FEW, accelerator2_prob=Probability.FEW,
+        Worker("闫昱萤", weight_dict.get('闫昱萤', 1.0), accelerator_prob=Probability.NEVER, positioning_prob=Probability.ALWAYS, counter_prob=Probability.NEVER, positioning1_prob=Probability.ALWAYS)
+        Worker("谭林", weight_dict.get('谭林', 1.0), accelerator_prob=Probability.ALWAYS, positioning_prob=Probability.NEVER, counter_prob=Probability.NEVER, accelerator1_prob=Probability.FEW, accelerator2_prob=Probability.FEW,
                accelerator3_prob=Probability.HIGH)
-        Worker("王吉锐", 1.0, accelerator_prob=Probability.ALWAYS, positioning_prob=Probability.NEVER, counter_prob=Probability.NEVER, accelerator1_prob=Probability.LOW, accelerator2_prob=Probability.POSSIBLE,
+        Worker("王吉锐", weight_dict.get('王吉锐', 1.0), accelerator_prob=Probability.ALWAYS, positioning_prob=Probability.NEVER, counter_prob=Probability.NEVER, accelerator1_prob=Probability.LOW, accelerator2_prob=Probability.POSSIBLE,
                accelerator3_prob=Probability.LOW)
-        Worker("唐晓燕", 1.0, accelerator_prob=Probability.HALF, positioning_prob=Probability.HALF, counter_prob=Probability.NEVER, accelerator1_prob=Probability.FEW, accelerator2_prob=Probability.FEW, accelerator3_prob=Probability.HIGH,
+        Worker("唐晓燕", weight_dict.get('唐晓燕', 1.0), accelerator_prob=Probability.HALF, positioning_prob=Probability.HALF, counter_prob=Probability.NEVER, accelerator1_prob=Probability.FEW, accelerator2_prob=Probability.FEW,
+               accelerator3_prob=Probability.HIGH,
                positioning2_prob=Probability.ALWAYS)
-        Worker("付昱东", 1.0, accelerator_prob=Probability.ALWAYS, positioning_prob=Probability.NEVER, counter_prob=Probability.NEVER, accelerator1_prob=Probability.HIGH, accelerator2_prob=Probability.LOW,
+        Worker("付昱东", weight_dict.get('付昱东', 1.0), accelerator_prob=Probability.ALWAYS, positioning_prob=Probability.NEVER, counter_prob=Probability.NEVER, accelerator1_prob=Probability.HIGH, accelerator2_prob=Probability.LOW,
                accelerator3_prob=Probability.LOW)
-        Worker("徐博", 1.0, accelerator_prob=Probability.HALF, positioning_prob=Probability.HALF, counter_prob=Probability.NEVER, accelerator1_prob=Probability.LOW, accelerator2_prob=Probability.LOW,
+        Worker("徐博", weight_dict.get('徐博', 1.0), accelerator_prob=Probability.HALF, positioning_prob=Probability.HALF, counter_prob=Probability.NEVER, accelerator1_prob=Probability.LOW, accelerator2_prob=Probability.LOW,
                accelerator3_prob=Probability.HIGH, positioning2_prob=Probability.ALWAYS)
-        Worker("康正樾", 1.0, accelerator_prob=Probability.POSSIBLE, positioning_prob=Probability.LOW, counter_prob=Probability.NEVER, positioning1_prob=Probability.HIGH, positioning2_prob=Probability.VERY_RARE)
-        Worker("戴梦莹", 1.0, accelerator_prob=Probability.FEW, positioning_prob=Probability.HIGH, counter_prob=Probability.NEVER, positioning1_prob=Probability.FEW, positioning2_prob=Probability.HIGH)
-        Worker("凌子涵", 0.8, accelerator_prob=Probability.POSSIBLE, positioning_prob=Probability.LOW, counter_prob=Probability.NEVER)
-        Worker("曾小洲", 0.8, accelerator_prob=Probability.HALF, positioning_prob=Probability.HALF, counter_prob=Probability.NEVER)
-        Worker("张旭辉", 0.5, accelerator_prob=Probability.POSSIBLE, positioning_prob=Probability.LOW, counter_prob=Probability.NEVER)
-        Worker("廖中凡", 0.5, accelerator_prob=Probability.POSSIBLE, positioning_prob=Probability.LOW, counter_prob=Probability.NEVER)
-        Worker("尹红科", 0.5, accelerator_prob=Probability.POSSIBLE, positioning_prob=Probability.LOW, counter_prob=Probability.NEVER)
-        Worker("杨星", 1.5, accelerator_prob=Probability.NEVER, positioning_prob=Probability.NEVER, counter_prob=Probability.ALWAYS, counter1_prob=Probability.ALWAYS)
-        Worker("郑霞", 1.5, accelerator_prob=Probability.NEVER, positioning_prob=Probability.NEVER, counter_prob=Probability.ALWAYS, counter2_prob=Probability.ALWAYS)
-        Worker("金小靖", 1.5, accelerator_prob=Probability.NEVER, positioning_prob=Probability.NEVER, counter_prob=Probability.ALWAYS, counter1_prob=Probability.HALF, counter2_prob=Probability.HALF)
+        Worker("康正樾", weight_dict.get('康正樾', 1.0), accelerator_prob=Probability.POSSIBLE, positioning_prob=Probability.LOW, counter_prob=Probability.NEVER, positioning1_prob=Probability.HIGH, positioning2_prob=Probability.VERY_RARE)
+        Worker("戴梦莹", weight_dict.get('戴梦莹', 1.0), accelerator_prob=Probability.FEW, positioning_prob=Probability.HIGH, counter_prob=Probability.NEVER, positioning1_prob=Probability.FEW, positioning2_prob=Probability.HIGH)
+        Worker("凌子涵", weight_dict.get('凌子涵', 0.8), accelerator_prob=Probability.POSSIBLE, positioning_prob=Probability.LOW, counter_prob=Probability.NEVER)
+        Worker("曾小洲", weight_dict.get('曾小洲', 0.8), accelerator_prob=Probability.HALF, positioning_prob=Probability.HALF, counter_prob=Probability.NEVER)
+        Worker("张旭辉", weight_dict.get('张旭辉', 0.5), accelerator_prob=Probability.POSSIBLE, positioning_prob=Probability.LOW, counter_prob=Probability.NEVER)
+        Worker("廖中凡", weight_dict.get('廖中凡', 0.5), accelerator_prob=Probability.POSSIBLE, positioning_prob=Probability.LOW, counter_prob=Probability.NEVER)
+        Worker("尹红科", weight_dict.get('尹红科', 0.5), accelerator_prob=Probability.POSSIBLE, positioning_prob=Probability.LOW, counter_prob=Probability.NEVER)
+        Worker("杨星", weight_dict.get('杨星', 1.5), accelerator_prob=Probability.NEVER, positioning_prob=Probability.NEVER, counter_prob=Probability.ALWAYS, counter1_prob=Probability.ALWAYS)
+        Worker("郑霞", weight_dict.get('郑霞', 1.5), accelerator_prob=Probability.NEVER, positioning_prob=Probability.NEVER, counter_prob=Probability.ALWAYS, counter2_prob=Probability.ALWAYS)
+        Worker("金小靖", weight_dict.get('金小靖', 1.5), accelerator_prob=Probability.NEVER, positioning_prob=Probability.NEVER, counter_prob=Probability.ALWAYS, counter1_prob=Probability.HALF, counter2_prob=Probability.HALF)
 
 
 class AutoOneSchedule:

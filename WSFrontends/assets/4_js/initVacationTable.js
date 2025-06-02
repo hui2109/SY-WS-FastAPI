@@ -117,6 +117,7 @@ class InitVacationTable {
                 inputEl.className = inputEl.className.replace(/border-\S+/, `border-${color}`);
                 labelEl.className = labelEl.className.replace(/text-\S+/, `text-${color}`);
                 btnEl.className = btnEl.className.replace(/btn-\S+/, `btn-${color}`);
+                btnEl.classList.add('btn-sm');
 
                 inputEl.disabled = false;
                 btnEl.disabled = false;
@@ -324,9 +325,11 @@ class InitVacationTable {
         this.resetBooking = document.getElementById('resetBooking');
         this.confirmBooking = document.getElementById('confirmBooking');
         this.deleteReserve = document.getElementById('deleteReserve');
+
         this.weekMap = getWeekMap();
         this.currentPerson = null;
         this.banTypeColor = getBanTypeColor();
+        this.relaxDropdownItemList = ['放射假', '年假', '病假', '事假', '婚假', '产假', '陪产假', '育儿假', '丧假', '调休假', '其他假'];
     }
 
     handleCellClick(et) {
@@ -358,6 +361,15 @@ class InitVacationTable {
         // 更新本人
         this.bookingPerson0.textContent = sessionStorage.getItem('user_name');
         this.currentPerson = sessionStorage.getItem('user_name');
+
+        // 更新假期下拉选择项
+        for (let dropdownDiv of this.relaxType) {
+            let dropdownMenu = dropdownDiv.querySelector('.dropdown-menu');
+            dropdownMenu.innerHTML = '';
+            for (let relax_type of this.relaxDropdownItemList) {
+                dropdownMenu.innerHTML += `<li><span class="dropdown-item">${relax_type}</span></li>`;
+            }
+        }
 
         // 判断单元格上是否已有预约
         if (srcCell.children.length === 0) {

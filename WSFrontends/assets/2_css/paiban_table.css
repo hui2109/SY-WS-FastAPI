@@ -4,7 +4,7 @@
 }
 #paiban-content-all .table-container {
   width: 100%;
-  height: 70vh;
+  height: 83vh;
   overflow: auto;
   z-index: 0;
   border: 1px solid rgba(229, 231, 235, 0.8);
@@ -176,7 +176,7 @@
     border-radius: 4px;
   }
   #paiban-content-all .table-container .paiban-table thead tr th {
-    width: 55px;
+    width: 53px;
     font-size: 11px;
     height: 38px;
   }
@@ -188,6 +188,11 @@
   #paiban-content-all .table-container .paiban-table .configure-days-cell,
   #paiban-content-all .table-container .paiban-table .special-days {
     padding: 1px 2px;
+  }
+}
+@media (max-width: 380px) {
+  #paiban-content-all .table-container {
+    height: 72vh;
   }
 }
 @media (max-width: 768px) and (orientation: landscape) {

@@ -66,9 +66,11 @@ class initIndex {
         this.mobileThemeDropdown = document.getElementById('mobileThemeDropdown');
 
         this.paibanDesktopTools = document.getElementById('paibanDesktopTools');
+        this.paibanToolLabel = this.paibanDesktopTools.querySelector('span');
         this.paibanDesktopDropdownItems = this.paibanDesktopTools.parentNode.querySelectorAll('.dropdown-item');
 
         this.paibanMobileTools = document.getElementById('paibanMobileTools');
+
         this.paibanMobileDropdownItems = this.paibanMobileTools.parentNode.querySelectorAll('.dropdown-item');
     }
 
@@ -106,6 +108,9 @@ class initIndex {
                 if (targetPane) {
                     targetPane.classList.add('show', 'active');
                 }
+
+                // 恢复 [排班工具] 对应的导航栏文字
+                this.paibanToolLabel.textContent = this.paibanToolLabel.dataset.default;
             });
         });
 
@@ -124,11 +129,9 @@ class initIndex {
                 // 显示对应的内容区域
                 const href = elementThis.getAttribute('href');
                 const targetId = href.substring(1);
-
                 this.tabPanes.forEach(pane => {
                     pane.classList.remove('show', 'active');
                 });
-
                 const targetPane = document.getElementById(targetId);
                 if (targetPane) {
                     targetPane.classList.add('show', 'active');
@@ -142,6 +145,9 @@ class initIndex {
                         });
                     }, 10);
                 }
+
+                // 更新 [排班工具] 对应的导航栏文字
+                this.paibanToolLabel.textContent = elementThis.textContent;
             });
         });
 

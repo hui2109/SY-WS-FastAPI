@@ -2,11 +2,11 @@ import random
 from calendar import monthrange
 from collections import Counter
 from datetime import date, timedelta, datetime
-from sqlalchemy.orm import joinedload
 
 import chinese_calendar
 from fastapi import APIRouter, Depends
 from pydantic import BaseModel
+from sqlalchemy.orm import joinedload
 from sqlmodel import select
 
 from .utils import CURRENT_PERSONNEL, MANDATORY_SCHEDULE
@@ -15,7 +15,6 @@ from ..database.models import Workschedule, Account, WorkschedulePersonnelLink, 
 from ..dependencies import get_current_user, SessionDep
 
 router = APIRouter(tags=["selects"], dependencies=[Depends(get_current_user)])
-InitWorkers.init_workers()
 
 
 class QueryMonth(BaseModel):
@@ -118,7 +117,7 @@ async def select_month_schedule(queryMonth: QueryMonth, session: SessionDep, use
     # 排序函数
     def sort_key(name):
         if name == priority_name:
-            return -1, 0  # 最高优先
+            return -1, 0  # 自己的名字放最前面，最高优先
         return 0, priority.get(name, float('inf'))  # 其次按 CURRENT_PERSONNEL 顺序，其他放最后
 
     # 排序
@@ -230,7 +229,7 @@ async def get_current_personnel_list():
 @router.post("/get_suggested_schedule")
 async def get_suggested_schedule(querySchedule: QuerySchedule, session: SessionDep):
     if len(Worker.instances) == 0:
-        InitWorkers.init_workers()
+        InitWorkers.init_workers(session)
 
     current_worker = Worker.get_by_name(querySchedule.name)
     last_week_work_schedule, last_work_schedule = get_last_week_work_schedule_and_last_work_schedule(session, querySchedule.name, querySchedule.schedule_date)
