@@ -5,8 +5,10 @@ from pydantic import BaseModel
 from sqlmodel import select
 
 from .login import get_password_hash
-from ..database.models import Account, Personnel
+from ..database.models import Account, Personnel, Workschedule
 from ..dependencies import get_current_user, SessionDep
+from datetime import date
+from ..database.utils import ScheduleStatus
 
 router = APIRouter(tags=["updates"])
 
@@ -24,6 +26,12 @@ class UserUpdate(AvatarUpdate):
     worknumber: str | None = None
     phonenumber: str | None = None
     password: str | None = None
+
+
+class WorkScheduleStatusUpdate(BaseModel):
+    status: ScheduleStatus
+    start_date: date
+    end_date: date
 
 
 # 更新头像API
@@ -59,3 +67,19 @@ async def update_user(user_data: UserUpdate, session: SessionDep):
     session.refresh(account)
 
     return user_data
+
+
+@router.post("/update-work-schedule-status")
+async def update_work_schedule_status(workScheduleStatusUpdate: WorkScheduleStatusUpdate, session: SessionDep):
+    results = session.exec(select(Workschedule).where(
+        Workschedule.work_date >= workScheduleStatusUpdate.start_date,
+        Workschedule.work_date <= workScheduleStatusUpdate.end_date
+    )).all()
+    for result in results:
+        result: Workschedule
+        result.status = workScheduleStatusUpdate.status
+        session.add(result)
+
+    session.commit()
+
+    return {'detail': 'success！'}

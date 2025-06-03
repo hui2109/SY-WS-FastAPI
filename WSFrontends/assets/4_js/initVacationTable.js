@@ -362,15 +362,6 @@ class InitVacationTable {
         this.bookingPerson0.textContent = sessionStorage.getItem('user_name');
         this.currentPerson = sessionStorage.getItem('user_name');
 
-        // 更新假期下拉选择项
-        for (let dropdownDiv of this.relaxType) {
-            let dropdownMenu = dropdownDiv.querySelector('.dropdown-menu');
-            dropdownMenu.innerHTML = '';
-            for (let relax_type of this.relaxDropdownItemList) {
-                dropdownMenu.innerHTML += `<li><span class="dropdown-item">${relax_type}</span></li>`;
-            }
-        }
-
         // 判断单元格上是否已有预约
         if (srcCell.children.length === 0) {
             // 模拟 [独立预约方式] 的点击事件
@@ -407,6 +398,15 @@ class InitVacationTable {
     }
 
     bindClickEvent() {
+        // 更新假期下拉选择项
+        for (let dropdownDiv of this.relaxType) {
+            let dropdownMenu = dropdownDiv.querySelector('.dropdown-menu');
+            dropdownMenu.innerHTML = '';
+            for (let relax_type of this.relaxDropdownItemList) {
+                dropdownMenu.innerHTML += `<li><span class="dropdown-item">${relax_type}</span></li>`;
+            }
+        }
+
         // 先绑定 激活/失活 属性
         this._setBookingPersonBtnProperties();
 

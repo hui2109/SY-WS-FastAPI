@@ -568,6 +568,8 @@ class InitPaiBanTables {
         this.autoScheduleAll = document.getElementById('autoScheduleAll');
         this.checkAllSchedule = document.getElementById('checkAllSchedule');
         this.checkAllScheduleFanBtn = document.getElementById('checkAllScheduleFan');
+        this.submitForAudit = document.getElementById('submitForAudit');
+        this.auditAllSchedule = document.getElementById('auditAllSchedule');
 
         this.datetimepicker3 = document.getElementById('datetimepicker3');
         this.paibanModal = document.getElementById('paibanModal');
@@ -602,6 +604,11 @@ class InitPaiBanTables {
 
         this.checkScheduleModal = document.getElementById('checkScheduleModal');
         this.checkScheduleLabel = document.getElementById('checkScheduleLabel');
+
+        this.submitForAuditModal = document.getElementById('submitForAuditModal');
+        this.confirmSubmitForAudit = document.getElementById('confirmSubmitForAudit');
+        this.confirmAuditModal = document.getElementById('confirmAuditModal');
+        this.confirmAudit = document.getElementById('confirmAudit');
 
         this.weekMap = getWeekMap();
         this.banTypeColor = getBanTypeColor();
@@ -741,11 +748,23 @@ class InitPaiBanTables {
 
             if (i === -1) {
                 if (personnel_list_length === 0) {
-                    th.textContent = '待排班'
+                    th.textContent = '无数据';
                     th.style.backgroundColor = 'var(--bs-danger)';
                 } else {
-                    th.textContent = '已发布'
+                    if (this.records['status'].includes('草稿')) {
+                        th.textContent = '草稿';
+                        th.style.backgroundColor = 'var(--bs-danger)';
+                    } else {
+                        if (this.records['status'].includes('待审核')) {
+                            th.textContent = '待审核';
+                            th.style.backgroundColor = 'var(--bs-warning)';
+                        } else {
+                            th.textContent = '已发布';
+                            th.style.backgroundColor = 'var(--bs-success)';
+                        }
+                    }
                 }
+
                 tr.appendChild(th);
                 continue;
             }
@@ -1075,6 +1094,7 @@ class InitPaiBanTables {
     }
 
     bindToolsBtnClick() {
+        // 绑定 是否清空排班 按钮事件
         this.clearAllSchedule.addEventListener('click', () => {
             let date1 = this.startDate.format('YYYY-MM-DD');
             let date2 = this.endDate.format('YYYY-MM-DD');
@@ -1085,6 +1105,7 @@ class InitPaiBanTables {
             modalInstance.show();
         });
 
+        // 绑定 确认清空排班 按钮事件
         this.confirmClearAll.addEventListener('click', () => {
             let data = {
                 start_date: this.startDate.format('YYYY-MM-DD'),
@@ -1134,6 +1155,7 @@ class InitPaiBanTables {
             });
         });
 
+        // 绑定 显示上月排班 按钮事件
         this.showLastSchedule.addEventListener('click', () => {
             if (this.showLastSchedule.classList.contains('active')) {
                 // 证明已经是激活状态
@@ -1180,6 +1202,7 @@ class InitPaiBanTables {
             }
         });
 
+        // 绑定 自动排班 按钮事件
         this.autoScheduleAll.addEventListener('click', async () => {
             // 获取token
             const token = getToken();
@@ -1250,6 +1273,7 @@ class InitPaiBanTables {
             }
         });
 
+        // 绑定 删除一个排班小叉叉 按钮事件
         this.clearOneSchedule.addEventListener('click', (event) => {
             let elementThis = event.currentTarget;
 
@@ -1271,6 +1295,7 @@ class InitPaiBanTables {
             }
         });
 
+        // 绑定 核查排班 按钮事件
         this.checkAllSchedule.addEventListener('click', () => {
             this.checkScheduleLabel.textContent = `核查 ${this.startDate.format('YYYY-MM-DD')}至${this.endDate.format('YYYY-MM-DD')} 的排班`
             this._renderCheckScheduleTable();
@@ -1282,6 +1307,7 @@ class InitPaiBanTables {
             const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl));
         });
 
+        // 绑定 核查排班 [定制] 按钮事件
         this.checkAllScheduleFanBtn.addEventListener('click', () => {
             this.checkScheduleLabel.textContent = `核查 ${this.startDate.format('YYYY-MM-DD')}至${this.endDate.format('YYYY-MM-DD')} 的排班`
             this._renderCheckScheduleTable();
@@ -1291,6 +1317,134 @@ class InitPaiBanTables {
 
             const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]');
             const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl));
+        });
+
+        // 绑定 是否提交审核 按钮事件
+        this.submitForAudit.addEventListener('click', () => {
+            let date1 = this.startDate.format('YYYY-MM-DD');
+            let date2 = this.endDate.format('YYYY-MM-DD');
+            let info_label = this.submitForAuditModal.querySelector('.modal-body p');
+
+            info_label.textContent = `确定要提交 ${date1} 至 ${date2} 之间的所有排班吗？`;
+
+            const modalInstance = new bootstrap.Modal(this.submitForAuditModal);
+            modalInstance.show();
+        });
+
+        // 绑定 提交审核 按钮事件
+        this.confirmSubmitForAudit.addEventListener('click', () => {
+            // 获取token
+            const token = getToken();
+            if (!token) {
+                return;
+            }
+
+            let data = {
+                start_date: this.startDate.format('YYYY-MM-DD'),
+                end_date: this.endDate.format('YYYY-MM-DD'),
+                status: '待审核'
+            }
+
+            fetch('/update-work-schedule-status', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify(data)
+            }).then(response => {
+                response.json().then(data => {
+                    if (response.ok) {
+                        showAlert({
+                            type: 'success',
+                            title: '提交成功！',
+                            message: '本月排班提交成功！'
+                        });
+
+                        // 重新渲染表格
+                        this.getRecordsFromServer();
+
+                        // 隐藏对话框
+                        const modalInstance = bootstrap.Modal.getInstance(this.submitForAuditModal);
+                        modalInstance.hide();
+                    } else {
+                        showAlert({
+                            type: 'danger',
+                            title: '提交失败！',
+                            message: data.detail
+                        });
+                    }
+                })
+            }).catch(error => {
+                debugger;
+                alert('未知错误！');
+                console.error('error!!!', error);
+            });
+        });
+
+        // 绑定 是否确认审核 按钮事件
+        this.auditAllSchedule.addEventListener('click', () => {
+            let date1 = this.startDate.format('YYYY-MM-DD');
+            let date2 = this.endDate.format('YYYY-MM-DD');
+            let info_label = this.confirmAuditModal.querySelector('.modal-body p');
+
+            info_label.textContent = `确定要审核 ${date1} 至 ${date2} 之间的所有排班吗？`;
+
+            const modalInstance = new bootstrap.Modal(this.confirmAuditModal);
+            modalInstance.show();
+        });
+
+        // 绑定 确认审核 按钮事件
+        this.confirmAudit.addEventListener('click', () => {
+            // 获取token
+            const token = getToken();
+            if (!token) {
+                return;
+            }
+
+            let data = {
+                start_date: this.startDate.format('YYYY-MM-DD'),
+                end_date: this.endDate.format('YYYY-MM-DD'),
+                status: '已发布'
+            }
+
+            fetch('/update-work-schedule-status', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify(data)
+            }).then(response => {
+                response.json().then(data => {
+                    if (response.ok) {
+                        showAlert({
+                            type: 'success',
+                            title: '审核成功！',
+                            message: '本月排班审核成功！'
+                        });
+
+                        // 重新渲染表格
+                        this.getRecordsFromServer();
+
+                        // 隐藏对话框
+                        const modalInstance = bootstrap.Modal.getInstance(this.confirmAuditModal);
+                        modalInstance.hide();
+                    } else {
+                        showAlert({
+                            type: 'danger',
+                            title: '审核失败！',
+                            message: data.detail
+                        });
+                    }
+                })
+            }).catch(error => {
+                debugger;
+                alert('未知错误！');
+                console.error('error!!!', error);
+            });
         });
     }
 

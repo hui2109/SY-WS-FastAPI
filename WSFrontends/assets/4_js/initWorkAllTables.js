@@ -97,6 +97,7 @@ class InitTables {
 
         this.weekMap = getWeekMap();
         this.banTypeColor = getBanTypeColor();
+        this.work_schedule_status = false;
     }
 
     handleCellClick(et) {
@@ -242,7 +243,11 @@ class InitTables {
                     //debugger;
                     this.records = data;
                     this.generateThead();
-                    this.generateTbody();
+
+                    // 发布了的排班才渲染
+                    if (this.work_schedule_status) {
+                        this.generateTbody();
+                    }
                 } else {
                     loginExpiredAlert();
                 }
@@ -265,11 +270,24 @@ class InitTables {
 
             if (i === -1) {
                 if (personnel_list_length === 0) {
-                    th.textContent = '无数据'
+                    th.textContent = '无数据';
                     th.style.backgroundColor = 'var(--bs-danger)';
                 } else {
-                    th.textContent = '已发布'
+                    if (this.records['status'].includes('草稿')) {
+                        th.textContent = '草稿';
+                        th.style.backgroundColor = 'var(--bs-danger)';
+                    } else {
+                        if (this.records['status'].includes('待审核')) {
+                            th.textContent = '待审核';
+                            th.style.backgroundColor = 'var(--bs-warning)';
+                        } else {
+                            th.textContent = '已发布';
+                            th.style.backgroundColor = 'var(--bs-success)';
+                            this.work_schedule_status = true;
+                        }
+                    }
                 }
+
                 tr.appendChild(th);
                 continue;
             }

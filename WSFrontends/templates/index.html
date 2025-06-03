@@ -520,6 +520,10 @@
                         <a class="dropdown-item" id="checkAllSchedule" style="font-size: 12px;">核查排班</a>
                       </li>
                       <li>
+                        <!-- 提交审核 -->
+                        <a class="dropdown-item" id="submitForAudit" style="font-size: 12px;">提交审核</a>
+                      </li>
+                      <li>
                         <!-- 审核排班 -->
                         <a class="dropdown-item" id="auditAllSchedule" style="font-size: 12px;">审核排班</a>
                       </li>
@@ -1312,6 +1316,53 @@
 
         <div class="modal-footer" style="height: 60px;">
           <button type="button" class="btn btn-sm btn-sm btn-secondary" data-bs-dismiss="modal">关闭</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 提交审核 确认 对话框 -->
+  <div class="modal fade" id="submitForAuditModal" tabindex="-1" aria-labelledby="submitForAuditLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-sm modal-dialog-centered" style="width: 348px; margin: auto; font-size: 15px;">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="submitForAuditLabel">是否提交本月所有排班？</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+
+        <div class="modal-body">
+          <p class="mb-0">确定要提交 2025-06-01 至 2025-06-30 之间的所有排班吗？</p>
+        </div>
+
+        <div class="modal-footer justify-content-between">
+          <button type="button" class="btn btn-sm btn-warning" id="confirmSubmitForAudit">确认提交</button>
+          <div>
+            <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">暂时不提交</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 确认审核 确认 对话框 -->
+  <div class="modal fade" id="confirmAuditModal" tabindex="-1" aria-labelledby="confirmAuditLabel" aria-hidden="true">
+    <div class="modal-dialog modal-sm modal-dialog-centered" style="width: 348px; margin: auto; font-size: 15px;">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="confirmAuditLabel">是否审核本月所有排班？</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+
+        <div class="modal-body">
+          <p class="mb-0">确定要审核 2025-06-01 至 2025-06-30 之间的所有排班吗？</p>
+        </div>
+
+        <div class="modal-footer justify-content-between">
+          <button type="button" class="btn btn-sm btn-primary" id="confirmAudit">确认审核</button>
+          <div>
+            <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">暂时不审核</button>
+          </div>
         </div>
       </div>
     </div>

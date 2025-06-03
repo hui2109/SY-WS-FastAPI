@@ -51,6 +51,7 @@ async def select_month_schedule(queryMonth: QueryMonth, session: SessionDep, use
     priority_name = user.personnel.name
     queryMonthResponse = {}
     personnel_set = set()
+    status_set = set()
 
     # 首先应该获取当前月的人员名单
     statement = select(Workschedule).where(
@@ -63,6 +64,7 @@ async def select_month_schedule(queryMonth: QueryMonth, session: SessionDep, use
         work_date = result.work_date
         personnel_links = result.personnel_links
         ban = result.bantype.ban
+        status_set.add(result.status)
 
         personnel_link: WorkschedulePersonnelLink
         for personnel_link in personnel_links:
@@ -93,7 +95,6 @@ async def select_month_schedule(queryMonth: QueryMonth, session: SessionDep, use
                 isHolidays[date_str] = '班'
 
         current_date += timedelta(days=1)
-
     queryMonthResponse['isHolidays'] = isHolidays
 
     # 更改班名的顺序
@@ -110,7 +111,7 @@ async def select_month_schedule(queryMonth: QueryMonth, session: SessionDep, use
                     new_value_list.append(_value_item)
             queryMonthResponse[_key] = new_value_list
 
-    # 更改personnels的顺序, 按照CURRENT_PERSONNEL的顺序, 如果元素不在CURRENT_PERSONNEL里, 移至最后; 如果name在personnels中，则将它移至最前面
+    # 更改personnels的顺序, 按照CURRENT_PERSONNEL的顺序, 如果元素不在CURRENT_PERSONNEL里, 移至最后; 如果name是 priority_name，则将它移至最前面
     # 创建优先级字典
     priority = {name: i for i, name in enumerate(CURRENT_PERSONNEL)}
 
@@ -123,6 +124,9 @@ async def select_month_schedule(queryMonth: QueryMonth, session: SessionDep, use
     # 排序
     personnel_list = sorted(personnel_list, key=sort_key)
     queryMonthResponse['personnels'] = personnel_list
+
+    # 新增: 排班状态判断
+    queryMonthResponse['status'] = list(status_set)
 
     return queryMonthResponse
 

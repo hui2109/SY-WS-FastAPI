@@ -187,8 +187,7 @@ class AutoOneSchedule:
 
         # 这些班没有参考意义, 不能作为连上的根据, 例如: 一个人上周上了OTB, 那么这一周任何班都可以排; 或者一个人上一周上了2B, 这一周OTB也可以排
         self.nonsense_schedule_list = [Bans.ENGAGE.value, Bans.TRAIN.value, Bans.JD.value, Bans.OAE.value, Bans.OBE.value, Bans.OCE.value,
-                                       Bans.OAF.value, Bans.OBF.value, Bans.OCF.value, Bans.OTR.value, Bans.OTB.value, Bans.OVB.value,
-                                       Bans.OPHY.value]
+                                       Bans.OAF.value, Bans.OBF.value, Bans.OCF.value, Bans.PHY.value, Bans.TS1, Bans.TS2, Bans.T1A, Bans.T2A, Bans.T1B, Bans.T2B, Bans.T3A, Bans.T3B]
 
     def __sorted_schedule(self):
         # 按概率排序
