@@ -147,12 +147,9 @@ async def create_holiday_rule(holiday_rules: list[HolidayRule], session: Session
             # 更新现有记录
             result.bantype = bantype
             result.personnel = personnel
-            if holiday_rule.start_date:
-                result.start_date = holiday_rule.start_date
-            if holiday_rule.end_date:
-                result.end_date = holiday_rule.end_date
-            if holiday_rule.available_days:
-                result.available_days = holiday_rule.available_days
+            result.start_date = holiday_rule.start_date
+            result.end_date = holiday_rule.end_date
+            result.available_days = holiday_rule.available_days
 
             session.add(result)
 

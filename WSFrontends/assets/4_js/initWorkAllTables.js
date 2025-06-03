@@ -10,6 +10,7 @@ class InitTables {
     }
 
     init() {
+        this.work_schedule_status = false;
         this.getStartEndDate();
         this.getRecordsFromServer();
     }
@@ -97,7 +98,6 @@ class InitTables {
 
         this.weekMap = getWeekMap();
         this.banTypeColor = getBanTypeColor();
-        this.work_schedule_status = false;
     }
 
     handleCellClick(et) {
@@ -243,11 +243,7 @@ class InitTables {
                     //debugger;
                     this.records = data;
                     this.generateThead();
-
-                    // 发布了的排班才渲染
-                    if (this.work_schedule_status) {
-                        this.generateTbody();
-                    }
+                    this.generateTbody();
                 } else {
                     loginExpiredAlert();
                 }
@@ -317,6 +313,11 @@ class InitTables {
     generateTbody() {
         let tbody = this.paibanTable.querySelector('tbody');
         tbody.innerHTML = '';
+
+        // 发布了的排班才渲染
+        if (!this.work_schedule_status) {
+            return;
+        }
 
         let daysNum = this.dateList.length;
         let personnel_list = this.records['personnels']

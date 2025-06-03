@@ -149,6 +149,7 @@ async def select_my_month_schedule(queryMonth: QueryMonth, session: SessionDep, 
         if name in names_in_personnel_links:
             work_date = result.work_date
             ban = result.bantype.ban
+            status = result.status
 
             names_in_personnel_links.remove(name)
             coworker_names_list = names_in_personnel_links
@@ -156,7 +157,8 @@ async def select_my_month_schedule(queryMonth: QueryMonth, session: SessionDep, 
             _key = f'{name}_{work_date.year}_{work_date.month}_{work_date.day}'
             _value = {
                 'ban': f'{ban.value}',
-                'coworkers': coworker_names_list
+                'coworkers': coworker_names_list,
+                'status': status
             }
             if queryMyMonthResponse.get(_key) is None:
                 queryMyMonthResponse[_key] = [_value]

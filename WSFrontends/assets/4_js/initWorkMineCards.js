@@ -286,6 +286,7 @@ class InitMineCards {
         }).then(response => {
             response.json().then(data => {
                 if (response.ok) {
+                    //debugger;
                     this.records = data;
                     this.generateCards();
                 } else {
@@ -405,6 +406,7 @@ class InitMineCards {
 
         let coworkers = info_dict['coworkers']
         let ban = info_dict['ban']
+        let status = info_dict['status']
 
         if (ban === '休息') {
             //this.currentWeekNormalRestDateList.push(date);
@@ -414,6 +416,10 @@ class InitMineCards {
         if (ban === '补假') {
             //this.currentWeekNormalRestDateList.push(date);
             return this.generateCommonInfoItem(div_info_item, '补假', name, date);
+        }
+
+        if (status === '草稿' || status === '待审核') {
+            return this.generateCommonInfoItem(div_info_item, 'null');
         }
 
         for (let i = -1; i < coworkers.length; i++) {

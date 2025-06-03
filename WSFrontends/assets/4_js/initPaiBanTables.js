@@ -113,7 +113,7 @@ class InitPaiBanTables {
 
         for (let i = 0; i < _keys.length; i++) {
             let div = document.createElement('div');
-            div.classList.add('d-flex', 'align-items-center', 'mb-2');
+            div.classList.add('d-flex', 'align-items-center', 'mb-2', 'flex-wrap');
             div.style.gap = '12px';
 
             let possi_span = document.createElement('span');

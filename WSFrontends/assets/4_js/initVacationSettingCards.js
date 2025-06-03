@@ -121,10 +121,10 @@ class InitVacationSettingCards {
                                 ${user.holidayRules.map((rule, index) => this._createHolidayRule(user.id, rule, index)).join('')}
                             </div>
                             <div class="d-flex justify-content-between align-items-center">
-                                <button class="btn btn-add-rule btn-sm mt-2" data-user-id="${user.id}">
+                                <button class="btn btn-add-rule btn-sm mt-2" data-user-id="${user.id}" style="font-size: 14px;">
                                     <i class="bi bi-plus-circle me-1"></i>新增规则
                                 </button>
-                                <button class="btn btn-save-rule btn-sm mt-2" data-user-id="${user.id}">
+                                <button class="btn btn-save-rule btn-sm mt-2" data-user-id="${user.id}" style="font-size: 14px;">
                                     <i class="bi bi-database-add me-1"></i>保存
                                 </button> 
                             </div>
@@ -379,14 +379,15 @@ class InitVacationSettingCards {
 
     // 验证假期规则
     _validateHolidayRule(rule_dict) {
-        if (rule_dict.days === 0) {
-            showAlert({
-                type: 'danger',
-                title: '保存失败！',
-                message: '可用天数不能为0！'
-            })
-            return null;
-        }
+        // 可以将天数设为0，这样某些假期就为负值，便于统计
+        //if (rule_dict.days === 0) {
+        //    showAlert({
+        //        type: 'danger',
+        //        title: '保存失败！',
+        //        message: '可用天数不能为0！'
+        //    })
+        //    return null;
+        //}
 
         if (dayjs(rule_dict.startDate) >= dayjs(rule_dict.endDate)) {
             showAlert({

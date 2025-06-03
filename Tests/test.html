@@ -1,387 +1,573 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
-
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>排班检查系统</title>
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.1/font/bootstrap-icons.min.css"
-    rel="stylesheet">
-  <style>
-    .schedule-table {
-      border-collapse: collapse;
-      font-size: 0.85rem;
-    }
-
-    .schedule-table th,
-    .schedule-table td {
-      border: 1px solid var(--bs-border-color);
-      padding: 0.5rem;
-      text-align: center;
-      vertical-align: top;
-      min-width: 120px;
-    }
-
-    .schedule-table th {
-      background-color: var(--bs-primary);
-      color: white;
-      font-weight: 600;
-      position: sticky;
-      top: 0;
-      z-index: 10;
-    }
-
-    .schedule-table .date-header {
-      background-color: var(--bs-secondary);
-      color: white;
-      font-weight: 600;
-      position: sticky;
-      left: 0;
-      z-index: 5;
-      min-width: 100px;
-    }
-
-    .schedule-table .corner-cell {
-      background-color: var(--bs-dark);
-      color: white;
-      font-weight: 600;
-      position: sticky;
-      left: 0;
-      top: 0;
-      z-index: 15;
-    }
-
-    .person-count {
-      font-weight: bold;
-      color: var(--bs-primary);
-      margin-bottom: 0.25rem;
-    }
-
-    .person-name {
-      font-size: 0.75rem;
-      color: var(--bs-secondary);
-      margin: 0.1rem 0;
-    }
-
-    .missing-schedule {
-      background-color: var(--bs-danger-bg-subtle);
-      color: var(--bs-danger-text-emphasis);
-    }
-
-    .complete-schedule {
-      background-color: var(--bs-success-bg-subtle);
-      color: var(--bs-success-text-emphasis);
-    }
-
-    .table-container {
-      max-height: 70vh;
-      overflow: auto;
-      border: 1px solid var(--bs-border-color);
-      border-radius: 0.5rem;
-    }
-
-    .status-badge {
-      font-size: 0.7rem;
-      padding: 0.2rem 0.4rem;
-    }
-
-    .modal-header {
-      background: linear-gradient(135deg, var(--bs-primary), var(--bs-primary-dark, #0b5ed7));
-      color: white;
-    }
-
-    .modal-header .btn-close {
-      filter: invert(1);
-    }
-
-    @media (max-width: 768px) {
-      .schedule-table {
-        font-size: 0.75rem;
-      }
-
-      .schedule-table th,
-      .schedule-table td {
-        padding: 0.25rem;
-        min-width: 80px;
-      }
-
-      .person-name {
-        font-size: 0.65rem;
-      }
-    }
-
-    [data-bs-theme="dark"] .schedule-table th {
-      background-color: var(--bs-primary);
-    }
-
-    [data-bs-theme="dark"] .schedule-table .date-header {
-      background-color: var(--bs-secondary);
-    }
-
-    [data-bs-theme="dark"] .schedule-table .corner-cell {
-      background-color: var(--bs-dark);
-    }
-  </style>
-</head>
-
-<body data-bs-theme="light">
-  <div class="container mt-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-      <h2><i class="bi bi-calendar-check me-2"></i>排班管理系统</h2>
-      <div>
-        <button class="btn btn-outline-secondary me-2" onclick="toggleTheme()">
-          <i class="bi bi-moon-stars" id="theme-icon"></i>
-        </button>
-        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#scheduleModal">
-          <i class="bi bi-plus-circle me-2"></i>检查排班
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- 排班检查模态对话框 -->
-  <div class="modal fade" id="scheduleModal" tabindex="-1" aria-labelledby="scheduleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-fullscreen-lg-down modal-xl">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="scheduleModalLabel">
-            <i class="bi bi-clipboard2-check me-2"></i>排班检查
-          </h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="关闭"></button>
-        </div>
-        <div class="modal-body">
-          <div class="row mb-3">
-            <div class="col-12">
-              <label for="scheduleData" class="form-label">
-                <i class="bi bi-code-square me-2"></i>排班数据 (JSON格式)
-              </label>
-              <textarea class="form-control" id="scheduleData" rows="8" placeholder="请输入排班数据..."></textarea>
-            </div>
-          </div>
-          <div class="row mb-3">
-            <div class="col-12">
-              <button type="button" class="btn btn-success" onclick="generateScheduleTable()">
-                <i class="bi bi-table me-2"></i>生成排班表
-              </button>
-              <button type="button" class="btn btn-outline-secondary ms-2" onclick="loadSampleData()">
-                <i class="bi bi-clipboard-data me-2"></i>加载示例数据
-              </button>
-            </div>
-          </div>
-          <div id="scheduleTableContainer" style="display: none;">
-            <hr>
-            <div class="d-flex justify-content-between align-items-center mb-3">
-              <h6><i class="bi bi-table me-2"></i>排班检查结果</h6>
-              <div id="summaryBadges"></div>
-            </div>
-            <div class="table-container">
-              <table class="table table-bordered schedule-table mb-0" id="scheduleTable">
-                <!-- 表格内容将通过JavaScript生成 -->
-              </table>
-            </div>
-          </div>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-            <i class="bi bi-x-circle me-2"></i>关闭
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
-  <script>
-    // 主题切换功能
-    function toggleTheme() {
-      const html = document.documentElement;
-      const currentTheme = html.getAttribute('data-bs-theme');
-      const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-      const icon = document.getElementById('theme-icon');
-
-      html.setAttribute('data-bs-theme', newTheme);
-      document.body.setAttribute('data-bs-theme', newTheme);
-
-      icon.className = newTheme === 'light' ? 'bi bi-moon-stars' : 'bi bi-sun';
-    }
-
-    // 加载示例数据
-    function loadSampleData() {
-      const sampleData = {
-        "2025-5-1": {
-          "today_mandatory_schedule": [
-            "1A", "1B", "1C", "2A", "2B", "2C",
-            "3A", "3B", "3C", "S1", "S2", "N1", "N2"
-          ],
-          "today_planed_schedule": {
-            "叶荣": "S1", "闫昱萤": "S1", "戴梦莹": "S2", "曾小洲": "S2",
-            "杨星": "N1", "郑霞": "N2", "金小靖": "N2", "肖贵珍": "1B",
-            "付昱东": "1A", "黄文军": "1B", "黄发生": "2C", "杨鹏": "2B",
-            "余涛": "2A", "王吉锐": "2A", "唐晓燕": "3B", "余翔": "3A",
-            "谭林": "3A", "徐博": "3B", "康正樾": "1A", "张旭辉": "2C",
-            "廖中凡": "2B", "尹红科": "1B"
-          }
-        },
-        "2025-5-2": {
-          "today_mandatory_schedule": [
-            "1A", "1B", "1C", "2A", "2B", "2C",
-            "3A", "3B", "3C", "S1", "S2", "N1", "N2"
-          ],
-          "today_planed_schedule": {
-            "叶荣": "S2", "闫昱萤": "S1", "戴梦莹": "S1",
-            "杨星": "N1", "郑霞": "N2", "肖贵珍": "1A",
-            "付昱东": "1B", "黄文军": "1C", "余涛": "2A",
-            "唐晓燕": "3A", "余翔": "3B"
-          }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>排班管理系统</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* 自定义样式 */
+        .modal-content {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
         }
-      };
+        
+        .modal-header {
+            border-bottom: 1px solid #f0f0f0;
+            padding: 1.5rem;
+        }
+        
+        .modal-title {
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .nav-tabs {
+            border-bottom: 2px solid #f0f0f0;
+        }
+        
+        .nav-tabs .nav-link {
+            color: #666;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            font-weight: 500;
+        }
+        
+        .nav-tabs .nav-link.active {
+            color: #0066cc;
+            background-color: transparent;
+            border-bottom: 2px solid #0066cc;
+            margin-bottom: -2px;
+        }
+        
+        .form-label {
+            font-weight: 500;
+            color: #555;
+            margin-bottom: 0.5rem;
+        }
+        
+        .form-control, .form-select {
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 0.75rem;
+            transition: all 0.3s ease;
+        }
+        
+        .form-control:focus, .form-select:focus {
+            border-color: #0066cc;
+            box-shadow: 0 0 0 0.2rem rgba(0,102,204,0.1);
+        }
+        
+        .btn-primary {
+            background-color: #0066cc;
+            border: none;
+            padding: 0.75rem 2rem;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            background-color: #0052a3;
+            transform: translateY(-1px);
+        }
+        
+        .btn-secondary {
+            background-color: #f0f0f0;
+            border: none;
+            color: #666;
+            padding: 0.75rem 2rem;
+            border-radius: 8px;
+            font-weight: 500;
+        }
+        
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+        
+        .status-pending {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+        
+        .status-approved {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        
+        .status-rejected {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        
+        .record-item {
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border: 1px solid #e9ecef;
+        }
+        
+        .record-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+        
+        .record-type {
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .record-date {
+            font-size: 0.875rem;
+            color: #6c757d;
+        }
+        
+        .record-details {
+            font-size: 0.9rem;
+            color: #495057;
+            line-height: 1.6;
+        }
+        
+        .admin-comment {
+            background-color: #e9ecef;
+            padding: 0.5rem;
+            border-radius: 4px;
+            margin-top: 0.5rem;
+            font-size: 0.875rem;
+        }
+        
+        .filter-section {
+            background-color: #f8f9fa;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+        
+        @media (max-width: 576px) {
+            .modal-dialog {
+                margin: 0.5rem;
+            }
+            
+            .nav-tabs .nav-link {
+                padding: 0.5rem 1rem;
+                font-size: 0.9rem;
+            }
+            
+            .btn-primary, .btn-secondary {
+                padding: 0.5rem 1.5rem;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 触发按钮 -->
+    <div class="container mt-5">
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#applicationModal">
+            提交申请
+        </button>
+        <button type="button" class="btn btn-secondary ms-2" data-bs-toggle="modal" data-bs-target="#adminModal">
+            审核管理
+        </button>
+    </div>
 
-      document.getElementById('scheduleData').value = JSON.stringify(sampleData, null, 2);
-    }
+    <!-- 申请提交模态对话框 -->
+    <div class="modal fade" id="applicationModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">提交申请</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <ul class="nav nav-tabs" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link active" data-bs-toggle="tab" href="#shift-exchange">换班申请</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" data-bs-toggle="tab" href="#leave-request">请假申请</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" data-bs-toggle="tab" href="#shift-preference">期望排班</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" data-bs-toggle="tab" href="#operation-history">操作记录</a>
+                        </li>
+                    </ul>
 
-    // 生成排班表
-    function generateScheduleTable() {
-      const dataText = document.getElementById('scheduleData').value.trim();
+                    <div class="tab-content mt-4">
+                        <!-- 换班申请 -->
+                        <div class="tab-pane fade show active" id="shift-exchange">
+                            <form>
+                                <div class                        <input type="date" class="form-control" required>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">申请人</label>
+                                        <input type="text" class="form-control" placeholder="请输入申请人姓名" required>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">申请班种</label>
+                                        <select class="form-select" required>
+                                            <option value="">请选择班种</option>
+                                            <option value="morning">早班</option>
+                                            <option value="afternoon">中班</option>
+                                            <option value="night">晚班</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">替班人</label>
+                                        <input type="text" class="form-control" placeholder="请输入替班人姓名" required>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">替换班种</label>
+                                        <select class="form-select" required>
+                                            <option value="">请选择班种</option>
+                                            <option value="morning">早班</option>
+                                            <option value="afternoon">中班</option>
+                                            <option value="night">晚班</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-12 mb-3">
+                                        <label class="form-label">换班原因</label>
+                                        <textarea class="form-control" rows="3" placeholder="请输入换班原因" required></textarea>
+                                    </div>
+                                </div>
+                                <div class="d-flex justify-content-end gap-2">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                                    <button type="submit" class="btn btn-primary">提交申请</button>
+                                </div>
+                            </form>
+                        </div>
 
-      if (!dataText) {
-        alert('请输入排班数据');
-        return;
-      }
+                        <!-- 请假申请 -->
+                        <div class="tab-pane fade" id="leave-request">
+                            <form>
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">请假类型</label>
+                                        <select class="form-select" required>
+                                            <option value="">请选择请假类型</option>
+                                            <option value="sick">病假</option>
+                                            <option value="personal">事假</option>
+                                            <option value="annual">年假</option>
+                                            <option value="other">其他</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">开始时间</label>
+                                        <input type="datetime-local" class="form-control" required>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">结束时间</label>
+                                        <input type="datetime-local" class="form-control" required>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">时长（天）</label>
+                                        <input type="number" class="form-control" placeholder="自动计算" readonly>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-12 mb-3">
+                                        <label class="form-label">请假事由</label>
+                                        <textarea class="form-control" rows="3" placeholder="请输入请假事由" required></textarea>
+                                    </div>
+                                </div>
+                                <div class="d-flex justify-content-end gap-2">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                                    <button type="submit" class="btn btn-primary">提交申请</button>
+                                </div>
+                            </form>
+                        </div>
 
-      try {
-        const scheduleData = JSON.parse(dataText);
-        createScheduleTable(scheduleData);
-        document.getElementById('scheduleTableContainer').style.display = 'block';
-      } catch (error) {
-        alert('数据格式错误，请检查JSON格式是否正确');
-        console.error(error);
-      }
-    }
+                        <!-- 期望排班 -->
+                        <div class="tab-pane fade" id="shift-preference">
+                            <form>
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">申请人</label>
+                                        <input type="text" class="form-control" placeholder="请输入申请人姓名" required>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">期望班种</label>
+                                        <select class="form-select" required>
+                                            <option value="">请选择期望班种</option>
+                                            <option value="morning">早班</option>
+                                            <option value="afternoon">中班</option>
+                                            <option value="night">晚班</option>
+                                            <option value="rest">休息</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">开始日期</label>
+                                        <input type="date" class="form-control" required>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">结束日期</label>
+                                        <input type="date" class="form-control" required>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-12 mb-3">
+                                        <label class="form-label">申请理由</label>
+                                        <textarea class="form-control" rows="3" placeholder="请输入申请理由" required></textarea>
+                                    </div>
+                                </div>
+                                <div class="d-flex justify-content-end gap-2">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                                    <button type="submit" class="btn btn-primary">提交申请</button>
+                                </div>
+                            </form>
+                        </div>
 
-    // 创建排班表
-    function createScheduleTable(scheduleData) {
-      const table = document.getElementById('scheduleTable');
-      const dates = Object.keys(scheduleData).sort();
+                        <!-- 操作记录 -->
+                        <div class="tab-pane fade" id="operation-history">
+                            <div class="record-list">
+                                <!-- 换班申请记录 -->
+                                <div class="record-item">
+                                    <div class="record-header">
+                                        <span class="record-type text-primary">换班申请</span>
+                                        <span class="status-badge status-approved">已通过</span>
+                                    </div>
+                                    <div class="record-date">提交时间：2025-01-15 14:30</div>
+                                    <div class="record-details">
+                                        <strong>换班日期：</strong>2025-01-20<br>
+                                        <strong>申请班种：</strong>早班 → <strong>替换班种：</strong>晚班<br>
+                                        <strong>替班人：</strong>李四<br>
+                                        <strong>换班原因：</strong>家中有急事需要处理
+                                    </div>
+                                    <div class="admin-comment">
+                                        <strong>审核意见：</strong>同意换班，请提前做好工作交接。
+                                    </div>
+                                </div>
 
-      // 获取所有班种
-      const allShifts = new Set();
-      dates.forEach(date => {
-        const mandatory = scheduleData[date].today_mandatory_schedule || [];
-        mandatory.forEach(shift => allShifts.add(shift));
-      });
-      const shifts = Array.from(allShifts).sort();
+                                <!-- 请假申请记录 -->
+                                <div class="record-item">
+                                    <div class="record-header">
+                                        <span class="record-type text-success">请假申请</span>
+                                        <span class="status-badge status-pending">待审核</span>
+                                ">
+                                        <strong>请假类型：</strong>病假<br>
+                                        <strong>请假时间：</strong>2025-01-18 08:00 至 2025-01-19 18:00<br>
+                                        <strong>请假时长：</strong>2天<br>
+                                        <strong>请假事由：</strong>身体不适，需要就医休息
+                                    </div>
+                                </div>
 
-      // 清空表格
-      table.innerHTML = '';
+                                <!-- 期望排班记录 -->
+                                <div class="record-item">
+                                    <div class="record-header">
+                                        <span class="record-type text-info">期望排班</span>
+                                        <span class="status-badge" style="background-color: #e3f2fd; color: #1976d2;">已提交</span>
+                                    </div>
+                                    <div class="record-date">提交时间：2025-01-13 16:45</div>
+                                    <div class="record-details">
+                                        <strong>期望时间：</strong>2025-02-01 至 2025-02-07<br>
+                                        <strong>期望班种：</strong>早班<br>
+                                        <strong>申请理由：</strong>需要照顾家人，希望能安排早班
+                                    </div>
+                                </div>
 
-      // 创建表头
-      const thead = document.createElement('thead');
-      const headerRow = document.createElement('tr');
+                                <!-- 被拒绝的记录 -->
+                                <div class="record-item">
+                                    <div class="record-header">
+                                        <span class="record-type text-primary">换班申请</span>
+                                        <span class="status-badge status-rejected">已拒绝</span>
+                                    </div>
+                                    <div class="record-date">提交时间：2025-01-10 11:20</div>
+                                    <div class="record-details">
+                                        <strong>换班日期：</strong>2025-01-12<br>
+                                        <strong>申请班种：</strong>晚班 → <strong>替换班种：</strong>早班<br>
+                                        <strong>替班人：</strong>王五<br>
+                                        <strong>换班原因：</strong>个人安排
+                                    </div>
+                                    <div class="admin-comment">
+                                        <strong>审核意见：</strong>该时段人员安排已满，无法同意换班。
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-      // 左上角空白单元格
-      const cornerCell = document.createElement('th');
-      cornerCell.textContent = '日期/班次';
-      cornerCell.className = 'corner-cell';
-      headerRow.appendChild(cornerCell);
+    <!-- 审核管理模态对话框 -->
+    <div class="modal fade" id="adminModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">审核管理</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <ul class="nav nav-tabs" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link active" data-bs-toggle="tab" href="#shift-review">换班审核</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" data-bs-toggle="tab" href="#leave-review">请假审核</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" data-bs-toggle="tab" href="#preference-view">期望排班查看</a>
+                        </li>
+                    </ul>
 
-      // 班次列标题
-      shifts.forEach(shift => {
-        const th = document.createElement('th');
-        th.textContent = shift;
-        headerRow.appendChild(th);
-      });
+                    <div class="tab-content mt-4">
+                        <!-- 换班审核 -->
+                        <div class="tab-pane fade show active" id="shift-review">
+                            <div class="list-group">
+                                <div class="list-group-item">
+                                    <div class="d-flex justify-content-between align-items-start">
+                                        <div class="flex-grow-1">
+                                            <h6 class="mb-1">张三 申请换班</h6>
+                                            <p class="mb-1"><strong>换班日期：</strong>2025-01-25</p>
+                                            <p class="mb-1"><strong>原班次：</strong>早班 → <strong>换为：</strong>晚班</p>
+                                            <p class="mb-1"><strong>替班人：</strong>李四</p>
+                                            <p class="mb-1"><strong>原因：</strong>家中有事需要处理</p>
+                                        </div>
+                                        <span class="status-badge status-pending">待审核</span>
+                                    </div>
+                                    <div class="mt-3">
+                                        <div class="mb-2">
+                                            <textarea class="form-control" placeholder="审核意见（选填）" rows="2"></textarea>
+                                        </div>
+                                        <div class="d-flex gap-2">
+                                            <button class="btn btn-success btn-sm">通过</button>
+                                            <button class="btn btn-danger btn-sm">拒绝</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 
-      thead.appendChild(headerRow);
-      table.appendChild(thead);
+                        <!-- 请假审核 -->
+                        <div class="tab-pane fade" id="leave-review">
+                            <div class="list-group">
+                                <div class="list-group-item">
+                                    <div class="d-flex justify-content-between align-items-start">
+                                        <div class="flex-grow-1">
+                                            <h6 class="mb-1">王五 申请请假</h6>
+                                            <p class="mb-1"><strong>请假类型：</strong>病假</p>
+                                            <p class="mb-1"><strong>时间：</strong>2025-01-20 08:00 至 2025-01-21 18:00</p>
+                                            <p class="mb-1"><strong>时长：</strong>2天</p>
+                                            <p class="mb-1"><strong>事由：</strong>身体不适，需要就医</p>
+                                        </div>
+                                        <span class="status-badge status-pending">待审核</span>
+                                    </div>
+                                    <div class="mt-3">
+                                        <div class="mb-2">
+                                            <textarea class="form-control" placeholder="审核意见（选填）" rows="2"></textarea>
+                                        </div>
+                                        <div class="d-flex gap-2">
+                                            <button class="btn btn-success btn-sm">通过</button>
+                                            <button class="btn btn-danger btn-sm">拒绝</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 
-      // 创建表体
-      const tbody = document.createElement('tbody');
-      let totalMissing = 0;
-      let totalComplete = 0;
+                        <!-- 期望排班查看 -->
+                        <div class="tab-pane fade" id="preference-view">
+                            <div class="filter-section">
+                                <div class="row">
+                                    <div class="col-md-5">
+                                        <label class="form-label">开始日期</label>
+                                        <input type="date" class="form-control" i</label>
+                                        <input type="date" class="form-control" id="filterEndDate">
+                                    </div>
+                                    <div class="col-md-2 d-flex align-items-end">
+                                        <button class="btn btn-primary w-100" onclick="filterPreferences()">筛选</button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="list-group">
+                                <div class="list-group-item">
+                                    <h6 class="mb-1">张三 的期望排班</h6>
+                                    <p class="mb-1"><strong>期望时间：</strong>2025-02-01 至 2025-02-07</p>
+                                    <p class="mb-1"><strong>期望班种：</strong>早班</p>
+                                    <p class="mb-1"><strong>申请理由：</strong>需要照顾家人，希望能安排早班</p>
+                                    <small class="text-muted">提交时间：2025-01-15 14:30</small>
+                                </div>
+                                
+                                <div class="list-group-item">
+                                    <h6 class="mb-1">李四 的期望排班</h6>
+                                    <p class="mb-1"><strong>期望时间：</strong>2025-02-10 至 2025-02-16</p>
+                                    <p class="mb-1"><strong>期望班种：</strong>晚班</p>
+                                    <p class="mb-1"><strong>申请理由：</strong>个人学习安排，晚班更合适</p>
+                                    <small class="text-muted">提交时间：2025-01-14 10:15</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-      dates.forEach(date => {
-        const row = document.createElement('tr');
-
-        // 日期列
-        const dateCell = document.createElement('td');
-        dateCell.textContent = date;
-        dateCell.className = 'date-header';
-        row.appendChild(dateCell);
-
-        const dayData = scheduleData[date];
-        const mandatory = dayData.today_mandatory_schedule || [];
-        const planned = dayData.today_planed_schedule || {};
-
-        // 按班种分组人员
-        const shiftGroups = {};
-        Object.entries(planned).forEach(([person, shift]) => {
-          if (!shiftGroups[shift]) {
-            shiftGroups[shift] = [];
-          }
-          shiftGroups[shift].push(person);
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // 计算请假时长
+        document.querySelectorAll('input[type="datetime-local"]').forEach(input => {
+            input.addEventListener('change', function() {
+                const form = this.closest('form');
+                const startTime = form.querySelector('input[type="datetime-local"]:nth-of-type(1)').value;
+                const endTime = form.querySelector('input[type="datetime-local"]:nth-of-type(2)').value;
+                
+                if (startTime && endTime) {
+                    const start = new Date(startTime);
+                    const end = new Date(endTime);
+                    const diffTime = Math.abs(end - start);
+                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                    
+                    form.querySelector('input[type="number"]').value = diffDays;
+                }
+            });
         });
 
-        // 为每个班种创建单元格
-        shifts.forEach(shift => {
-          const td = document.createElement('td');
-          const people = shiftGroups[shift] || [];
-          const requiredCount = mandatory.filter(s => s === shift).length;
-          const actualCount = people.length;
+        // 筛选期望排班
+        function filterPreferences() {
+            const startDate = document.getElementById('filterStartDate').value;
+            const endDate = document.getElementById('filterEndDate').value;
+            
+            // 这里可以添加实际的筛选逻辑
+            console.log('筛选日期范围：', startDate, '至', endDate);
+        }
 
-          // 人数显示
-          const countDiv = document.createElement('div');
-          countDiv.className = 'person-count';
-          countDiv.textContent = `${actualCount}/${requiredCount}`;
-          td.appendChild(countDiv);
-
-          // 人员名单
-          people.forEach(person => {
-            const nameDiv = document.createElement('div');
-            nameDiv.className = 'person-name';
-            nameDiv.textContent = person;
-            td.appendChild(nameDiv);
-          });
-
-          // 根据排班情况设置样式
-          if (actualCount < requiredCount) {
-            td.className = 'missing-schedule';
-            totalMissing++;
-          } else if (actualCount >= requiredCount) {
-            td.className = 'complete-schedule';
-            totalComplete++;
-          }
-
-          row.appendChild(td);
+        // 表单提交处理
+        document.querySelectorAll('form').forEach(form => {
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                alert('申请已提交！');
+                bootstrap.Modal.getInstance(this.closest('.modal')).hide();
+            });
         });
 
-        tbody.appendChild(row);
-      });
-
-      table.appendChild(tbody);
-
-      // 更新汇总徽章
-      updateSummaryBadges(totalMissing, totalComplete);
-    }
-
-    // 更新汇总徽章
-    function updateSummaryBadges(missing, complete) {
-      const container = document.getElementById('summaryBadges');
-      container.innerHTML = `
-                <span class="badge bg-danger status-badge me-2">
-                    <i class="bi bi-exclamation-triangle me-1"></i>缺员: ${missing}
-                </span>
-                <span class="badge bg-success status-badge">
-                    <i class="bi bi-check-circle me-1"></i>完成: ${complete}
-                </span>
-            `;
-    }
-
-    // 页面加载时自动加载示例数据
-    document.addEventListener('DOMContentLoaded', function () {
-      loadSampleData();
-    });
-  </script>
+        // 审核按钮处理
+        document.querySelectorAll('.btn-success.btn-sm, .btn-danger.btn-sm').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const action = this.classList.contains('btn-success') ? '通过' : '拒绝';
+                const comment = this.closest('.list-group-item').querySelector('textarea').value;
+                alert(`审核${action}！${comment ? '\n审核意见：' + comment : ''}`);
+            });
+        });
+    </script>
 </body>
-
 </html>

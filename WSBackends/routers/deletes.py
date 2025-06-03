@@ -5,7 +5,7 @@ from pydantic import BaseModel
 from sqlmodel import select
 
 from ..database.models import Personnel, Bantype, ReserveVacation, Workschedule, WorkschedulePersonnelLink, RestInfo
-from ..database.utils import Bans
+from ..database.utils import Bans, ScheduleStatus
 from ..dependencies import SessionDep
 from .inserts import OneSchedule, OneReserve
 from .inserts import HolidayRule
@@ -67,6 +67,8 @@ async def delete_work_schedule(one_schedule: OneSchedule, session: SessionDep):
     if wpLink:
         session.delete(wpLink)
         # session.delete(workschedule)  不能删除workschedule，因为可能还有其他人关联到这个排班
+        workschedule.status = ScheduleStatus.DRAFT
+        session.add(workschedule)
 
     session.commit()
 
