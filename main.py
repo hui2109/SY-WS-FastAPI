@@ -47,12 +47,14 @@ def add_static_files():
     app.mount("/WSFrontends", StaticFiles(directory=Statics), name="WSFrontends")
 
 
-def main():
-    create_db_and_tables()
-    add_middleware()
-    add_routers()
-    add_static_files()
+# 在模块加载时初始化应用
+create_db_and_tables()
+add_middleware()
+add_routers()
+add_static_files()
 
+
+def main():
     # uvicorn.run(app)
     uvicorn.run(
         app,
@@ -62,4 +64,5 @@ def main():
 
 
 if __name__ == '__main__':
+    # fastapi run main.py --host 0.0.0.0 --port 8000
     main()
