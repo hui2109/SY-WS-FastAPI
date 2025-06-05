@@ -12,6 +12,7 @@ from sqlmodel import select
 from .utils import CURRENT_PERSONNEL, MANDATORY_SCHEDULE
 from ..autoSchedule import Worker, InitWorkers, AutoOneSchedule
 from ..database.models import Workschedule, Account, WorkschedulePersonnelLink, ReserveVacation, Personnel, RestInfo, Bantype
+from ..database.utils import Bans
 from ..dependencies import get_current_user, SessionDep
 
 router = APIRouter(tags=["selects"], dependencies=[Depends(get_current_user)])
@@ -510,10 +511,13 @@ def get_person_vacation_setting_data(session: SessionDep, name: str) -> dict:
     for value, count in c.items():
         data['workSchedule']['schedules'].append({'type': value, 'count': count})
 
+    # 8. 新增: 补假 + 调休假 统计
+    data = get_lieu_vacation_data(root_now, personnel.id, session)
+
     return data
 
 
-def get_work_schedule_statistic(root_now, personnel_id, session: SessionDep):
+def get_work_schedule_statistic(root_now: date, personnel_id: int, session: SessionDep):
     last_day = monthrange(root_now.year, root_now.month)[1]
 
     # 使用你提到的优化方法2 - 直接JOIN查询
@@ -533,6 +537,52 @@ def get_work_schedule_statistic(root_now, personnel_id, session: SessionDep):
     all_workschedule_records = [ban.value for ban in monthly_results]
 
     return all_workschedule_records
+
+
+def get_lieu_vacation_data(root_now: date, personnel_id: int, session: SessionDep):
+    year_start = date(root_now.year, 1, 1)
+    year_end = date(root_now.year, 12, 31)
+
+    dl_bantype = session.exec(select(Bantype).where(Bantype.ban == Bans.DL)).first()  # 补假
+    ll_bantype = session.exec(select(Bantype).where(Bantype.ban == Bans.LL)).first()  # 调休假
+    total_lieu = 0
+    used_lieu = 0
+
+    results = session.exec(select(Workschedule).where(
+        Workschedule.bantype == dl_bantype,
+        Workschedule.work_date >= year_start,
+        Workschedule.work_date <= year_end
+    ))
+    for result in results:
+        result: Workschedule
+        personnel_links = result.personnel_links
+        for personnel_link in personnel_links:
+            personnel_link: WorkschedulePersonnelLink
+            if personnel_link.personnel.id == personnel_id:
+                total_lieu += 1
+
+    results = session.exec(select(Workschedule).where(
+        Workschedule.bantype == ll_bantype,
+        Workschedule.work_date >= year_start,
+        Workschedule.work_date <= year_end
+    ))
+    for result in results:
+        result: Workschedule
+        personnel_links = result.personnel_links
+        for personnel_link in personnel_links:
+            personnel_link: WorkschedulePersonnelLink
+            if personnel_link.personnel.id == personnel_id:
+                used_lieu += 1
+
+    rest_lieu = total_lieu - used_lieu
+    return {"personnel_id": personnel_id, "data": {
+        'type': ll_bantype.ban.value,
+        'used': used_lieu,
+        'remaining': rest_lieu,
+        'startDate': year_start.strftime("%Y-%m-%d"),
+        'endDate': year_end.strftime("%Y-%m-%d"),
+        'days': total_lieu,
+    }}
 
 
 @router.post('/get_work_schedule_statistics')
