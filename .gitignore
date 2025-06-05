@@ -1,6 +1,7 @@
 test.py
 .idea
 .vscode
+WorkSchedule.db
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
