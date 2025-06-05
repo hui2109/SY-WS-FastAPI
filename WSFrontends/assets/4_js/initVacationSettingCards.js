@@ -502,26 +502,3 @@ class InitVacationSettingCards {
         });
     }
 }
-
-// 初始化类并调用异步init方法
-(async function () {
-    try {
-        const iVSCs = new InitVacationSettingCards();
-        await iVSCs.init();
-
-        // 页面加载外部添加一个滚动控制
-        window.addEventListener('load', function () {
-            setTimeout(function () {
-                window.scrollTo({
-                    top: 0,
-                    left: 0,
-                    behavior: 'auto'
-                });
-            }, 10);
-        });
-    } catch (error) {
-        debugger;
-        console.error('初始化失败:', error);
-    }
-})();
-

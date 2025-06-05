@@ -64,8 +64,3 @@ function generateWeeklyGroups(startYear, startMonth, endYear, endMonth) {
 
     return [result, result_obj];
 }
-
-
-// const groupedDates = generateWeeklyGroups(2025, 1, 2025, 6);
-// console.log(JSON.stringify(groupedDates, null, 2));
-// console.log(groupedDates)

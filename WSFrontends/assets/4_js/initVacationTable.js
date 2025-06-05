@@ -859,7 +859,3 @@ class InitVacationTable {
         })
     }
 }
-
-let today = new Date();
-let iVT = new InitVacationTable(today.getFullYear());
-iVT.init();

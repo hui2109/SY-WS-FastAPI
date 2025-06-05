@@ -1656,6 +1656,3 @@ class InitPaiBanTables {
         }
     }
 }
-
-let iPBTs = new InitPaiBanTables(dayjs());
-iPBTs.init();

@@ -39,17 +39,17 @@
         <div class="d-flex align-items-center">
           <ul class="navbar-nav">
             <li class="nav-item">
-              <a class="nav-link active" href="#work-mine">
+              <a class="nav-link active" href="#work-mine" id="desktopWorkMineLink">
                 <i class="bi bi-person-circle nav-icon"></i>我的排班
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="#work-all">
+              <a class="nav-link" href="#work-all" id="desktopWorkAllLink">
                 <i class="bi bi-people-fill nav-icon"></i>全科排班
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="#reserve-all">
+              <a class="nav-link" href="#reserve-all" id="desktopReserveLink">
                 <i class="bi bi-calendar-heart-fill nav-icon"></i>预约休假
               </a>
             </li>
@@ -59,11 +59,11 @@
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="#statistics-all">
+              <a class="nav-link" href="#statistics-all" id="desktopStatisticsLink">
                 <i class="bi bi-calculator-fill nav-icon"></i>统计
               </a>
             </li>
-            <li class="nav-item dropdown">
+            <li class="nav-item dropdown d-none" id="administerTools">
               <!-- a标签里面不能套a标签了!!! -->
               <a class="nav-link dropdown-toggle" href="#" id="paibanDesktopTools" data-bs-toggle="dropdown"
                 aria-expanded="false">
@@ -182,7 +182,7 @@
     <div class="container">
       <div class="row justify-content-around">
         <div class="col-2 text-center">
-          <a class="nav-link active" href="#work-mine">
+          <a class="nav-link active" href="#work-mine" id="mobileWorkMineLink">
             <div class="d-flex flex-column justify-content-center align-items-center" style="height: 30px;">
               <i class="bi bi-person-circle nav-icon"></i>
               <div style="font-size: 10px;">我的排班</div>
@@ -190,7 +190,7 @@
           </a>
         </div>
         <div class="col-2 text-center">
-          <a class="nav-link" href="#work-all">
+          <a class="nav-link" href="#work-all" id="mobileWorkAllLink">
             <div class="d-flex flex-column justify-content-center align-items-center" style="height: 30px;">
               <i class="bi bi-people-fill nav-icon"></i>
               <div style="font-size: 10px;">全科排班</div>
@@ -198,7 +198,7 @@
           </a>
         </div>
         <div class="col-2 text-center">
-          <a class="nav-link" href="#reserve-all">
+          <a class="nav-link" href="#reserve-all" id="mobileReserveLink">
             <div class="d-flex flex-column justify-content-center align-items-center" style="height: 30px;">
               <i class="bi bi-calendar-heart-fill nav-icon"></i>
               <div style="font-size: 10px;">预约休假</div>
@@ -214,14 +214,14 @@
           </a>
         </div>
         <div class="col-2 text-center">
-          <a class="nav-link" href="#statistics-all">
+          <a class="nav-link" href="#statistics-all" id="mobileStatisticsLink">
             <div class="d-flex flex-column justify-content-center align-items-center" style="height: 30px;">
               <i class="bi bi-calculator-fill nav-icon"></i>
               <div style="font-size: 10px;">统计</div>
             </div>
           </a>
         </div>
-        <div class="col-2 text-center btn-group dropup">
+        <div class="col-2 text-center btn-group dropup d-none" id="administerTools2">
           <!-- a标签里面不能套a标签了!!! -->
           <a class="nav-link dropdown-toggle" href="#" id="paibanMobileTools" data-bs-toggle="dropdown"
             aria-expanded="false">
@@ -1403,8 +1403,8 @@
   <script src="/WSFrontends/assets/4_js/commons.js"></script>
   <script src="/WSFrontends/assets/4_js/differentAlert.js"></script>
   <script src="/WSFrontends/assets/4_js/getWeekGroups.js"></script>
-  <script src="/WSFrontends/assets/4_js/index.js"></script>
 
+  <script src="/WSFrontends/assets/4_js/index.js"></script>
   <script src="/WSFrontends/assets/4_js/initUserInfo.js"></script>
   <script src="/WSFrontends/assets/4_js/initWorkAllTables.js"></script>
   <script src="/WSFrontends/assets/4_js/initWorkMineCards.js"></script>
@@ -1412,7 +1412,7 @@
   <script src="/WSFrontends/assets/4_js/initPaiBanTables.js"></script>
   <script src="/WSFrontends/assets/4_js/initVacationSettingCards.js"></script>
   <script src="/WSFrontends/assets/4_js/initStatisticsCards.js"></script>
-
+  <script src="/WSFrontends/assets/4_js/startPrograms.js"></script>
   <!-- <script src="/WSFrontends/assets/4_js/verify.js"></script> -->
 </body>
 

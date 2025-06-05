@@ -103,7 +103,6 @@ class initIndex {
                 this.tabPanes.forEach(pane => {
                     pane.classList.remove('show', 'active');
                 });
-
                 const targetPane = document.getElementById(targetId);
                 if (targetPane) {
                     targetPane.classList.add('show', 'active');
@@ -331,7 +330,3 @@ class initIndex {
         }
     }
 }
-
-
-let iI = new initIndex();
-iI.init();

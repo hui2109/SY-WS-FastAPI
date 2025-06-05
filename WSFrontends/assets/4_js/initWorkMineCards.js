@@ -502,6 +502,3 @@ class InitMineCards {
         }
     }
 }
-
-let iMCs = new InitMineCards(dayjs());
-iMCs.init();

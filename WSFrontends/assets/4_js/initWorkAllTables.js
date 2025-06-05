@@ -376,6 +376,3 @@ class InitTables {
         }
     }
 }
-
-let iTs = new InitTables(dayjs());
-iTs.init();

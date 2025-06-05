@@ -125,6 +125,21 @@ class initUserInfo {
             userName.textContent = this.userData[1];
             sessionStorage.setItem('user_name', this.userData[1]);
         }
+
+        this.secret_setting();
+    }
+
+    secret_setting() {
+        let administers = ['黄发生', '唐晓燕'];
+        let administerTools = document.getElementById('administerTools');
+        let administerTools2 = document.getElementById('administerTools2');
+
+        administerTools.classList.add('d-none');
+        administerTools2.classList.add('d-none');
+        if (administers.includes(sessionStorage.getItem('user_name'))) {
+            administerTools.classList.remove('d-none');
+            administerTools2.classList.remove('d-none');
+        }
     }
 
     bindClick() {
@@ -217,5 +232,4 @@ class initUserInfo {
     }
 }
 
-let iUI = new initUserInfo();
-iUI.init();
+
