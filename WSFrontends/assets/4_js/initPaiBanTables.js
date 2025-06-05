@@ -579,6 +579,7 @@ class InitPaiBanTables {
         this.expectedPaibanReason = document.getElementById('expectedPaibanReason');
         this.expectedRelax = document.getElementById('expectedRelax');
         this.expectedRelaxSequence = document.getElementById('expectedRelaxSequence');
+        this.scheduledVacation = document.getElementById('scheduledVacation');
         this.paibanSelectDropdown = document.getElementById('paibanSelectDropdown');
         this.dropdownToggle = this.paibanSelectDropdown.querySelector('.dropdown-toggle');
         this.paibanSelectHD = document.getElementById('paibanSelectHD');
@@ -939,6 +940,7 @@ class InitPaiBanTables {
 
         this.getExpectedRelax(name, dateObj.format('YYYY-MM-DD'));
         this.getSuggestedSchedule(name, dateObj);
+        this.getVacationInfo(name);
 
         // 加载已有排班
         // <span class="badge bg-success" style="font-size: 0.9rem;">暂无</span>
@@ -1600,6 +1602,58 @@ class InitPaiBanTables {
             this.sendSchedule(data);
         }
 
+    }
+
+    getVacationInfo(name) {
+        // 获取token
+        const token = getToken();
+        if (!token) {
+            return;
+        }
+
+        this.scheduledVacation.innerHTML = '';
+
+
+        fetch(`/get_vacation_setting_data?onePerson_name=${name}`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'Accept': 'application/json'
+            }
+        }).then(response => {
+            response.json().then(data => {
+                if (response.ok) {
+                    this._renderVacationInfo(data[0]);
+                } else {
+                    showAlert({
+                        type: 'danger',
+                        title: '数据获取失败！',
+                        message: data.detail
+                    })
+                }
+            })
+        }).catch(error => {
+            debugger;
+            alert('未知错误！');
+            console.error('error!!!', error);
+        });
+    }
+
+    _renderVacationInfo(data) {
+        let zero_flag = true;
+
+        for (let holidayInfo of data['holidayStats']) {
+            let remaining = holidayInfo['remaining'];
+            if (remaining > 0) {
+                this.scheduledVacation.innerHTML += `<span class="badge bg-warning ms-2 text-wrap mb-1" style="font-size: 0.9rem;">${holidayInfo['type']}${remaining}天</span>`;
+                zero_flag = false;
+            }
+        }
+
+        if (zero_flag) {
+            this.scheduledVacation.innerHTML = '<span class="badge bg-warning ms-2 text-wrap" style="font-size: 0.9rem;">暂无</span>'
+        }
     }
 }
 

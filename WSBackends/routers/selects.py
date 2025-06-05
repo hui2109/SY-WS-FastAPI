@@ -265,12 +265,16 @@ async def get_suggested_schedule(querySchedule: QuerySchedule, session: SessionD
 
 
 @router.post("/get_vacation_setting_data")
-async def get_vacation_setting_data(session: SessionDep):
+async def get_vacation_setting_data(session: SessionDep, onePerson_name: str = None):
     all_data = []
 
-    for personnel in CURRENT_PERSONNEL:
-        data = get_person_vacation_setting_data(session, personnel)
+    if onePerson_name:
+        data = get_person_vacation_setting_data(session, onePerson_name)
         all_data.append(data)
+    else:
+        for personnel in CURRENT_PERSONNEL:
+            data = get_person_vacation_setting_data(session, personnel)
+            all_data.append(data)
 
     return all_data
 
@@ -512,7 +516,13 @@ def get_person_vacation_setting_data(session: SessionDep, name: str) -> dict:
         data['workSchedule']['schedules'].append({'type': value, 'count': count})
 
     # 8. 新增: 补假 + 调休假 统计
-    data = get_lieu_vacation_data(root_now, personnel.id, session)
+    lieu_data = get_lieu_vacation_data(root_now, personnel.id, session)
+    data['holidayStats'].append({
+        'type': lieu_data['data']['type'],
+        'used': lieu_data['data']['used'],
+        'remaining': lieu_data['data']['remaining'],
+        'expiry': lieu_data['data']['endDate']
+    })
 
     return data
 
@@ -548,33 +558,27 @@ def get_lieu_vacation_data(root_now: date, personnel_id: int, session: SessionDe
     total_lieu = 0
     used_lieu = 0
 
-    results = session.exec(select(Workschedule).where(
-        Workschedule.bantype == dl_bantype,
-        Workschedule.work_date >= year_start,
-        Workschedule.work_date <= year_end
-    ))
-    for result in results:
-        result: Workschedule
-        personnel_links = result.personnel_links
-        for personnel_link in personnel_links:
-            personnel_link: WorkschedulePersonnelLink
-            if personnel_link.personnel.id == personnel_id:
-                total_lieu += 1
+    # 联合查询 更快
+    results_1 = session.exec(select(Workschedule)
+                             .join(WorkschedulePersonnelLink, Workschedule.id == WorkschedulePersonnelLink.workschedule_id)
+                             .where(WorkschedulePersonnelLink.personnel_id == personnel_id,
+                                    Workschedule.work_date >= year_start,
+                                    Workschedule.work_date <= year_end,
+                                    Workschedule.bantype == dl_bantype
+                                    )).all()
 
-    results = session.exec(select(Workschedule).where(
-        Workschedule.bantype == ll_bantype,
-        Workschedule.work_date >= year_start,
-        Workschedule.work_date <= year_end
-    ))
-    for result in results:
-        result: Workschedule
-        personnel_links = result.personnel_links
-        for personnel_link in personnel_links:
-            personnel_link: WorkschedulePersonnelLink
-            if personnel_link.personnel.id == personnel_id:
-                used_lieu += 1
+    results_2 = session.exec(select(Workschedule)
+                             .join(WorkschedulePersonnelLink, Workschedule.id == WorkschedulePersonnelLink.workschedule_id)
+                             .where(WorkschedulePersonnelLink.personnel_id == personnel_id,
+                                    Workschedule.work_date >= year_start,
+                                    Workschedule.work_date <= year_end,
+                                    Workschedule.bantype == ll_bantype
+                                    )).all()
 
+    total_lieu = len(results_1)
+    used_lieu = len(results_2)
     rest_lieu = total_lieu - used_lieu
+
     return {"personnel_id": personnel_id, "data": {
         'type': ll_bantype.ban.value,
         'used': used_lieu,
