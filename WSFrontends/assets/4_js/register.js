@@ -152,12 +152,15 @@ function formValidation() {
             } else {
                 // 显示错误消息
                 return response.json().then(err => {
-                    alert('注册失败，请重试! ' + err.detail || '注册失败，请重试!');
+                    showAlert({
+                        type: "danger",
+                        title: '注册失败！',
+                        message: err.detail
+                    })
                 });
             }
         }).catch(error => {
             // 显示错误消息
-            alert('网络错误，请检查您的连接');
             console.error('Error:', error);
         }).finally(() => {
             // 如果在非成功情况下需要恢复按钮状态
