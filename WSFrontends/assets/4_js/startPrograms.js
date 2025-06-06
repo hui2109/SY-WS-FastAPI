@@ -164,11 +164,20 @@ function vacationSettingCards_start() {
             }
         })();
     });
+    document.getElementById('checkAllScheduleFan').classList.add('d-none');
 
     setTimeout(() => {
         if (administers.includes(sessionStorage.getItem('user_name'))) {
             paiBanTables_start();
             vacationSettingCards_start();
+        }
+    }, 2000);
+
+    // 凡哥定制选项
+    setTimeout(() => {
+        if (sessionStorage.getItem('user_name') === '廖中凡') {
+            paiBanTables_start();
+            document.getElementById('checkAllScheduleFan').classList.remove('d-none');
         }
     }, 2000);
 })();

@@ -133,9 +133,9 @@ class initUserInfo {
         let administers = ['黄发生', '唐晓燕'];
         let administerTools = document.getElementById('administerTools');
         let administerTools2 = document.getElementById('administerTools2');
-
         administerTools.classList.add('d-none');
         administerTools2.classList.add('d-none');
+
         if (administers.includes(sessionStorage.getItem('user_name'))) {
             administerTools.classList.remove('d-none');
             administerTools2.classList.remove('d-none');
