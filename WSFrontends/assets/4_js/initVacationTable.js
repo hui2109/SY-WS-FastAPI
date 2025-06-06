@@ -545,7 +545,7 @@ class InitVacationTable {
                 this._setAllDropdownToggleYear(year)
 
                 this.init_year = year;
-                iVT.init();
+                this.init();
             });
         })
     }
