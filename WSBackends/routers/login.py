@@ -83,7 +83,7 @@ async def register_user(user_data: UserCreate, session: SessionDep):
 
     # 如果是已注册人员, 则修改已有账号
     PersonnelSet = set(get_personnel_list())
-    if user_data.name not in PersonnelSet:
+    if user_data.name in PersonnelSet:
         return RedirectResponse(url='/update-user', status_code=status.HTTP_307_TEMPORARY_REDIRECT)
     else:
         # 禁止外部人员注册
