@@ -60,13 +60,16 @@ function statisticsCards_start() {
 function paiBanTables_start() {
     let iPBTs = new InitPaiBanTables(dayjs());
     iPBTs.init();
+
+    return iPBTs;
 }
 
 function vacationSettingCards_start() {
+    let iVSCs = new InitVacationSettingCards();
+
     // 初始化类并调用异步init方法
     (async function () {
         try {
-            const iVSCs = new InitVacationSettingCards();
             await iVSCs.init();
 
             // 页面加载外部添加一个滚动控制
@@ -84,6 +87,8 @@ function vacationSettingCards_start() {
             console.error('初始化失败:', error);
         }
     })();
+
+    return iVSCs;
 }
 
 // 自运行函数
@@ -164,12 +169,58 @@ function vacationSettingCards_start() {
             }
         })();
     });
+
+    // 凡哥定制选项
     document.getElementById('checkAllScheduleFan').classList.add('d-none');
 
     setTimeout(() => {
         if (administers.includes(sessionStorage.getItem('user_name'))) {
-            paiBanTables_start();
-            vacationSettingCards_start();
+            let iPBTs = paiBanTables_start();
+            let iVSCs = vacationSettingCards_start();
+
+            // 假期规则设置区域 点击后强制获取一下数据
+            document.getElementById('desktopVacationSetting').addEventListener('click', () => {
+                (async function () {
+                    try {
+                        await iVSCs.init();
+
+                        // 页面加载外部添加一个滚动控制
+                        window.addEventListener('load', function () {
+                            setTimeout(function () {
+                                window.scrollTo({
+                                    top: 0,
+                                    left: 0,
+                                    behavior: 'auto'
+                                });
+                            }, 10);
+                        });
+                    } catch (error) {
+                        debugger;
+                        console.error('初始化失败:', error);
+                    }
+                })();
+            });
+            document.getElementById('mobileVacationSetting').addEventListener('click', () => {
+                (async function () {
+                    try {
+                        await iVSCs.init();
+
+                        // 页面加载外部添加一个滚动控制
+                        window.addEventListener('load', function () {
+                            setTimeout(function () {
+                                window.scrollTo({
+                                    top: 0,
+                                    left: 0,
+                                    behavior: 'auto'
+                                });
+                            }, 10);
+                        });
+                    } catch (error) {
+                        debugger;
+                        console.error('初始化失败:', error);
+                    }
+                })();
+            });
         }
     }, 2000);
 
