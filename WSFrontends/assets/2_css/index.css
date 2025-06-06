@@ -188,6 +188,7 @@ body {
   width: 100%;
   z-index: 102;
   transition: background-color 0.3s;
+  height: 68px;
 }
 .bottom-nav:after {
   content: "";
