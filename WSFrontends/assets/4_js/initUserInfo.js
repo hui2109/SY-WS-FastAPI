@@ -2,11 +2,11 @@ class initUserInfo {
     constructor() {
         this.lookElement();
         this.initAvatarModal();
+        this.bindClick();
     }
 
     init() {
         this.loadUserInfo();
-        this.bindClick();
     }
 
     _updateAvatar() {

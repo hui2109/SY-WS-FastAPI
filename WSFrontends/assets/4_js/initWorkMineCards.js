@@ -398,9 +398,6 @@ class InitMineCards {
 
         let info_dict = info_list[k];
         if (!info_dict) {
-            //if (this.currentWeekNormalRestDateList.includes(date)) {
-            //    return this.generateCommonInfoItem(div_info_item, '休息', name, date);
-            //}
             return this.generateCommonInfoItem(div_info_item, 'null');
         }
 
@@ -408,18 +405,16 @@ class InitMineCards {
         let ban = info_dict['ban']
         let status = info_dict['status']
 
+        if (status === '草稿' || status === '待审核') {
+            return this.generateCommonInfoItem(div_info_item, 'null');
+        }
+
         if (ban === '休息') {
-            //this.currentWeekNormalRestDateList.push(date);
             return this.generateCommonInfoItem(div_info_item, '休息', name, date);
         }
 
         if (ban === '补假') {
-            //this.currentWeekNormalRestDateList.push(date);
             return this.generateCommonInfoItem(div_info_item, '补假', name, date);
-        }
-
-        if (status === '草稿' || status === '待审核') {
-            return this.generateCommonInfoItem(div_info_item, 'null');
         }
 
         for (let i = -1; i < coworkers.length; i++) {

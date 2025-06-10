@@ -1,9 +1,9 @@
-const CACHE_NAME = 'SY-FastAPI-v3';
+const CACHE_NAME = 'SY-FastAPI-v4';
 const urlsToCache = [
     '/login',
     '/register',
-    '/WSFrontends/assets/icons/icon-512x512.png',
-    '/WSFrontends/assets/icons/icon-192x192.png',
+    '/WSFrontends/assets/icons/icon-512x512-v2.png',
+    '/WSFrontends/assets/icons/icon-192x192-v2.png',
     '/WSFrontends/assets/manifest.json',
     '/WSFrontends/assets/plugin/node_modules/bootstrap/dist/css/bootstrap.min.css',
     '/WSFrontends/assets/plugin/node_modules/@eonasdan/tempus-dominus/dist/css/tempus-dominus.min.css',
@@ -136,8 +136,8 @@ function doBackgroundSync() {
 self.addEventListener('push', (event) => {
     const options = {
         body: event.data ? event.data.text() : '您有新消息',
-        icon: '/WSFrontends/assets/icons/icon-192x192.png',
-        badge: '/WSFrontends/assets/icons/icon-72x72.png',
+        icon: '/WSFrontends/assets/icons/icon-192x192-v2.png',
+        badge: '/WSFrontends/assets/icons/icon-72x72-v2.png',
         vibrate: [100, 50, 100],
         data: {
             dateOfArrival: Date.now(),
@@ -147,12 +147,12 @@ self.addEventListener('push', (event) => {
             {
                 action: 'explore',
                 title: '查看详情',
-                icon: '/WSFrontends/assets/icons/icon-192x192.png'
+                icon: '/WSFrontends/assets/icons/icon-192x192-v2.png'
             },
             {
                 action: 'close',
                 title: '关闭',
-                icon: '/WSFrontends/assets/icons/icon-192x192.png'
+                icon: '/WSFrontends/assets/icons/icon-192x192-v2.png'
             }
         ]
     };

@@ -58,7 +58,7 @@
       "url": "/login",
       "icons": [
         {
-          "src": "/WSFrontends/assets/icons/icon-192x192.png",
+          "src": "/WSFrontends/assets/icons/icon-192x192-v2.png",
           "sizes": "192x192"
         }
       ]
@@ -70,7 +70,7 @@
       "url": "/register",
       "icons": [
         {
-          "src": "/WSFrontends/assets/icons/icon-192x192.png",
+          "src": "/WSFrontends/assets/icons/icon-192x192-v2.png",
           "sizes": "192x192"
         }
       ]

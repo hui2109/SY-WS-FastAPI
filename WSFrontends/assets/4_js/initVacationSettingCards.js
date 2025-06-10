@@ -84,13 +84,13 @@ class InitVacationSettingCards {
         this.allUsers = [];
         this.filteredUsers = [];
         this.banTypeColor = getBanTypeColor();
+        this.setupEventListeners();
     }
 
     async init() {
         await this.getDataFromServer();
         this.renderCards();
         this.setupSearch();
-        this.setupEventListeners();
     }
 
     // 创建单个卡片

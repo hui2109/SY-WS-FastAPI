@@ -1,11 +1,10 @@
 class initIndex {
     constructor() {
-        //this.init();
+        this.lookElement();
+        this.bindEvent();
     }
 
     init() {
-        this.lookElement();
-        this.bindEvent();
         this.changeTheme();
         this.navLinks[0].click();
         //this.paibanDesktopDropdownItems[0].click();
