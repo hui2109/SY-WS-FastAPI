@@ -1,4 +1,4 @@
-const CACHE_NAME = 'SY-FastAPI-v4';
+const CACHE_NAME = 'SY-FastAPI-v5';
 const urlsToCache = [
     '/login',
     '/register',
