@@ -3,570 +3,434 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>排班管理系统</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>表格导出示例</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
-        /* 自定义样式 */
-        .modal-content {
-            border: none;
-            border-radius: 12px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
         }
-        
-        .modal-header {
-            border-bottom: 1px solid #f0f0f0;
-            padding: 1.5rem;
-        }
-        
-        .modal-title {
-            font-weight: 600;
-            color: #333;
-        }
-        
-        .nav-tabs {
-            border-bottom: 2px solid #f0f0f0;
-        }
-        
-        .nav-tabs .nav-link {
-            color: #666;
-            border: none;
-            padding: 0.75rem 1.5rem;
-            font-weight: 500;
-        }
-        
-        .nav-tabs .nav-link.active {
-            color: #0066cc;
-            background-color: transparent;
-            border-bottom: 2px solid #0066cc;
-            margin-bottom: -2px;
-        }
-        
-        .form-label {
-            font-weight: 500;
-            color: #555;
-            margin-bottom: 0.5rem;
-        }
-        
-        .form-control, .form-select {
-            border: 1px solid #e0e0e0;
+
+        .container {
+            background: white;
+            padding: 20px;
             border-radius: 8px;
-            padding: 0.75rem;
-            transition: all 0.3s ease;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
-        
-        .form-control:focus, .form-select:focus {
-            border-color: #0066cc;
-            box-shadow: 0 0 0 0.2rem rgba(0,102,204,0.1);
+
+        .table-container {
+            width: 600px;
+            height: 400px;
+            border: 2px solid #333;
+            overflow: auto;
+            margin: 20px 0;
+            background: white;
         }
-        
+
+        table {
+            width: 1200px; /* 宽度超过容器 */
+            border-collapse: collapse;
+            background: white;
+        }
+
+        th, td {
+            border: 1px solid #ccc;
+            padding: 8px 12px;
+            text-align: left;
+            white-space: nowrap;
+        }
+
+        th {
+            background-color: #f8f9fa;
+            font-weight: bold;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        .export-buttons {
+            margin: 20px 0;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s;
+        }
+
         .btn-primary {
-            background-color: #0066cc;
-            border: none;
-            padding: 0.75rem 2rem;
-            border-radius: 8px;
-            font-weight: 500;
-            transition: all 0.3s ease;
+            background-color: #007bff;
+            color: white;
         }
-        
-        .btn-primary:hover {
-            background-color: #0052a3;
-            transform: translateY(-1px);
+
+        .btn-success {
+            background-color: #28a745;
+            color: white;
         }
-        
-        .btn-secondary {
-            background-color: #f0f0f0;
-            border: none;
-            color: #666;
-            padding: 0.75rem 2rem;
-            border-radius: 8px;
-            font-weight: 500;
+
+        .btn-info {
+            background-color: #17a2b8;
+            color: white;
         }
-        
-        .status-badge {
-            padding: 0.25rem 0.75rem;
-            border-radius: 20px;
-            font-size: 0.875rem;
-            font-weight: 500;
+
+        .btn-warning {
+            background-color: #ffc107;
+            color: black;
         }
-        
-        .status-pending {
-            background-color: #fff3cd;
-            color: #856404;
+
+        button:hover {
+            opacity: 0.8;
         }
-        
-        .status-approved {
+
+        .status {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 5px;
+            display: none;
+        }
+
+        .status.success {
             background-color: #d4edda;
             color: #155724;
+            border: 1px solid #c3e6cb;
         }
-        
-        .status-rejected {
+
+        .status.error {
             background-color: #f8d7da;
             color: #721c24;
+            border: 1px solid #f5c6cb;
         }
-        
-        .record-item {
-            background-color: #f8f9fa;
-            border-radius: 8px;
-            padding: 1rem;
-            margin-bottom: 1rem;
-            border: 1px solid #e9ecef;
+
+        /* 导出专用样式 */
+        .export-table {
+            position: absolute;
+            left: -9999px;
+            top: -9999px;
+            width: auto !important;
+            height: auto !important;
+            overflow: visible !important;
+            border: none;
+            background: white;
         }
-        
-        .record-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 0.5rem;
+
+        .export-table table {
+            width: auto !important;
         }
-        
-        .record-type {
-            font-weight: 600;
-            color: #333;
-        }
-        
-        .record-date {
-            font-size: 0.875rem;
-            color: #6c757d;
-        }
-        
-        .record-details {
-            font-size: 0.9rem;
-            color: #495057;
-            line-height: 1.6;
-        }
-        
-        .admin-comment {
-            background-color: #e9ecef;
-            padding: 0.5rem;
-            border-radius: 4px;
-            margin-top: 0.5rem;
-            font-size: 0.875rem;
-        }
-        
-        .filter-section {
-            background-color: #f8f9fa;
-            padding: 1rem;
-            border-radius: 8px;
-            margin-bottom: 1rem;
-        }
-        
-        @media (max-width: 576px) {
-            .modal-dialog {
-                margin: 0.5rem;
+
+        @media print {
+            body * {
+                visibility: hidden;
             }
-            
-            .nav-tabs .nav-link {
-                padding: 0.5rem 1rem;
-                font-size: 0.9rem;
+            .print-area, .print-area * {
+                visibility: visible;
             }
-            
-            .btn-primary, .btn-secondary {
-                padding: 0.5rem 1.5rem;
-                font-size: 0.9rem;
+            .print-area {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
             }
         }
     </style>
 </head>
 <body>
-    <!-- 触发按钮 -->
-    <div class="container mt-5">
-        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#applicationModal">
-            提交申请
-        </button>
-        <button type="button" class="btn btn-secondary ms-2" data-bs-toggle="modal" data-bs-target="#adminModal">
-            审核管理
-        </button>
-    </div>
+    <div class="container">
+        <h1>HTML表格导出PDF/图片示例</h1>
+        <p>下面是一个可滚动的大表格，演示如何导出为PDF或图片：</p>
 
-    <!-- 申请提交模态对话框 -->
-    <div class="modal fade" id="applicationModal" tabindex="-1">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">提交申请</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <ul class="nav nav-tabs" role="tablist">
-                        <li class="nav-item">
-                            <a class="nav-link active" data-bs-toggle="tab" href="#shift-exchange">换班申请</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" data-bs-toggle="tab" href="#leave-request">请假申请</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" data-bs-toggle="tab" href="#shift-preference">期望排班</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" data-bs-toggle="tab" href="#operation-history">操作记录</a>
-                        </li>
-                    </ul>
+        <div class="export-buttons">
+            <button class="btn-primary" onclick="exportAsImage()">导出为图片 (PNG)</button>
+            <button class="btn-success" onclick="exportAsPDF()">导出为PDF</button>
+            <button class="btn-info" onclick="exportFullTableAsImage()">导出完整表格为图片</button>
+            <button class="btn-warning" onclick="printTable()">打印表格</button>
+        </div>
 
-                    <div class="tab-content mt-4">
-                        <!-- 换班申请 -->
-                        <div class="tab-pane fade show active" id="shift-exchange">
-                            <form>
-                                <div class                        <input type="date" class="form-control" required>
-                                    </div>
-                                    <div class="col-md-6 mb-3">
-                                        <label class="form-label">申请人</label>
-                                        <input type="text" class="form-control" placeholder="请输入申请人姓名" required>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-6 mb-3">
-                                        <label class="form-label">申请班种</label>
-                                        <select class="form-select" required>
-                                            <option value="">请选择班种</option>
-                                            <option value="morning">早班</option>
-                                            <option value="afternoon">中班</option>
-                                            <option value="night">晚班</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-md-6 mb-3">
-                                        <label class="form-label">替班人</label>
-                                        <input type="text" class="form-control" placeholder="请输入替班人姓名" required>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-6 mb-3">
-                                        <label class="form-label">替换班种</label>
-                                        <select class="form-select" required>
-                                            <option value="">请选择班种</option>
-                                            <option value="morning">早班</option>
-                                            <option value="afternoon">中班</option>
-                                            <option value="night">晚班</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-12 mb-3">
-                                        <label class="form-label">换班原因</label>
-                                        <textarea class="form-control" rows="3" placeholder="请输入换班原因" required></textarea>
-                                    </div>
-                                </div>
-                                <div class="d-flex justify-content-end gap-2">
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
-                                    <button type="submit" class="btn btn-primary">提交申请</button>
-                                </div>
-                            </form>
-                        </div>
+        <div id="status" class="status"></div>
 
-                        <!-- 请假申请 -->
-                        <div class="tab-pane fade" id="leave-request">
-                            <form>
-                                <div class="row">
-                                    <div class="col-md-6 mb-3">
-                                        <label class="form-label">请假类型</label>
-                                        <select class="form-select" required>
-                                            <option value="">请选择请假类型</option>
-                                            <option value="sick">病假</option>
-                                            <option value="personal">事假</option>
-                                            <option value="annual">年假</option>
-                                            <option value="other">其他</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-md-6 mb-3">
-                                        <label class="form-label">开始时间</label>
-                                        <input type="datetime-local" class="form-control" required>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-6 mb-3">
-                                        <label class="form-label">结束时间</label>
-                                        <input type="datetime-local" class="form-control" required>
-                                    </div>
-                                    <div class="col-md-6 mb-3">
-                                        <label class="form-label">时长（天）</label>
-                                        <input type="number" class="form-control" placeholder="自动计算" readonly>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-12 mb-3">
-                                        <label class="form-label">请假事由</label>
-                                        <textarea class="form-control" rows="3" placeholder="请输入请假事由" required></textarea>
-                                    </div>
-                                </div>
-                                <div class="d-flex justify-content-end gap-2">
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
-                                    <button type="submit" class="btn btn-primary">提交申请</button>
-                                </div>
-                            </form>
-                        </div>
+        <div class="table-container" id="tableContainer">
+            <table id="dataTable">
+                <thead>
+                    <tr>
+                        <th>序号</th>
+                        <th>姓名</th>
+                        <th>年龄</th>
+                        <th>城市</th>
+                        <th>职业</th>
+                        <th>邮箱</th>
+                        <th>电话</th>
+                        <th>部门</th>
+                        <th>入职日期</th>
+                        <th>薪资</th>
+                        <th>状态</th>
+                        <th>备注</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody">
+                    <!-- 数据将通过JavaScript生成 -->
+                </tbody>
+            </table>
+        </div>
 
-                        <!-- 期望排班 -->
-                        <div class="tab-pane fade" id="shift-preference">
-                            <form>
-                                <div class="row">
-                                    <div class="col-md-6 mb-3">
-                                        <label class="form-label">申请人</label>
-                                        <input type="text" class="form-control" placeholder="请输入申请人姓名" required>
-                                    </div>
-                                    <div class="col-md-6 mb-3">
-                                        <label class="form-label">期望班种</label>
-                                        <select class="form-select" required>
-                                            <option value="">请选择期望班种</option>
-                                            <option value="morning">早班</option>
-                                            <option value="afternoon">中班</option>
-                                            <option value="night">晚班</option>
-                                            <option value="rest">休息</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-6 mb-3">
-                                        <label class="form-label">开始日期</label>
-                                        <input type="date" class="form-control" required>
-                                    </div>
-                                    <div class="col-md-6 mb-3">
-                                        <label class="form-label">结束日期</label>
-                                        <input type="date" class="form-control" required>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-12 mb-3">
-                                        <label class="form-label">申请理由</label>
-                                        <textarea class="form-control" rows="3" placeholder="请输入申请理由" required></textarea>
-                                    </div>
-                                </div>
-                                <div class="d-flex justify-content-end gap-2">
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
-                                    <button type="submit" class="btn btn-primary">提交申请</button>
-                                </div>
-                            </form>
-                        </div>
-
-                        <!-- 操作记录 -->
-                        <div class="tab-pane fade" id="operation-history">
-                            <div class="record-list">
-                                <!-- 换班申请记录 -->
-                                <div class="record-item">
-                                    <div class="record-header">
-                                        <span class="record-type text-primary">换班申请</span>
-                                        <span class="status-badge status-approved">已通过</span>
-                                    </div>
-                                    <div class="record-date">提交时间：2025-01-15 14:30</div>
-                                    <div class="record-details">
-                                        <strong>换班日期：</strong>2025-01-20<br>
-                                        <strong>申请班种：</strong>早班 → <strong>替换班种：</strong>晚班<br>
-                                        <strong>替班人：</strong>李四<br>
-                                        <strong>换班原因：</strong>家中有急事需要处理
-                                    </div>
-                                    <div class="admin-comment">
-                                        <strong>审核意见：</strong>同意换班，请提前做好工作交接。
-                                    </div>
-                                </div>
-
-                                <!-- 请假申请记录 -->
-                                <div class="record-item">
-                                    <div class="record-header">
-                                        <span class="record-type text-success">请假申请</span>
-                                        <span class="status-badge status-pending">待审核</span>
-                                ">
-                                        <strong>请假类型：</strong>病假<br>
-                                        <strong>请假时间：</strong>2025-01-18 08:00 至 2025-01-19 18:00<br>
-                                        <strong>请假时长：</strong>2天<br>
-                                        <strong>请假事由：</strong>身体不适，需要就医休息
-                                    </div>
-                                </div>
-
-                                <!-- 期望排班记录 -->
-                                <div class="record-item">
-                                    <div class="record-header">
-                                        <span class="record-type text-info">期望排班</span>
-                                        <span class="status-badge" style="background-color: #e3f2fd; color: #1976d2;">已提交</span>
-                                    </div>
-                                    <div class="record-date">提交时间：2025-01-13 16:45</div>
-                                    <div class="record-details">
-                                        <strong>期望时间：</strong>2025-02-01 至 2025-02-07<br>
-                                        <strong>期望班种：</strong>早班<br>
-                                        <strong>申请理由：</strong>需要照顾家人，希望能安排早班
-                                    </div>
-                                </div>
-
-                                <!-- 被拒绝的记录 -->
-                                <div class="record-item">
-                                    <div class="record-header">
-                                        <span class="record-type text-primary">换班申请</span>
-                                        <span class="status-badge status-rejected">已拒绝</span>
-                                    </div>
-                                    <div class="record-date">提交时间：2025-01-10 11:20</div>
-                                    <div class="record-details">
-                                        <strong>换班日期：</strong>2025-01-12<br>
-                                        <strong>申请班种：</strong>晚班 → <strong>替换班种：</strong>早班<br>
-                                        <strong>替班人：</strong>王五<br>
-                                        <strong>换班原因：</strong>个人安排
-                                    </div>
-                                    <div class="admin-comment">
-                                        <strong>审核意见：</strong>该时段人员安排已满，无法同意换班。
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <div class="export-buttons">
+            <button class="btn-primary" onclick="generateMoreData()">生成更多数据</button>
+            <button class="btn-success" onclick="clearTable()">清空表格</button>
         </div>
     </div>
 
-    <!-- 审核管理模态对话框 -->
-    <div class="modal fade" id="adminModal" tabindex="-1">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">审核管理</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <ul class="nav nav-tabs" role="tablist">
-                        <li class="nav-item">
-                            <a class="nav-link active" data-bs-toggle="tab" href="#shift-review">换班审核</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" data-bs-toggle="tab" href="#leave-review">请假审核</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" data-bs-toggle="tab" href="#preference-view">期望排班查看</a>
-                        </li>
-                    </ul>
-
-                    <div class="tab-content mt-4">
-                        <!-- 换班审核 -->
-                        <div class="tab-pane fade show active" id="shift-review">
-                            <div class="list-group">
-                                <div class="list-group-item">
-                                    <div class="d-flex justify-content-between align-items-start">
-                                        <div class="flex-grow-1">
-                                            <h6 class="mb-1">张三 申请换班</h6>
-                                            <p class="mb-1"><strong>换班日期：</strong>2025-01-25</p>
-                                            <p class="mb-1"><strong>原班次：</strong>早班 → <strong>换为：</strong>晚班</p>
-                                            <p class="mb-1"><strong>替班人：</strong>李四</p>
-                                            <p class="mb-1"><strong>原因：</strong>家中有事需要处理</p>
-                                        </div>
-                                        <span class="status-badge status-pending">待审核</span>
-                                    </div>
-                                    <div class="mt-3">
-                                        <div class="mb-2">
-                                            <textarea class="form-control" placeholder="审核意见（选填）" rows="2"></textarea>
-                                        </div>
-                                        <div class="d-flex gap-2">
-                                            <button class="btn btn-success btn-sm">通过</button>
-                                            <button class="btn btn-danger btn-sm">拒绝</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- 请假审核 -->
-                        <div class="tab-pane fade" id="leave-review">
-                            <div class="list-group">
-                                <div class="list-group-item">
-                                    <div class="d-flex justify-content-between align-items-start">
-                                        <div class="flex-grow-1">
-                                            <h6 class="mb-1">王五 申请请假</h6>
-                                            <p class="mb-1"><strong>请假类型：</strong>病假</p>
-                                            <p class="mb-1"><strong>时间：</strong>2025-01-20 08:00 至 2025-01-21 18:00</p>
-                                            <p class="mb-1"><strong>时长：</strong>2天</p>
-                                            <p class="mb-1"><strong>事由：</strong>身体不适，需要就医</p>
-                                        </div>
-                                        <span class="status-badge status-pending">待审核</span>
-                                    </div>
-                                    <div class="mt-3">
-                                        <div class="mb-2">
-                                            <textarea class="form-control" placeholder="审核意见（选填）" rows="2"></textarea>
-                                        </div>
-                                        <div class="d-flex gap-2">
-                                            <button class="btn btn-success btn-sm">通过</button>
-                                            <button class="btn btn-danger btn-sm">拒绝</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- 期望排班查看 -->
-                        <div class="tab-pane fade" id="preference-view">
-                            <div class="filter-section">
-                                <div class="row">
-                                    <div class="col-md-5">
-                                        <label class="form-label">开始日期</label>
-                                        <input type="date" class="form-control" i</label>
-                                        <input type="date" class="form-control" id="filterEndDate">
-                                    </div>
-                                    <div class="col-md-2 d-flex align-items-end">
-                                        <button class="btn btn-primary w-100" onclick="filterPreferences()">筛选</button>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div class="list-group">
-                                <div class="list-group-item">
-                                    <h6 class="mb-1">张三 的期望排班</h6>
-                                    <p class="mb-1"><strong>期望时间：</strong>2025-02-01 至 2025-02-07</p>
-                                    <p class="mb-1"><strong>期望班种：</strong>早班</p>
-                                    <p class="mb-1"><strong>申请理由：</strong>需要照顾家人，希望能安排早班</p>
-                                    <small class="text-muted">提交时间：2025-01-15 14:30</small>
-                                </div>
-                                
-                                <div class="list-group-item">
-                                    <h6 class="mb-1">李四 的期望排班</h6>
-                                    <p class="mb-1"><strong>期望时间：</strong>2025-02-10 至 2025-02-16</p>
-                                    <p class="mb-1"><strong>期望班种：</strong>晚班</p>
-                                    <p class="mb-1"><strong>申请理由：</strong>个人学习安排，晚班更合适</p>
-                                    <small class="text-muted">提交时间：2025-01-14 10:15</small>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // 计算请假时长
-        document.querySelectorAll('input[type="datetime-local"]').forEach(input => {
-            input.addEventListener('change', function() {
-                const form = this.closest('form');
-                const startTime = form.querySelector('input[type="datetime-local"]:nth-of-type(1)').value;
-                const endTime = form.querySelector('input[type="datetime-local"]:nth-of-type(2)').value;
-                
-                if (startTime && endTime) {
-                    const start = new Date(startTime);
-                    const end = new Date(endTime);
-                    const diffTime = Math.abs(end - start);
-                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-                    
-                    form.querySelector('input[type="number"]').value = diffDays;
-                }
-            });
-        });
+        // 生成测试数据
+        function generateTestData(count = 50) {
+            const names = ['张三', '李四', '王五', '赵六', '钱七', '孙八', '周九', '吴十'];
+            const cities = ['北京', '上海', '广州', '深圳', '杭州', '成都', '武汉', '西安'];
+            const jobs = ['工程师', '设计师', '产品经理', '运营', '销售', '财务', '人事', '市场'];
+            const departments = ['技术部', '设计部', '产品部', '运营部', '销售部', '财务部', '人事部', '市场部'];
+            const statuses = ['在职', '试用期', '离职', '休假'];
 
-        // 筛选期望排班
-        function filterPreferences() {
-            const startDate = document.getElementById('filterStartDate').value;
-            const endDate = document.getElementById('filterEndDate').value;
-            
-            // 这里可以添加实际的筛选逻辑
-            console.log('筛选日期范围：', startDate, '至', endDate);
+            const data = [];
+            for (let i = 1; i <= count; i++) {
+                data.push({
+                    id: i,
+                    name: names[Math.floor(Math.random() * names.length)] + i,
+                    age: Math.floor(Math.random() * 40) + 22,
+                    city: cities[Math.floor(Math.random() * cities.length)],
+                    job: jobs[Math.floor(Math.random() * jobs.length)],
+                    email: `user${i}@example.com`,
+                    phone: `1${Math.floor(Math.random() * 9000000000) + 1000000000}`,
+                    department: departments[Math.floor(Math.random() * departments.length)],
+                    joinDate: new Date(2020 + Math.floor(Math.random() * 5), Math.floor(Math.random() * 12), Math.floor(Math.random() * 28) + 1).toLocaleDateString(),
+                    salary: (Math.floor(Math.random() * 20000) + 8000).toLocaleString(),
+                    status: statuses[Math.floor(Math.random() * statuses.length)],
+                    note: `备注信息${i}`
+                });
+            }
+            return data;
         }
 
-        // 表单提交处理
-        document.querySelectorAll('form').forEach(form => {
-            form.addEventListener('submit', function(e) {
-                e.preventDefault();
-                alert('申请已提交！');
-                bootstrap.Modal.getInstance(this.closest('.modal')).hide();
-            });
-        });
+        // 填充表格数据
+        function populateTable(data) {
+            const tbody = document.getElementById('tableBody');
+            tbody.innerHTML = '';
 
-        // 审核按钮处理
-        document.querySelectorAll('.btn-success.btn-sm, .btn-danger.btn-sm').forEach(btn => {
-            btn.addEventListener('click', function() {
-                const action = this.classList.contains('btn-success') ? '通过' : '拒绝';
-                const comment = this.closest('.list-group-item').querySelector('textarea').value;
-                alert(`审核${action}！${comment ? '\n审核意见：' + comment : ''}`);
+            data.forEach(row => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${row.id}</td>
+                    <td>${row.name}</td>
+                    <td>${row.age}</td>
+                    <td>${row.city}</td>
+                    <td>${row.job}</td>
+                    <td>${row.email}</td>
+                    <td>${row.phone}</td>
+                    <td>${row.department}</td>
+                    <td>${row.joinDate}</td>
+                    <td>${row.salary}</td>
+                    <td>${row.status}</td>
+                    <td>${row.note}</td>
+                `;
+                tbody.appendChild(tr);
             });
+        }
+
+        // 显示状态信息
+        function showStatus(message, type = 'success') {
+            const status = document.getElementById('status');
+            status.textContent = message;
+            status.className = `status ${type}`;
+            status.style.display = 'block';
+            setTimeout(() => {
+                status.style.display = 'none';
+            }, 3000);
+        }
+
+        // 方法1：导出当前视图为图片
+        async function exportAsImage() {
+            try {
+                showStatus('正在生成图片...', 'success');
+                const container = document.getElementById('tableContainer');
+                const canvas = await html2canvas(container, {
+                    scale: 2,
+                    useCORS: true,
+                    allowTaint: true
+                });
+
+                // 下载图片
+                const link = document.createElement('a');
+                link.download = 'table-view.png';
+                link.href = canvas.toDataURL();
+                link.click();
+
+                showStatus('图片导出成功！', 'success');
+            } catch (error) {
+                showStatus('导出失败：' + error.message, 'error');
+            }
+        }
+
+        // 方法2：导出完整表格为图片（包含滚动内容）
+        async function exportFullTableAsImage() {
+            try {
+                showStatus('正在生成完整表格图片...', 'success');
+
+                // 创建一个临时容器来显示完整表格
+                const originalTable = document.getElementById('dataTable');
+                const tempContainer = document.createElement('div');
+                tempContainer.className = 'export-table';
+                tempContainer.style.position = 'absolute';
+                tempContainer.style.left = '-9999px';
+                tempContainer.style.background = 'white';
+                tempContainer.style.padding = '20px';
+
+                // 克隆表格
+                const clonedTable = originalTable.cloneNode(true);
+                tempContainer.appendChild(clonedTable);
+                document.body.appendChild(tempContainer);
+
+                debugger;
+
+                // 生成图片
+                const canvas = await html2canvas(tempContainer, {
+                    scale: 1.5,
+                    useCORS: true,
+                    allowTaint: true,
+                    backgroundColor: 'white'
+                });
+
+                // 清理临时元素
+                document.body.removeChild(tempContainer);
+
+                // 下载图片
+                const link = document.createElement('a');
+                link.download = 'complete-table.png';
+                link.href = canvas.toDataURL();
+                link.click();
+
+                showStatus('完整表格图片导出成功！', 'success');
+            } catch (error) {
+                showStatus('导出失败：' + error.message, 'error');
+            }
+        }
+
+        // 方法3：导出为PDF
+        async function exportAsPDF() {
+            try {
+                showStatus('正在生成PDF...', 'success');
+
+                // 创建临时容器
+                const originalTable = document.getElementById('dataTable');
+                const tempContainer = document.createElement('div');
+                tempContainer.className = 'export-table';
+                tempContainer.style.position = 'absolute';
+                tempContainer.style.left = '-9999px';
+                tempContainer.style.background = 'white';
+                tempContainer.style.padding = '20px';
+
+                const clonedTable = originalTable.cloneNode(true);
+                tempContainer.appendChild(clonedTable);
+                document.body.appendChild(tempContainer);
+
+                // 生成canvas
+                const canvas = await html2canvas(tempContainer, {
+                    scale: 1.2,
+                    useCORS: true,
+                    allowTaint: true,
+                    backgroundColor: 'white'
+                });
+
+                // 清理临时元素
+                document.body.removeChild(tempContainer);
+
+                // 创建PDF
+                const { jsPDF } = window.jspdf;
+                const pdf = new jsPDF('l', 'mm', 'a4'); // 横向，A4纸
+
+                const imgData = canvas.toDataURL('image/png');
+                const imgWidth = 280; // A4横向宽度
+                const pageHeight = 210; // A4横向高度
+                const imgHeight = (canvas.height * imgWidth) / canvas.width;
+                let heightLeft = imgHeight;
+                let position = 10;
+
+                // 添加第一页
+                pdf.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
+                heightLeft -= pageHeight;
+
+                // 如果内容超过一页，分页处理
+                while (heightLeft >= 0) {
+                    position = heightLeft - imgHeight + 10;
+                    pdf.addPage();
+                    pdf.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
+                    heightLeft -= pageHeight;
+                }
+
+                // 下载PDF
+                pdf.save('table-export.pdf');
+                showStatus('PDF导出成功！', 'success');
+            } catch (error) {
+                showStatus('PDF导出失败：' + error.message, 'error');
+            }
+        }
+
+        // 方法4：打印表格
+        function printTable() {
+            const originalTable = document.getElementById('dataTable');
+            const printWindow = window.open('', '_blank');
+
+            printWindow.document.write(`
+                <html>
+                <head>
+                    <title>打印表格</title>
+                    <style>
+                        body { font-family: Arial, sans-serif; margin: 20px; }
+                        table { width: 100%; border-collapse: collapse; }
+                        th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+                        th { background-color: #f8f9fa; }
+                        tr:nth-child(even) { background-color: #f9f9f9; }
+                        @media print {
+                            body { margin: 0; }
+                            table { font-size: 12px; }
+                        }
+                    </style>
+                </head>
+                <body>
+                    <h2>数据表格</h2>
+                    ${originalTable.outerHTML}
+                </body>
+                </html>
+            `);
+
+            printWindow.document.close();
+            printWindow.print();
+            showStatus('打印预览已打开', 'success');
+        }
+
+        // 生成更多数据
+        function generateMoreData() {
+            const newData = generateTestData(30);
+            populateTable([...generateTestData(50), ...newData]);
+            showStatus('已生成更多数据', 'success');
+        }
+
+        // 清空表格
+        function clearTable() {
+            document.getElementById('tableBody').innerHTML = '';
+            showStatus('表格已清空', 'success');
+        }
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            const testData = generateTestData(50);
+            populateTable(testData);
         });
     </script>
 </body>

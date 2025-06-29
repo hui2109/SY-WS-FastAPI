@@ -51,7 +51,7 @@
   background-color: #fdfcfb;
   color: #242222;
 }
-.tempus-dominus-widget .tempus-dominus-widget.dark {
+.tempus-dominus-widget.dark {
   background-color: #1b1b1b;
   color: #e5dada;
 }
@@ -60,4 +60,89 @@
   .container, .container-lg, .container-md, .container-sm, .container-xl {
     max-width: 1260px;
   }
+}
+#exportTableContainer {
+  position: absolute !important;
+  top: 0 !important;
+  left: -9999px !important;
+  text-align: center;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 30px;
+}
+#exportTableContainer h2 {
+  margin-top: 15px;
+  margin-bottom: 15px;
+  color: #0a58ca;
+}
+#exportTableContainer .table-container {
+  border: 1px solid burlywood;
+  border-radius: 8px;
+}
+#exportTableContainer .table-container .paiban-table {
+  table-layout: fixed;
+  border-collapse: separate;
+  border-spacing: 0;
+  min-width: 100%;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  border-radius: 8px;
+}
+#exportTableContainer .table-container .paiban-table thead tr th {
+  position: relative;
+  background: #f8fafc;
+  text-align: center;
+  width: 65px;
+  height: 44px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #374151;
+  letter-spacing: 0.025em;
+  border-bottom: 1px solid #e5e7eb;
+  border-right: 1px solid #f3f4f6;
+  transition: background-color 0.15s ease;
+}
+#exportTableContainer .table-container .paiban-table thead tr th:first-child {
+  background: #f1f5f9;
+  border-right: 1px solid #e5e7eb;
+  font-weight: 600;
+  color: #1f2937;
+  vertical-align: middle;
+}
+#exportTableContainer .table-container .paiban-table tbody tr {
+  transition: background-color 0.15s ease;
+}
+#exportTableContainer .table-container .paiban-table tbody tr:nth-child(even) {
+  background: #fafbfc;
+}
+#exportTableContainer .table-container .paiban-table tbody tr td {
+  text-align: center;
+  height: 38px;
+  vertical-align: middle;
+  font-size: 15px;
+  font-weight: 400;
+  color: #1f2937;
+  border-bottom: 1px solid #f3f4f6;
+  border-right: 1px solid #f9fafb;
+  padding: 8px 4px;
+  transition: background-color 0.15s ease;
+}
+#exportTableContainer .table-container .paiban-table tbody tr td:first-child {
+  left: 0;
+  z-index: 2;
+  background: #f8fafc;
+  border-right: 1px solid #e5e7eb;
+  font-weight: 500;
+  color: #1f2937;
+}
+#exportTableContainer .table-container .paiban-table .special-days {
+  position: absolute;
+  top: 1px;
+  right: 1px;
+  font-size: 7px;
+  padding: 2px 4px;
+  font-weight: 700;
+  border-radius: 8px;
+  background: #f59e0b;
+  color: white;
 }

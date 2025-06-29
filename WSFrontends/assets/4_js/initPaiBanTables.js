@@ -570,6 +570,7 @@ class InitPaiBanTables {
         this.checkAllScheduleFanBtn = document.getElementById('checkAllScheduleFan');
         this.submitForAudit = document.getElementById('submitForAudit');
         this.auditAllSchedule = document.getElementById('auditAllSchedule');
+        this.exportScheduleTable = document.getElementById('exportScheduleTable');
 
         this.datetimepicker3 = document.getElementById('datetimepicker3');
         this.paibanModal = document.getElementById('paibanModal');
@@ -1446,6 +1447,61 @@ class InitPaiBanTables {
                 debugger;
                 alert('未知错误！');
                 console.error('error!!!', error);
+            });
+        });
+
+        // 绑定 导出排班 按钮事件
+        this.exportScheduleTable.addEventListener('click', async () => {
+            console.log('xxx!')
+
+            // 新建克隆容器
+            const tempContainer = document.createElement('div');
+            tempContainer.id = 'exportTableContainer'
+
+            // 克隆表格以确保样式稳定性
+            const clonedTable = this.paibanTable.cloneNode(true);
+            clonedTable.style.width = this.paibanTable.offsetWidth + 'px';
+            // 移除所有小齿轮
+            clonedTable.querySelectorAll('.configure-days-cell').forEach((gear) => {
+                gear.remove();
+            });
+            // 加一个容器, 用于设置表格圆角
+            let tableContainter = document.createElement('div');
+            tableContainter.classList.add('table-container');
+            tableContainter.appendChild(clonedTable);
+
+            // 排班表标题
+            let head = document.createElement('h2');
+            head.textContent = this.startDate.format('YYYY年M月') + ' 放疗技术组排班表';
+
+            tempContainer.appendChild(head);
+            tempContainer.appendChild(tableContainter);
+            document.body.appendChild(tempContainer);
+
+            // 生成图片
+            const canvas = await html2canvas(tempContainer, {
+                scale: 9.0,
+                logging: false,
+                useCORS: true,
+                x: -20,  // 左边距
+                y: -20,  // 上边距
+                width: tempContainer.offsetWidth + 40,   // 增加宽度
+                height: tempContainer.offsetHeight + 40, // 增加高度
+            });
+
+            // 清理临时元素
+            document.body.removeChild(tempContainer);
+
+            // 下载图片
+            const link = document.createElement('a');
+            link.download = 'complete-table.png';
+            link.href = canvas.toDataURL();
+            link.click();
+
+            showAlert({
+                type: 'success',
+                title: '导出成功！',
+                message: `成功导出 ${this.startDate.format('YYYY年M月')} 排班表！`
             });
         });
     }
