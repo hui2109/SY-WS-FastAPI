@@ -1,9 +1,15 @@
-const CACHE_NAME = 'SY-FastAPI-v5';
+const CACHE_NAME = 'SY-FastAPI-v6';
 const urlsToCache = [
     '/login',
     '/register',
-    '/WSFrontends/assets/icons/icon-512x512-v2.png',
+    '/WSFrontends/assets/icons/icon-72x72-v2.png',
+    '/WSFrontends/assets/icons/icon-96x96-v2.png',
+    '/WSFrontends/assets/icons/icon-128x128-v2.png',
+    '/WSFrontends/assets/icons/icon-144x144-v2.png',
+    '/WSFrontends/assets/icons/icon-152x152-v2.png',
     '/WSFrontends/assets/icons/icon-192x192-v2.png',
+    '/WSFrontends/assets/icons/icon-384x384-v2.png',
+    '/WSFrontends/assets/icons/icon-512x512-v2.png',
     '/WSFrontends/assets/manifest.json',
     '/WSFrontends/assets/plugin/node_modules/bootstrap/dist/css/bootstrap.min.css',
     '/WSFrontends/assets/plugin/node_modules/@eonasdan/tempus-dominus/dist/css/tempus-dominus.min.css',
@@ -16,7 +22,8 @@ const urlsToCache = [
     '/WSFrontends/assets/plugin/node_modules/dayjs/dayjs.min.js',
     '/WSFrontends/assets/plugin/node_modules/dayjs/plugin/isoWeek.js',
     '/WSFrontends/assets/plugin/node_modules/dayjs/plugin/localeData.js',
-    '/WSFrontends/assets/plugin/node_modules/dayjs/locale/zh-cn.js'
+    '/WSFrontends/assets/plugin/node_modules/dayjs/locale/zh-cn.js',
+    '/WSFrontends/assets/plugin/node_modules/html2canvas/html2canvas.min.js'
 ];
 
 // 安装事件 - 缓存资源
