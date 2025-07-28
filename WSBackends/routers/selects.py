@@ -264,15 +264,21 @@ async def get_suggested_schedule(querySchedule: QuerySchedule, session: SessionD
     return querySuggestedScheduleResponse
 
 
-@router.post("/get_vacation_setting_data")
-async def get_vacation_setting_data(session: SessionDep, onePerson_name: str = None):
+@router.post("/get_vacation_setting_data", dependencies=None)
+async def get_vacation_setting_data(session: SessionDep, onePerson_name: str = None, user: Account = Depends(get_current_user)):
     all_data = []
 
     if onePerson_name:
         data = get_person_vacation_setting_data(session, onePerson_name)
         all_data.append(data)
     else:
-        for personnel in CURRENT_PERSONNEL:
+        # 优化: 将本人的休假信息卡片放在第一位
+        my_name = user.personnel.name
+        better_personnel_list = CURRENT_PERSONNEL.copy()
+        better_personnel_list.remove(my_name)
+        better_personnel_list.insert(0, my_name)
+
+        for personnel in better_personnel_list:
             data = get_person_vacation_setting_data(session, personnel)
             all_data.append(data)
 
