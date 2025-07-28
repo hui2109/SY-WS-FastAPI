@@ -233,6 +233,30 @@ class InitVacationTable {
         }
 
         dropDownMenuPersonnel2.innerHTML = dropDownMenuPersonnel1.innerHTML;
+
+        // 处理 [预约人 下拉框] 的点击事件
+        let dropDownItems1 = this.bookingPerson[1].querySelectorAll('.dropdown-item')
+        dropDownItems1.forEach(item => {
+            item.addEventListener('click', (event) => {
+                const elementThis = event.currentTarget;
+                this.bookingPerson1.textContent = elementThis.textContent;
+                if (this.bookingPerson1.disabled) {
+                    this.bookingPerson1.disabled = false;
+                    this.bookingPerson[1].style.cursor = 'pointer';
+                }
+            })
+        })
+        let dropDownItems2 = this.bookingPerson[2].querySelectorAll('.dropdown-item')
+        dropDownItems2.forEach(item => {
+            item.addEventListener('click', (event) => {
+                const elementThis = event.currentTarget;
+                this.bookingPerson2.textContent = elementThis.textContent;
+                if (this.bookingPerson2.disabled) {
+                    this.bookingPerson2.disabled = false;
+                    this.bookingPerson[2].style.cursor = 'pointer';
+                }
+            })
+        })
     }
 
     modifyHalfTableHead(_id, startYear, startMonth, endYear, endMonth, delta = null) {
@@ -490,30 +514,6 @@ class InitVacationTable {
             this.bookingPerson1.inactive();
             this.currentPerson = elementThis.textContent;
             this._detectInputHDStatus('warning');
-        })
-
-        // 处理 [预约人 下拉框] 的点击事件
-        let dropDownItems1 = this.bookingPerson[1].querySelectorAll('.dropdown-item')
-        dropDownItems1.forEach(item => {
-            item.addEventListener('click', (event) => {
-                const elementThis = event.currentTarget;
-                this.bookingPerson1.textContent = elementThis.textContent;
-                if (this.bookingPerson1.disabled) {
-                    this.bookingPerson1.disabled = false;
-                    this.bookingPerson[1].style.cursor = 'pointer';
-                }
-            })
-        })
-        let dropDownItems2 = this.bookingPerson[2].querySelectorAll('.dropdown-item')
-        dropDownItems2.forEach(item => {
-            item.addEventListener('click', (event) => {
-                const elementThis = event.currentTarget;
-                this.bookingPerson2.textContent = elementThis.textContent;
-                if (this.bookingPerson2.disabled) {
-                    this.bookingPerson2.disabled = false;
-                    this.bookingPerson[2].style.cursor = 'pointer';
-                }
-            })
         })
 
         // 处理 [确认预约] 点击事件
