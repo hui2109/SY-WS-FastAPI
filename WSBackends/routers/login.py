@@ -11,7 +11,7 @@ from pydantic import BaseModel
 from sqlmodel import select
 
 from .secret import SECRET_KEY, ALGORITHM, ACCESS_TOKEN_EXPIRE_MINUTES
-from .utils import get_personnel_list
+from .utils import get_personnel_list, CURRENT_PERSONNEL
 from ..database.models import Account, Personnel
 from ..dependencies import SessionDep
 from ..utils import Templates
@@ -85,8 +85,9 @@ async def register_user(user_data: UserCreate, session: SessionDep):
     PersonnelSet = set(get_personnel_list())
     if user_data.name in PersonnelSet:
         return RedirectResponse(url='/update-user', status_code=status.HTTP_307_TEMPORARY_REDIRECT)
-    else:
-        # 禁止外部人员注册
+
+    # 禁止外部人员注册
+    if user_data.name not in CURRENT_PERSONNEL:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="全名错误！仅供内部使用！",

@@ -47,6 +47,7 @@ CURRENT_PERSONNEL = ['叶荣',
                      '张旭辉',
                      '廖中凡',
                      '尹红科',
+                     '贺思程',
                      ]
 
 MANDATORY_SCHEDULE = [

@@ -1,0 +1,13 @@
+每来一位新员工, 需要进行以下操作:
+
+1. sw.js 改版本
+    const CACHE_NAME = 'SY-FastAPI-v7';
+
+2. utils.py 里 CURRENT_PERSONNEL 里增加新员工的名字
+
+
+3. 设置新员工的权重
+    autoSchedule.py
+    Worker("贺思程", weight_dict.get('贺思程', 0.5), accelerator_prob=Probability.POSSIBLE, positioning_prob=Probability.LOW, counter_prob=Probability.NEVER)
+
+4. 正常手工注册下

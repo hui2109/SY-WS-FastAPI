@@ -163,6 +163,7 @@ class InitWorkers:
         Worker("张旭辉", weight_dict.get('张旭辉', 0.5), accelerator_prob=Probability.POSSIBLE, positioning_prob=Probability.LOW, counter_prob=Probability.NEVER)
         Worker("廖中凡", weight_dict.get('廖中凡', 0.5), accelerator_prob=Probability.POSSIBLE, positioning_prob=Probability.LOW, counter_prob=Probability.NEVER)
         Worker("尹红科", weight_dict.get('尹红科', 0.5), accelerator_prob=Probability.POSSIBLE, positioning_prob=Probability.LOW, counter_prob=Probability.NEVER)
+        Worker("贺思程", weight_dict.get('贺思程', 0.5), accelerator_prob=Probability.POSSIBLE, positioning_prob=Probability.LOW, counter_prob=Probability.NEVER)
         Worker("杨星", weight_dict.get('杨星', 1.5), accelerator_prob=Probability.NEVER, positioning_prob=Probability.NEVER, counter_prob=Probability.ALWAYS, counter1_prob=Probability.ALWAYS)
         Worker("郑霞", weight_dict.get('郑霞', 1.5), accelerator_prob=Probability.NEVER, positioning_prob=Probability.NEVER, counter_prob=Probability.ALWAYS, counter2_prob=Probability.ALWAYS)
         Worker("金小靖", weight_dict.get('金小靖', 1.5), accelerator_prob=Probability.NEVER, positioning_prob=Probability.NEVER, counter_prob=Probability.ALWAYS, counter1_prob=Probability.HALF, counter2_prob=Probability.HALF)
