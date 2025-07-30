@@ -46,8 +46,6 @@ class InitPaiBanTables {
         this.repeatPaiban5.checked = false;
         this.repeatPaiban2.checked = false;
         this.dropdownToggle.textContent = this.dropdownToggle.dataset.default;
-
-        this.bantypeInfo.classList.add('d-none');
     }
 
     _resetConfigureDate() {
@@ -1043,7 +1041,6 @@ class InitPaiBanTables {
 
                 this.bantypeInfo.dataset.bsTitle = `班种名称：${selectedText}`;
                 this.bantypeInfo.dataset.bsContent = `开始时间：${start_time}；结束时间：${end_time}；班种描述：${description}。`;
-                this.bantypeInfo.classList.remove('d-none');
 
                 // 初始化所有的popover
                 const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]');
