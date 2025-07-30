@@ -46,6 +46,8 @@ class InitPaiBanTables {
         this.repeatPaiban5.checked = false;
         this.repeatPaiban2.checked = false;
         this.dropdownToggle.textContent = this.dropdownToggle.dataset.default;
+
+        this.bantypeInfo.classList.add('d-none');
     }
 
     _resetConfigureDate() {
@@ -617,6 +619,9 @@ class InitPaiBanTables {
         this.mustBansList = ["1A", "1B", "2A", "2B", "2C", "3A", "3B", "S1", "S2", "N1", "N2"];
         this.customCursor = document.getElementById('customCursor');
         this.tempEraseMode = false;
+
+        this.bantypeInfo = document.getElementById('bantypeInfo');
+        this.bantype_info = JSON.parse(sessionStorage.getItem('bantype_info'));
     }
 
     initDatePicker() {
@@ -1030,6 +1035,19 @@ class InitPaiBanTables {
                 let selectedText = elementThis.textContent;
                 this.dropdownToggle.textContent = selectedText;
                 this.paibanSelectHD.dataset.bantype = selectedText;
+
+                // 设置班种信息, 便于排班者查看
+                let start_time = this.bantype_info[selectedText]['start_time'];
+                let end_time = this.bantype_info[selectedText]['end_time'];
+                let description = this.bantype_info[selectedText]['description'];
+
+                this.bantypeInfo.dataset.bsTitle = `班种名称：${selectedText}`;
+                this.bantypeInfo.dataset.bsContent = `开始时间：${start_time}；结束时间：${end_time}；班种描述：${description}。`;
+                this.bantypeInfo.classList.remove('d-none');
+
+                // 初始化所有的popover
+                const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]');
+                const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl));
             });
         });
 
