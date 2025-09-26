@@ -1467,8 +1467,6 @@ class InitPaiBanTables {
 
         // 绑定 导出排班 按钮事件
         this.exportScheduleTable.addEventListener('click', async () => {
-            console.log('xxx!')
-
             // 新建克隆容器
             const tempContainer = document.createElement('div');
             tempContainer.id = 'exportTableContainer'
@@ -1494,15 +1492,31 @@ class InitPaiBanTables {
             document.body.appendChild(tempContainer);
 
             // 生成图片
-            const canvas = await html2canvas(tempContainer, {
-                scale: 9.0,
-                logging: false,
-                useCORS: true,
-                x: -20,  // 左边距
-                y: -20,  // 上边距
-                width: tempContainer.offsetWidth + 40,   // 增加宽度
-                height: tempContainer.offsetHeight + 40, // 增加高度
-            });
+            // 不断迭代, 找到最佳的scale参数
+            // 图片大小应小于: 268,435,456 pixels (e.g., 16,384 x 16,384)
+            let scale = 10.0;
+            let canvas;
+            let imageSize;
+
+            while (true) {
+                canvas = await html2canvas(tempContainer, {
+                    scale: scale,
+                    logging: false,
+                    useCORS: true,
+                    x: -20,  // 左边距
+                    y: -20,  // 上边距
+                    width: tempContainer.offsetWidth + 40,   // 增加宽度
+                    height: tempContainer.offsetHeight + 40, // 增加高度
+                });
+
+                // 获取图片尺寸
+                imageSize = canvas.width * canvas.height;
+                if (imageSize >= 268435456) {
+                    scale -= 0.5
+                } else {
+                    break;
+                }
+            }
 
             // 清理临时元素
             document.body.removeChild(tempContainer);
