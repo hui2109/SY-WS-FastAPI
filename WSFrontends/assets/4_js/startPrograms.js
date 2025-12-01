@@ -25,7 +25,17 @@ function workMineCards_start() {
 }
 
 function vacationTable_start() {
-    let iVT = new InitVacationTable(dayjs().year());
+    // 新的一年, 提前一个月翻页
+    let init_year;
+    let curr_month = dayjs().month() + 1
+
+    if (curr_month + 1 >= 13) {
+        init_year = dayjs().year() + 1
+    } else {
+        init_year = dayjs().year()
+    }
+
+    let iVT = new InitVacationTable(init_year);
     iVT.init();
 
     return iVT;
