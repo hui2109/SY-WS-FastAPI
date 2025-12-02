@@ -145,6 +145,8 @@ class initUserInfo {
     bindClick() {
         for (let userDropdownToggle of this.userDropdownToggles) {
             let logoutBtn = userDropdownToggle.querySelector('.logoutBtn');
+            let forceUpdate = userDropdownToggle.querySelector('.forceUpdate');
+
             logoutBtn.addEventListener('click', (e) => {
                 e.preventDefault();
 
@@ -184,6 +186,32 @@ class initUserInfo {
                     sessionStorage.removeItem('access_token');
                     window.location.href = '/login';
                 });
+            })
+
+            // 新增: 强制更新按钮
+            forceUpdate.addEventListener('click', (e) => {
+                e.preventDefault();
+
+                if ('serviceWorker' in navigator) {
+                    navigator.serviceWorker.getRegistrations().then((registrations) => {
+                        // 注销所有 Service Worker
+                        const unregisterPromises = registrations.map(registration =>
+                            registration.unregister()
+                        );
+
+                        Promise.all(unregisterPromises).then(() => {
+                            // 清除所有缓存
+                            caches.keys().then((cacheNames) => {
+                                return Promise.all(
+                                    cacheNames.map(cacheName => caches.delete(cacheName))
+                                );
+                            }).then(() => {
+                                alert('缓存已清除，页面即将刷新');
+                                window.location.reload(true);
+                            });
+                        });
+                    });
+                }
             })
         }
 
