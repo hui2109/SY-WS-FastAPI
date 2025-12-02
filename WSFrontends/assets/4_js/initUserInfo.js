@@ -206,7 +206,7 @@ class initUserInfo {
                                     cacheNames.map(cacheName => caches.delete(cacheName))
                                 );
                             }).then(() => {
-                                alert('缓存已清除，页面即将刷新');
+                                alert('缓存已清除，页面即将刷新!');
                                 window.location.reload(true);
                             });
                         });
