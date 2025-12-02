@@ -1,4 +1,4 @@
-const CACHE_NAME = 'SY-FastAPI-v16';
+const CACHE_NAME = 'SY-FastAPI-v17';
 const urlsToCache = [
     '/login',
     '/register',
@@ -28,11 +28,16 @@ const urlsToCache = [
 
 // 安装事件 - 缓存资源
 self.addEventListener('install', (event) => {
+    console.log('Service Worker 正在安装，版本:', CACHE_NAME);
     event.waitUntil(
         caches.open(CACHE_NAME)
             .then((cache) => {
                 console.log('缓存已打开');
                 return cache.addAll(urlsToCache);
+            })
+            .then(() => {
+                // 关键：跳过等待，立即激活新的 Service Worker
+                return self.skipWaiting();
             })
             .catch((error) => {
                 console.error('缓存失败:', error);
@@ -42,6 +47,7 @@ self.addEventListener('install', (event) => {
 
 // 激活事件 - 清理旧缓存
 self.addEventListener('activate', (event) => {
+    console.log('Service Worker 正在激活，版本:', CACHE_NAME);
     event.waitUntil(
         caches.keys().then((cacheNames) => {
             return Promise.all(
@@ -52,6 +58,9 @@ self.addEventListener('activate', (event) => {
                     }
                 })
             );
+        }).then(() => {
+            // 关键：立即接管所有页面
+            return self.clients.claim();
         })
     );
 });
