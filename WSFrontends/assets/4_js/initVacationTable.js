@@ -259,6 +259,14 @@ class InitVacationTable {
         })
     }
 
+    _isShowDeleteBtn() {
+        let currUser = sessionStorage.getItem('user_name');
+
+        if (currUser === this.bookingPerson0.textContent || currUser === this.bookingPerson1.textContent || currUser === this.bookingPerson2.textContent || currUser === '张旭辉' || currUser === '廖中凡') {
+            this.deleteReserve.classList.remove('d-none');  // 核心代码
+        }
+    }
+
     modifyHalfTableHead(_id, startYear, startMonth, endYear, endMonth, delta = null) {
         [this.GroupedDates, this.GroupedDatesObj] = generateWeeklyGroups(startYear, startMonth, endYear, endMonth);
         [this.day_start, this.day_end] = this._getStartEndDates();
@@ -410,7 +418,10 @@ class InitVacationTable {
             for (let footerChild of footerChildren) {
                 footerChild.classList.add('d-none');
             }
-            this.deleteReserve.classList.remove('d-none');
+
+            // 不是自己预约的休假, 不能删除预约, 就不给他显示[删除预约]按钮
+            this._isShowDeleteBtn();
+
             // 禁止交互
             let overlay = document.createElement('div');
             overlay.className = 'modal-overlay';
