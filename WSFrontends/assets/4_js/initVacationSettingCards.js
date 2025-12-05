@@ -84,6 +84,7 @@ class InitVacationSettingCards {
         this.allUsers = [];
         this.filteredUsers = [];
         this.banTypeColor = getBanTypeColor();
+        this.lookElement();
         this.setupEventListeners();
     }
 
@@ -91,6 +92,7 @@ class InitVacationSettingCards {
         await this.getDataFromServer();
         this.renderCards();
         this.setupSearch();
+        this.setupBatchSelection();
     }
 
     // 创建单个卡片
@@ -401,6 +403,60 @@ class InitVacationSettingCards {
         return rule_dict;
     }
 
+    // 根据入职日期计算年假天数
+    _computeAnnualLeaveDays(name, operate_year) {
+        for (let user of this.allUsers) {
+            if (user.name === name) {
+                let hireDate = dayjs(user.hiredate);
+                let endDate = dayjs(`${operate_year}-12-31`);
+                let work_years = endDate.diff(hireDate, 'days') / 365;
+                let relax_days = 0;
+
+                if (work_years < 1) {
+                    relax_days = 0;
+                } else if (work_years >= 1 && work_years < 10) {
+                    let delta = work_years - 1;
+                    if (delta >= 1) {
+                        relax_days = 5;
+                    } else {
+                        relax_days = delta * 5;
+                    }
+                } else if (work_years >= 10 && work_years < 20) {
+                    let delta = work_years - 10;
+                    if (delta >= 1) {
+                        relax_days = 10;
+                    } else {
+                        relax_days = delta * 10 + (1 - delta) * 5;
+                    }
+                } else {
+                    relax_days = 15
+                }
+
+                return Math.ceil(relax_days);
+            }
+        }
+    }
+
+    // 结合去年休假情况, 计算每个人应该休的放射假
+    _computeRadiationLeaveDays(person, setDays) {
+        let remaining_days = 0;
+
+        for (let user of this.operate_year_data) {
+            if (user.name === person) {
+                for (let holidayStat of user.holidayStats) {
+                    remaining_days += parseInt(holidayStat.remaining);
+                }
+                break;
+            }
+        }
+
+        if (remaining_days >= 5) {
+            remaining_days = 5
+        }
+
+        return parseInt(setDays) + remaining_days;
+    }
+
     async getDataFromServer() {
         // 获取token
         const token = getToken();
@@ -481,6 +537,195 @@ class InitVacationSettingCards {
                 const userId = parseInt(btn.dataset.userId);
                 this._saveHolidayRule(userId);
             }
+
+            if (event.target.closest('#batchOpp1-btn')) {
+                const btn = event.target.closest('#batchOpp1-btn');
+
+                this.confirmBatchGenLabel.textContent = `是否为所有人生成${this.batchYearSelect1.value}年休假规则？`
+                this.confirmBatchGenP.textContent = `是否为所有人生成${this.batchYearSelect1.value}年休假规则（放射假规则和年假规则，放射假每人${this.batchDaySelect1.value}天，年假系统自动计算）？`
+
+                const modalInstance = new bootstrap.Modal(this.confirmBatchGenModal);
+                modalInstance.show();
+            }
+
+            if (event.target.closest('#batchOpp2-btn')) {
+                const btn = event.target.closest('#batchOpp2-btn');
+
+                this.confirmBatchDelLabel.textContent = `是否删除${this.batchYearSelect2.value}年所有人的休假规则？`
+                this.confirmBatchDelP.textContent = `是否删除${this.batchYearSelect2.value}年所有人的休假规则（可找系统管理员撤销）？`
+
+                const modalInstance = new bootstrap.Modal(this.confirmBatchDelModal);
+                modalInstance.show();
+            }
+
+            if (event.target.closest('#confirmBatchGen')) {
+                const btn = event.target.closest('#confirmBatchGen');
+
+                let currentPersonnelList = JSON.parse(sessionStorage.getItem('currentPersonnelList'));
+                let data_list = [];
+                let operate_year = this.batchYearSelect1.value;
+
+                // 先获取 操作年去年 的休假统计
+                // 获取token
+                const token = getToken();
+                if (!token) {
+                    return;
+                }
+
+                fetch(`/get_vacation_setting_data?specify_year=${operate_year - 1}`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                }).then(response => {
+                    response.json().then(data => {
+                        if (response.ok) {
+                            this.operate_year_data = data;
+                            for (let person of currentPersonnelList) {
+                                data_list.push({
+                                    "name": person,
+                                    "relax": "放射假",
+                                    "start_date": `${operate_year}-01-01`,
+                                    "end_date": `${operate_year}-12-31`,
+                                    "available_days": this._computeRadiationLeaveDays(person, this.batchDaySelect1.value),
+                                    "rule_id": -1
+                                });
+                                data_list.push({
+                                    "name": person,
+                                    "relax": "年假",
+                                    "start_date": `${operate_year}-01-01`,
+                                    "end_date": `${operate_year}-12-31`,
+                                    "available_days": this._computeAnnualLeaveDays(person, operate_year),
+                                    "rule_id": -1
+                                });
+                            }
+
+                            if (data_list.length === 0) {
+                                return;
+                            }
+
+                            fetch('/create-holiday-rule', {
+                                method: 'POST',
+                                headers: {
+                                    'Authorization': `Bearer ${token}`,
+                                    'Content-Type': 'application/json',
+                                    'Accept': 'application/json'
+                                },
+                                body: JSON.stringify(data_list)
+                            }).then(response => {
+                                response.json().then(data => {
+                                    if (response.ok) {
+                                        showAlert({
+                                            type: 'success',
+                                            title: '保存成功！',
+                                            message: data.detail,
+                                        });
+
+                                        // 重新渲染休假表
+                                        // 初始化类并调用异步init方法
+                                        (async () => {
+                                            await this.init();
+                                        })();
+
+                                        // 隐藏对话框
+                                        const modalInstance = bootstrap.Modal.getInstance(this.confirmBatchGenModal);
+                                        modalInstance.hide();
+                                    } else {
+                                        showAlert(
+                                            {
+                                                type: 'danger',
+                                                title: '保存失败！',
+                                                message: data.detail,
+                                            })
+                                    }
+                                })
+                            }).catch(error => {
+                                debugger;
+                                console.error('error!!!', error);
+                            });
+                        } else {
+                            showAlert({
+                                type: 'danger',
+                                title: '数据获取失败！',
+                                message: data.detail,
+                            })
+                        }
+                    })
+                }).catch(error => {
+                    debugger;
+                    console.error('error!!!', error);
+                });
+            }
+
+            if (event.target.closest('#confirmBatchDel')) {
+                const btn = event.target.closest('#confirmBatchDel');
+                let operate_year = this.batchYearSelect2.value;
+                let deleted_rules = [];
+
+                for (let user of this.allUsers) {
+                    for (let holidayRule of user.holidayRules) {
+                        if (holidayRule.startDate.substring(0, 4) === operate_year) {
+                            deleted_rules.push({
+                                "name": user.name,
+                                "relax": holidayRule.type,
+                                "start_date": holidayRule.startDate,
+                                "end_date": holidayRule.endDate,
+                                "available_days": holidayRule.days,
+                                "rule_id": holidayRule.rule_id
+                            })
+                        }
+                    }
+                }
+
+                // 获取token
+                const token = getToken();
+                if (!token) {
+                    return;
+                }
+
+                for (let deletedRule of deleted_rules) {
+                    fetch('/delete_relax_rule', {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json'
+                        },
+                        body: JSON.stringify(deletedRule)
+                    }).then(response => {
+                        response.json().then(data => {
+                            if (response.ok) {
+                                showAlert({
+                                    type: 'success',
+                                    title: '删除成功！',
+                                    message: data.detail,
+                                })
+                            } else {
+                                showAlert({
+                                    type: 'danger',
+                                    title: '删除失败！',
+                                    message: data.detail,
+                                })
+                            }
+                        })
+                    }).catch(error => {
+                        debugger;
+                        console.error('error!!!', error);
+                    });
+                }
+
+                // 重新渲染休假表
+                // 初始化类并调用异步init方法
+                (async () => {
+                    await this.init();
+                })();
+
+                // 隐藏对话框
+                const modalInstance = bootstrap.Modal.getInstance(this.confirmBatchDelModal);
+                modalInstance.hide();
+            }
         });
 
         document.addEventListener('change', (e) => {
@@ -500,5 +745,38 @@ class InitVacationSettingCards {
                 }
             }
         });
+    }
+
+
+    lookElement() {
+        this.confirmBatchGenModal = document.getElementById('confirmBatchGenModal');
+        this.confirmBatchDelModal = document.getElementById('confirmBatchDelModal');
+        this.confirmBatchGen = document.getElementById('confirmBatchGen');
+        this.confirmBatchDel = document.getElementById('confirmBatchDel');
+        this.confirmBatchGenLabel = document.getElementById('confirmBatchGenLabel');
+        this.confirmBatchDelLabel = document.getElementById('confirmBatchDelLabel');
+        this.confirmBatchGenP = document.getElementById('confirmBatchGenP');
+        this.confirmBatchDelP = document.getElementById('confirmBatchDelP');
+
+        this.batchYearSelect1 = document.getElementById('batch-year-select1');
+        this.batchYearSelect2 = document.getElementById('batch-year-select2');
+        this.batchDaySelect1 = document.getElementById('batch-day-select1');
+    }
+
+    setupBatchSelection() {
+        let curr_year = dayjs().year();
+        let year_ops = [curr_year - 1, curr_year, curr_year + 1, curr_year + 2, curr_year + 3]
+        let option_html = '';
+        for (let year_op of year_ops) {
+            option_html += `<option value="${year_op}">${year_op}年</option>`;
+        }
+        this.batchYearSelect1.innerHTML = option_html;
+        this.batchYearSelect2.innerHTML = option_html;
+
+        option_html = '';
+        for (let i = 5; i < 31; i++) {
+            option_html += `<option value="${i}">${i}天</option>`;
+        }
+        this.batchDaySelect1.innerHTML = option_html;
     }
 }

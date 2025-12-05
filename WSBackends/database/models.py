@@ -80,6 +80,7 @@ class RestInfo(SQLModel, table=True):
     available_days: int
     personnel_id: int | None = Field(default=None, foreign_key="personnel.id")
     bantype_id: int | None = Field(default=None, foreign_key="bantype.id")
+    is_deleted: int | None = Field(default=0)
 
     personnel: Personnel | None = Relationship(back_populates="restinfos")
     bantype: Bantype | None = Relationship(back_populates="restinfos")

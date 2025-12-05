@@ -141,8 +141,24 @@ async def create_holiday_rule(holiday_rules: list[HolidayRule], session: Session
         result = session.get(RestInfo, holiday_rule.rule_id)
         result: RestInfo
         if not result:
-            restinfo = RestInfo(personnel=personnel, bantype=bantype, **holiday_rule.model_dump())
-            session.add(restinfo)
+            # 证明是新创建的规则
+            # 新规则不能和现有规则重复
+            result = session.exec(
+                select(RestInfo).where(
+                    RestInfo.start_date == holiday_rule.start_date,
+                    RestInfo.end_date == holiday_rule.end_date,
+                    RestInfo.available_days == holiday_rule.available_days,
+                    RestInfo.personnel == personnel,
+                    RestInfo.bantype == bantype,
+                )
+            ).first()
+            if not result:
+                restinfo = RestInfo(personnel=personnel, bantype=bantype, **holiday_rule.model_dump())
+                session.add(restinfo)
+            else:
+                if result.is_deleted == 1:
+                    result.is_deleted = 0
+                    session.add(result)
         else:
             # 更新现有记录
             result.bantype = bantype
@@ -150,6 +166,7 @@ async def create_holiday_rule(holiday_rules: list[HolidayRule], session: Session
             result.start_date = holiday_rule.start_date
             result.end_date = holiday_rule.end_date
             result.available_days = holiday_rule.available_days
+            result.is_deleted = 0
 
             session.add(result)
 

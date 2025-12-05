@@ -592,6 +592,41 @@
                 </div>
               </div>
 
+              <!-- 批量操作区域 -->
+              <div class="batchOpp-container">
+                <div class="container">
+                  <div class="row m-1">
+                    <div class="batchOpp1 border border-primary border-2 rounded mb-4 p-3 col">
+                    批量生成
+                    <select id="batch-year-select1" class="form-select form-select-sm mt-2 mb-2">
+                      <option>2026年</option>
+                      <option>2027年</option>
+                      <option>2028年</option>
+                    </select>
+                    <label for="batch-year-select1">休假规则，</label>
+                    每人每年休
+                    <select id="batch-day-select1" class="form-select form-select-sm mt-2 mb-2">
+                      <option>22天</option>
+                      <option>23天</option>
+                      <option>24天</option>
+                    </select>
+                    <label for="batch-day-select1">放射假：</label>
+                    <button type="button" class="btn btn-sm btn-primary" id="batchOpp1-btn">生成</button>
+                  </div>
+                  <div class="batchOpp2 border border-danger border-2 rounded mb-4 p-3 col ms-2">
+                    批量删除
+                    <select id="batch-year-select2" class="form-select form-select-sm mt-2 mb-2">
+                      <option>2026年</option>
+                      <option>2027年</option>
+                      <option>2028年</option>
+                    </select>
+                    <label for="batch-year-select2">所有人的休假规则：</label>
+                    <button type="button" class="btn btn-sm btn-danger" id="batchOpp2-btn">删除</button>
+                  </div>
+                  </div>
+                </div>
+              </div>
+
               <!-- 卡片容器 -->
               <div class="container">
                 <div id="cardsContainer" class="row">
@@ -1411,6 +1446,52 @@
           <button type="button" class="btn btn-sm btn-primary" id="confirmAudit">确认审核</button>
           <div>
             <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">暂时不审核</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 确认批量生成休假规则 确认 对话框 -->
+  <div class="modal fade" id="confirmBatchGenModal" tabindex="-1" aria-labelledby="confirmAuditLabel" aria-hidden="true">
+    <div class="modal-dialog modal-sm modal-dialog-centered" style="width: 348px; margin: auto; font-size: 15px;">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="confirmBatchGenLabel">是否为所有人生成2026年休假规则？</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+
+        <div class="modal-body">
+          <p class="mb-0" id="confirmBatchGenP">是否为所有人生成2026年休假规则（放射假规则和年假规则，放射假每人22天，年假系统自动计算）？</p>
+        </div>
+
+        <div class="modal-footer justify-content-between">
+          <button type="button" class="btn btn-sm btn-primary" id="confirmBatchGen">确认生成</button>
+          <div>
+            <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">暂时不生成</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 确认批量删除休假规则 确认 对话框 -->
+  <div class="modal fade" id="confirmBatchDelModal" tabindex="-1" aria-labelledby="confirmAuditLabel" aria-hidden="true">
+    <div class="modal-dialog modal-sm modal-dialog-centered" style="width: 348px; margin: auto; font-size: 15px;">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="confirmBatchDelLabel">是否删除2026年所有人的休假规则？</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+
+        <div class="modal-body">
+          <p class="mb-0" id="confirmBatchDelP">是否删除2026年所有人的休假规则（可找系统管理员撤销）？</p>
+        </div>
+
+        <div class="modal-footer justify-content-between">
+          <button type="button" class="btn btn-sm btn-danger" id="confirmBatchDel">确认删除</button>
+          <div>
+            <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">暂时不删除</button>
           </div>
         </div>
       </div>

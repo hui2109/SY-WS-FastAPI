@@ -265,7 +265,7 @@ async def get_suggested_schedule(querySchedule: QuerySchedule, session: SessionD
 
 
 @router.post("/get_vacation_setting_data", dependencies=None)
-async def get_vacation_setting_data(session: SessionDep, onePerson_name: str = None, user: Account = Depends(get_current_user)):
+async def get_vacation_setting_data(session: SessionDep, onePerson_name: str = None, user: Account = Depends(get_current_user), specify_year: None | int = None):
     all_data = []
 
     if onePerson_name:
@@ -279,7 +279,7 @@ async def get_vacation_setting_data(session: SessionDep, onePerson_name: str = N
         better_personnel_list.insert(0, my_name)
 
         for personnel in better_personnel_list:
-            data = get_person_vacation_setting_data(session, personnel)
+            data = get_person_vacation_setting_data(session, personnel, specify_year)
             all_data.append(data)
 
     return all_data
@@ -365,7 +365,7 @@ def get_last_week_work_schedule_and_last_work_schedule(session: SessionDep, name
     return last_week_work_schedule, last_work_schedule
 
 
-def get_person_vacation_setting_data(session: SessionDep, name: str) -> dict:
+def get_person_vacation_setting_data(session: SessionDep, name: str, specify_year: None | int = None) -> dict:
     data = {
         'id': 1,
         'name': "张三",
@@ -412,8 +412,14 @@ def get_person_vacation_setting_data(session: SessionDep, name: str) -> dict:
 
     # 2. 设置基本信息
     root_now = date(datetime.now().year, datetime.now().month, datetime.now().day)
-    root_start_date = date(root_now.year, 1, 1)
-    root_end_date = date(root_now.year, 12, 31)
+    root_start_date = date(root_now.year - 1, 1, 1)
+    root_end_date = date(root_now.year + 1, 12, 31)
+
+    # specify_year用于查询指定年份的休假剩余天数
+    if specify_year is not None:
+        specified_year = specify_year
+    else:
+        specified_year = root_now.year
 
     data['id'] = personnel.id
     data['name'] = personnel.name
@@ -422,13 +428,18 @@ def get_person_vacation_setting_data(session: SessionDep, name: str) -> dict:
     data['workYears'] = f'{root_now.year - personnel.hiredate.year} 年'
     data['employeeId'] = personnel.worknumber
     data['phone'] = personnel.phonenumber
+    # 新增字段: hiredate (为了在前端算每个人的年假天数 不得已)
+    data['hiredate'] = personnel.hiredate
 
     # 3. 优化：批量处理休假规则，避免循环中的数据库查询
-    # 首先过滤出当年的休假信息
+    # 首先过滤出已删除的休假规则, 只显示去年 今年和明年的休假规则
     current_year_restinfos = [
         restinfo for restinfo in personnel.restinfos
-        if (restinfo.start_date >= root_start_date and
-            restinfo.end_date <= root_end_date)
+        if (
+                restinfo.start_date >= root_start_date and
+                restinfo.end_date <= root_end_date and
+                restinfo.is_deleted == 0
+        )
     ]
 
     # 4. 如果有休假信息，批量查询所有相关的工作计划
@@ -484,6 +495,7 @@ def get_person_vacation_setting_data(session: SessionDep, name: str) -> dict:
             days = restinfo.available_days
             rule_id = restinfo.id
 
+            # 只显示去年 今年和明年的休假规则
             data['holidayRules'].append({
                 'type': bantype,
                 'startDate': startDate,
@@ -495,22 +507,24 @@ def get_person_vacation_setting_data(session: SessionDep, name: str) -> dict:
             # 计算已使用的天数
             used_days = 0
             current_date = restinfo.start_date
-            while current_date <= restinfo.end_date:
-                key = (restinfo.bantype_id, current_date)
-                if key in workschedule_map:
-                    for ws in workschedule_map[key]:
-                        for personnel_link in ws.personnel_links:
-                            if personnel_link.personnel.id == personnel.id:
-                                used_days += 1
-                                break
-                current_date += timedelta(days=1)
+            # 假期统计只添加今年的统计
+            if restinfo.end_date.year == specified_year:
+                while current_date <= restinfo.end_date:
+                    key = (restinfo.bantype_id, current_date)
+                    if key in workschedule_map:
+                        for ws in workschedule_map[key]:
+                            for personnel_link in ws.personnel_links:
+                                if personnel_link.personnel.id == personnel.id:
+                                    used_days += 1
+                                    break
+                    current_date += timedelta(days=1)
 
-            data['holidayStats'].append({
-                'type': bantype,
-                'used': used_days,
-                'remaining': days - used_days,
-                'expiry': endDate
-            })
+                data['holidayStats'].append({
+                    'type': bantype,
+                    'used': used_days,
+                    'remaining': days - used_days,
+                    'expiry': endDate
+                })
 
     # 6. 优化：获取本月工作计划 - 使用直接的JOIN查询
     data['workSchedule']['month'] = f'{root_now.year}-{root_now.month:02d}'
@@ -522,7 +536,7 @@ def get_person_vacation_setting_data(session: SessionDep, name: str) -> dict:
         data['workSchedule']['schedules'].append({'type': value, 'count': count})
 
     # 8. 新增: 补假 + 调休假 统计
-    lieu_data = get_lieu_vacation_data(root_now, personnel.id, session)
+    lieu_data = get_lieu_vacation_data(specified_year, personnel.id, session)
     data['holidayStats'].append({
         'type': lieu_data['data']['type'],
         'used': lieu_data['data']['used'],
@@ -555,9 +569,9 @@ def get_work_schedule_statistic(root_now: date, personnel_id: int, session: Sess
     return all_workschedule_records
 
 
-def get_lieu_vacation_data(root_now: date, personnel_id: int, session: SessionDep):
-    year_start = date(root_now.year, 1, 1)
-    year_end = date(root_now.year, 12, 31)
+def get_lieu_vacation_data(year: int, personnel_id: int, session: SessionDep):
+    year_start = date(year, 1, 1)
+    year_end = date(year, 12, 31)
 
     dl_bantype = session.exec(select(Bantype).where(Bantype.ban == Bans.DL)).first()  # 补假
     ll_bantype = session.exec(select(Bantype).where(Bantype.ban == Bans.LL)).first()  # 调休假

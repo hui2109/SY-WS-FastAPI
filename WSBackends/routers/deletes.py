@@ -110,7 +110,7 @@ async def delete_relax_rule(holiday_rule: HolidayRule, session: SessionDep):
     result = session.get(RestInfo, holiday_rule.rule_id)
     result: RestInfo
     if result:
-        session.delete(result)
+        result.is_deleted = 1
 
     session.commit()
 
