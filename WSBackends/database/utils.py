@@ -16,6 +16,8 @@ class Bans(Enum):
 
     S1 = 'S1'
     S2 = 'S2'
+    S2_A = 'S2-A'
+    S2_B = 'S2-B'
 
     N1 = 'N1'
     N2 = 'N2'
