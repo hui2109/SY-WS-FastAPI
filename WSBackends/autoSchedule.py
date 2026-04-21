@@ -160,8 +160,8 @@ class InitWorkers:
         Worker("戴梦莹", weight_dict.get('戴梦莹', 1.0), accelerator_prob=Probability.FEW, positioning_prob=Probability.HIGH, counter_prob=Probability.NEVER, positioning1_prob=Probability.FEW, positioning2_prob=Probability.HIGH)
         Worker("凌子涵", weight_dict.get('凌子涵', 0.8), accelerator_prob=Probability.POSSIBLE, positioning_prob=Probability.LOW, counter_prob=Probability.NEVER)
         Worker("曾小洲", weight_dict.get('曾小洲', 0.8), accelerator_prob=Probability.HALF, positioning_prob=Probability.HALF, counter_prob=Probability.NEVER)
-        Worker("张旭辉", weight_dict.get('张旭辉', 0.5), accelerator_prob=Probability.POSSIBLE, positioning_prob=Probability.LOW, counter_prob=Probability.NEVER)
-        Worker("廖中凡", weight_dict.get('廖中凡', 0.5), accelerator_prob=Probability.POSSIBLE, positioning_prob=Probability.LOW, counter_prob=Probability.NEVER)
+        Worker("张旭辉", weight_dict.get('张旭辉', 0.8), accelerator_prob=Probability.HALF, positioning_prob=Probability.HIGH, counter_prob=Probability.NEVER)
+        Worker("廖中凡", weight_dict.get('廖中凡', 0.8), accelerator_prob=Probability.HALF, positioning_prob=Probability.HALF, counter_prob=Probability.NEVER)
         Worker("尹红科", weight_dict.get('尹红科', 0.5), accelerator_prob=Probability.POSSIBLE, positioning_prob=Probability.LOW, counter_prob=Probability.NEVER)
         Worker("贺思程", weight_dict.get('贺思程', 0.5), accelerator_prob=Probability.POSSIBLE, positioning_prob=Probability.LOW, counter_prob=Probability.NEVER)
         Worker("杨星", weight_dict.get('杨星', 1.5), accelerator_prob=Probability.NEVER, positioning_prob=Probability.NEVER, counter_prob=Probability.ALWAYS, counter1_prob=Probability.ALWAYS)
@@ -298,8 +298,13 @@ class AutoOneSchedule:
             return False
 
     def __judge_holiday_schedule(self):
-        if is_holiday(self.schedule_date):
-            # 如果是节假日，最大的概率是 休息
+        # 节假日不休息
+        # if is_holiday(self.schedule_date):
+        #     # 如果是节假日，最大的概率是 休息
+        #     self.possible_schedule[1.2].append(Bans.RELAX.value)
+
+        # 只有周末才能休息
+        if self.schedule_date.weekday() == 5 or self.schedule_date.weekday() == 6:
             self.possible_schedule[1.2].append(Bans.RELAX.value)
 
     def get_possible_schedule(self):

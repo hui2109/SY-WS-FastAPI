@@ -614,7 +614,7 @@ class InitPaiBanTables {
 
         this.weekMap = getWeekMap();
         this.banTypeColor = getBanTypeColor();
-        this.mustBansList = ["1A", "1B", "2A", "2B", "2C", "3A", "3B", "S1", "S2", "N1", "N2"];
+        this.mustBansList = ["1A", "1B", "2A", "2B", "2C", "3A", "3B", "3C", "S1", "S2", "N1", "N2"];
         this.customCursor = document.getElementById('customCursor');
         this.tempEraseMode = false;
 
