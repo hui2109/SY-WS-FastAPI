@@ -55,13 +55,13 @@ add_static_files()
 
 
 def main():
-    uvicorn.run(app)
+    # uvicorn.run(app)
 
-    # uvicorn.run(
-    #     app,
-    #     host="::",  # 使用 :: 来监听所有 IPv6 和 IPv4 地址
-    #     port=8000,
-    # )
+    uvicorn.run(
+        app,
+        host="127.0.0.1",
+        port=8333
+    )
 
 
 if __name__ == '__main__':
